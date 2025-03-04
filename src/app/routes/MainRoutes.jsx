@@ -8,7 +8,8 @@ import Register from "../modules/Register/Register";
 import PublisherLayout from "../layouts/PublisherLayOut";
 import AdvertiserLayout from "../layouts/AdvertiserLayout";
 import AdvertiserDashboard from "../pages/Advertiser/Dashboard/AdvertiserDashBoard";
-
+import Home from "../pages/Home";
+import Loading from "../components/Loading";
 const PageNotFound = lazy(() => import("../layouts/PageNotFound"));
 const ServerError = lazy(() => import("../layouts/ServerError/ServerError"));
 const Maintenance = lazy(() => import("../layouts/Maintenance/Maintenance"));
@@ -27,7 +28,7 @@ export default function MainRoutes() {
 
 
         <Route path="/admin" element={<AdminLayout />}>
-          <Route path="dashboard" element={<Dashboard />} />
+          {/* <Route path="dashboard" element={<Dashboard />} /> */}
         </Route>
 
         <Route path="/publisher" element={<PublisherLayout />}>
