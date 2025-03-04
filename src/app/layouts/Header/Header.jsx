@@ -1,181 +1,246 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Dropdown, Avatar, Button, Input, Card } from "antd";
-import { UserOutlined, SearchOutlined, StarFilled, EyeOutlined } from "@ant-design/icons";
+"use client";
+
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  Layout,
+  Menu,
+  Button,
+  Drawer,
+  Space,
+  Divider,
+  Avatar,
+  Dropdown,
+} from "antd";
+import {
+  UserOutlined,
+  MenuOutlined,
+  HomeOutlined,
+  TeamOutlined,
+  ShareAltOutlined,
+  InfoCircleOutlined,
+  LogoutOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 import logOut from "../../modules/Logout";
+import logo from "../../assets/img/download (1).png";
+const { Header } = Layout;
 
-const categories = [
-  { title: "Social Business", icon: "🧑‍🤝‍🧑", border: "border-blue-400" },
-  { title: "Price Comparison", icon: "⚖️", border: "border-yellow-400" },
-  { title: "Multivendor Store", icon: "🏪", border: "border-red-400" },
-  { title: "Product Review", icon: "⭐", border: "border-blue-400" },
-];
-
-const products = [
-  {
-    id: 1,
-    name: "Yamaha Speed Star Mod Class",
-    price: "$899.00-$999.00",
-    img: "https://themeim.com/wp/blurb/wp-content/uploads/2019/05/yv1-f-4.png",
-    rating: 4,
-  },
-  {
-    id: 2,
-    name: "Toyota Prius Speed Fast",
-    price: "$899.00-$999.00",
-    img: "https://themeim.com/wp/blurb/wp-content/uploads/2019/05/tc22-f-4.png",
-    rating: 4,
-  },
-  {
-    id: 3,
-    name: "Asus Max Twenty Six Laptop",
-    price: "$499.00-$699.00",
-    img: "https://themeim.com/wp/blurb/wp-content/uploads/2019/05/ac220-f-4.png",
-    rating: 3,
-  },
-  {
-    id: 4,
-    name: "Samsung Galaxy Mini Prime",
-    price: "$379.00-$399.00",
-    img: "https://themeim.com/wp/blurb/wp-content/uploads/2019/05/j4-f-4-2.png",
-    rating: 2,
-  },
-];
-
-const aliExpressProducts = [
-  {
-    id: 1,
-    name: "Asus Slim Extreme Laptop",
-    price: "$450.00-$699.00",
-    img: "https://themeim.com/wp/blurb/wp-content/uploads/2019/05/ac221-f-4.png",
-    rating: 3,
-  },
-  {
-    id: 2,
-    name: "Samsung Galaxy Xpro Classic",
-    price: "$259.00-$299.00",
-    img: "https://themeim.com/wp/blurb/wp-content/uploads/2019/05/j5-f-4.png",
-    rating: 3,
-  },
-  {
-    id: 3,
-    name: "Samsung Grand Prime Plus",
-    price: "$299.00-$399.00",
-    img: "https://themeim.com/wp/blurb/wp-content/uploads/2019/05/j6-f-4.png",
-    rating: 3,
-  },
-  {
-    id: 4,
-    name: "Samsung Grand Prime Mini",
-    price: "$250.00-$299.00",
-    img: "https://themeim.com/wp/blurb/wp-content/uploads/2019/05/mobile-feature-4.png",
-    rating: 3,
-  },
-];
-
-const ebayProducts = [
-  {
-    id: 1,
-    name: "Asus Max Twenty Six Laptop",
-    price: "$499.00-$699.00",
-    img: "https://your-image-url.com/asus-max-laptop.png",
-    rating: 3,
-  },
-  {
-    id: 2,
-    name: "Asus Slim Extreme Laptop",
-    price: "$450.00-$699.00",
-    img: "https://your-image-url.com/asus-slim-laptop.png",
-    rating: 3,
-  },
-  {
-    id: 3,
-    name: "Samsung Galaxy Xpro Classic",
-    price: "$259.00-$299.00",
-    img: "https://your-image-url.com/samsung-xpro.png",
-    rating: 3,
-  },
-  {
-    id: 4,
-    name: "Samsung Grand Prime Plus",
-    price: "$299.00-$399.00",
-    img: "https://your-image-url.com/grand-prime-plus.png",
-    rating: 3,
-  },
-];
-
-const aliexpressDeals = [
-  {
-    id: 1,
-    title: "DISCOVER PRO",
-    description: "Ultimate Multitasking",
-    img: "https://themeim.com/wp/blurb/wp-content/uploads/elementor/thumbs/slider1-qzw653d7qv0lbua9t3hn7q5jmucn2fsb12kbd9lsqw.jpg",
-    rating: 4.5,
-    user: {
-      name: "ThemelM",
-      role: "Team Leader",
-      review: "Lorem Ipsum is simply dummy text of the printing and type setting industry.",
-    },
-  },
-  {
-    id: 2,
-    title: "AliExpress Exclusive Video",
-    video: "https://www.youtube.com/embed/dQw4w9WgXcQ"
-  },
-];
-
-
-export default function HomePage() {
+export default function CustomHeader() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
+
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const menuItems = [
-    { key: "profile", label: <Link to="/profile">Profile</Link> },
-    { key: "schedule", label: <Link to="/schedule">Schedule</Link> },
-    { key: "logout", danger: true, label: <span onClick={logOut}>Logout</span> },
+    {
+      key: "publisher",
+      label: <Link to="/publisher" className="text-white hover:text-orange-300">Publisher</Link>,
+      icon: <HomeOutlined />,
+    },
+    {
+      key: "advertiser",
+      label: <Link to="/advertiser" className="text-white hover:text-orange-300">Advertiser</Link>,
+      icon: <TeamOutlined />,
+    },
+    {
+      key: "share",
+      label: <Link to="/share" className="text-white hover:text-orange-300">Góc Chia sẻ</Link>,
+      icon: <ShareAltOutlined />,
+    },
+    {
+      key: "affihub",
+      label: <Link to="/affihub" className="text-white hover:text-orange-300">Về AffiHub</Link>,
+      icon: <InfoCircleOutlined />,
+    },
   ];
 
-  const navItems = [
-    { key: "home", label: "HOME", link: "/home" },
-    { key: "market", label: "MARKET COMPARE", link: "/market-compare" },
-    { key: "reviews", label: "REVIEWS", link: "/reviews" },
-    { key: "coupons", label: "COUPONS", link: "/coupons" },
-    { key: "explore", label: "EXPLORE", link: "/explore" },
+  const userMenuItems = [
+    {
+      key: "profile",
+      label: <Link to="/profile" className="text-gray-700 hover:text-gray-900">Tài khoản</Link>,
+      icon: <UserOutlined />,
+    },
+    {
+      key: "settings",
+      label: <Link to="/settings" className="text-gray-700 hover:text-gray-900">Cài đặt</Link>,
+      icon: <SettingOutlined />,
+    },
+    {
+      type: "divider",
+    },
+    {
+      key: "logout",
+      label: "Đăng xuất",
+      icon: <LogoutOutlined />,
+      onClick: () => logOut(),
+    },
   ];
+
+  const handleLoginClick = () => {
+    navigate("/Login");
+  };
+
+  const handleRegisterClick = () => {
+    navigate("/register");
+  };
+
+  const handleLogoClick = () => {
+    navigate("/"); // Điều hướng về trang Home khi nhấn logo
+  };
 
   return (
-    <div className=" bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-md py-4">
-        <div className="container mx-auto flex justify-between items-center px-6">
-          <Link to="/" className="flex items-center text-xl font-bold text-orange-500">
-            <span className="text-2xl">▶</span> Blurb
-          </Link>
-          <div className="relative w-1/3">
-            <Input placeholder="Search..." className="px-4 py-2 rounded-lg border-gray-300" suffix={<SearchOutlined className="text-gray-500" />} />
-          </div>
-          <div>
-            {isLoggedIn ? (
-              <Dropdown menu={{ items: menuItems }}>
-                <Avatar size={40} icon={<UserOutlined />} className="cursor-pointer" />
-              </Dropdown>
-            ) : (
-              <Link to="/login" className="bg-orange-500 text-white px-4 py-2 rounded-lg">Login</Link>
-            )}
-          </div>
-        </div>
-        <nav className="mt-4 flex justify-center space-x-6 text-gray-600 font-medium">
-          {navItems.map((item) => (
-            <Link key={item.key} to={item.link} className="hover:text-orange-500">
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-      </header>
-    </div>
+    <Header
+      style={{
+        position: "sticky",
+        top: 0,
+        zIndex: 1000,
+        width: "100%",
+        padding: "0 50px",
+        background: scrolled
+          ? "linear-gradient(to right, #4a5568, #d97706)"
+          : "linear-gradient(to right, #2d3748, #f97316)",
+        boxShadow: scrolled ? "0 2px 8px rgba(0,0,0,0.15)" : "none",
+        transition: "all 0.3s ease",
+        height: "64px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
+    >
+      <div className="logo" style={{ display: "flex", alignItems: "center" }}>
+        <button onClick={handleLogoClick} style={{ border: "none", background: "transparent", cursor: "pointer" }}>
+          <img
+            src={logo}
+            alt="AffiHub Logo"
+            style={{ height: "160px", marginRight: "64px" }}
+          />
+        </button>
+      </div>
+
+      {/* Desktop Menu */}
+      <div className="desktop-menu" style={{ display: "flex", alignItems: "center" }}>
+        <Menu
+          mode="horizontal"
+          style={{
+            background: "transparent",
+            borderBottom: "none",
+            minWidth: "400px",
+          }}
+          className="desktop-nav"
+          items={menuItems}
+        />
+
+        <Space style={{ marginLeft: "24px" }}>
+          {isLoggedIn ? (
+            <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" arrow>
+              <Avatar
+                style={{
+                  backgroundColor: "#f97316",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                icon={<UserOutlined />}
+              />
+            </Dropdown>
+          ) : (
+            <>
+              <Button
+                type="primary"
+                onClick={handleRegisterClick}
+                style={{
+                  background: "#2563eb",
+                  borderColor: "#2563eb",
+                  fontWeight: "semibold",
+                }}
+              >
+                Đăng Ký
+              </Button>
+              <Button
+                type="default"
+                onClick={handleLoginClick}
+                style={{
+                  borderColor: "#2563eb",
+                  color: "#2563eb",
+                  fontWeight: "semibold",
+                }}
+              >
+                Đăng Nhập
+              </Button>
+            </>
+          )}
+        </Space>
+
+        {/* Mobile Menu Button */}
+        <Button
+          type="text"
+          icon={<MenuOutlined />}
+          onClick={() => setMobileMenuOpen(true)}
+          style={{ color: "white", fontSize: "20px" }}
+          className="mobile-menu-button"
+        />
+      </div>
+
+      {/* Mobile Menu Drawer */}
+      <Drawer
+        title="Menu"
+        placement="right"
+        onClose={() => setMobileMenuOpen(false)}
+        open={mobileMenuOpen}
+        width={280}
+        style={{ background: "#f5f5f5" }}
+      >
+        <Menu
+          mode="vertical"
+          style={{ border: "none", background: "transparent" }}
+          items={menuItems}
+        />
+
+        <Divider />
+
+        {isLoggedIn ? (
+          <Menu
+            mode="vertical"
+            style={{ border: "none", background: "transparent" }}
+            items={userMenuItems}
+          />
+        ) : (
+          <Space direction="vertical" style={{ width: "100%", marginTop: "16px" }}>
+            <Button
+              type="primary"
+              onClick={handleRegisterClick}
+              style={{ width: "100%", background: "#2563eb", borderColor: "#2563eb", fontWeight: "semibold" }}
+            >
+              Đăng Ký
+            </Button>
+            <Button
+              type="default"
+              onClick={handleLoginClick}
+              style={{ width: "100%", borderColor: "#2563eb", color: "#2563eb", fontWeight: "semibold" }}
+            >
+              Đăng Nhập
+            </Button>
+          </Space>
+        )}
+      </Drawer>
+    </Header>
   );
 }
