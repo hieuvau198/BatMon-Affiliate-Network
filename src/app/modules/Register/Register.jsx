@@ -137,12 +137,12 @@ export default function Register() {
 
         {/* Right Side - Registration Form */}
         <div className="lg:w-7/12 p-8 flex flex-col items-center justify-center">
-          <div className="relative mb-6">
+          <div className="relative">
             <div className="absolute w-24 h-24 bg-[radial-gradient(circle,rgba(58,123,213,0.1)_0%,transparent_70%)] rounded-full -top-2 -left-2"></div>
             <img
               src={logo}
               alt="AffiHub Logo"
-              className="w-20 h-20 relative z-10 object-contain"
+              className="w-64 h-64 relative z-10 object-contain"
             />
           </div>
 
@@ -152,11 +152,10 @@ export default function Register() {
             <div className="flex space-x-2 mb-4">
               <button
                 onClick={() => setUserType("publisher")}
-                className={`flex-1 py-3 rounded-lg text-center font-semibold transition-all duration-300 ${
-                  userType === "publisher"
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
+                className={`flex-1 py-3 rounded-lg text-center font-semibold transition-all duration-300 ${userType === "publisher"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
               >
                 <svg
                   className="w-5 h-5 inline mr-2"
@@ -176,11 +175,10 @@ export default function Register() {
               </button>
               <button
                 onClick={() => setUserType("advertiser")}
-                className={`flex-1 py-3 rounded-lg text-center font-semibold transition-all duration-300 ${
-                  userType === "advertiser"
-                    ? "bg-orange-500 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
+                className={`flex-1 py-3 rounded-lg text-center font-semibold transition-all duration-300 ${userType === "advertiser"
+                  ? "bg-orange-500 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
               >
                 <svg
                   className="w-5 h-5 inline mr-2"
@@ -200,14 +198,12 @@ export default function Register() {
               </button>
             </div>
             <div
-              className={`p-4 rounded-lg ${
-                userType === "publisher" ? "bg-blue-50" : "bg-orange-50"
-              }`}
+              className={`p-4 rounded-lg ${userType === "publisher" ? "bg-blue-50" : "bg-orange-50"
+                }`}
             >
               <p
-                className={`text-sm font-medium ${
-                  userType === "publisher" ? "text-blue-600" : "text-orange-600"
-                }`}
+                className={`text-sm font-medium ${userType === "publisher" ? "text-blue-600" : "text-orange-600"
+                  }`}
               >
                 {userType === "publisher"
                   ? "Bạn sẽ đăng ký tài khoản Publisher để kiếm tiền từ việc tiếp thị liên kết."
@@ -366,11 +362,10 @@ export default function Register() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-3 text-white font-semibold rounded-lg shadow-md transition-all duration-300 ${
-                userType === "publisher"
-                  ? "bg-gradient-to-r from-blue-500 to-cyan-400 hover:bg-opacity-90"
-                  : "bg-gradient-to-r from-orange-500 to-pink-500 hover:bg-opacity-90"
-              }`}
+              className={`w-full py-3 text-white font-semibold rounded-lg shadow-md transition-all duration-300 ${userType === "publisher"
+                ? "bg-gradient-to-r from-blue-500 to-cyan-400 hover:bg-opacity-90"
+                : "bg-gradient-to-r from-orange-500 to-pink-500 hover:bg-opacity-90"
+                }`}
             >
               {loading ? "Đang đăng ký..." : "Đăng ký"}
             </button>

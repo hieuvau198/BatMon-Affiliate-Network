@@ -8,8 +8,9 @@ import Dashboard from "../pages/Admin/Dashboard/Dashboard";
 import Employee from "../pages/Admin/Employee/Employee";
 import Booking from "../pages/Admin/Booking/Booking";
 import AboutUs from "../pages/About Us/AboutUs";
-import Login from "../components/Login/Login"; // Import Login
-import Register from "../components/Register/Register";
+import Login from "../modules/Login/Login"; // Import Login
+import Register from "../modules/Register/Register";
+import PublisherLayout from "../layouts/PublisherLayOut";
 
 const PageNotFound = lazy(() => import("../layouts/PageNotFound"));
 const ServerError = lazy(() => import("../layouts/ServerError/ServerError"));
@@ -19,28 +20,26 @@ export default function MainRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Route cho UserLayout */}
-        <Route
-          element={
-            <UserLayout>            
-              <Outlet /> 
-            </UserLayout>
-          }
-        >
+
+        <Route element={<UserLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<AboutUs />} />
-          <Route path="/login" element={<Login />} /> 
-          <Route path="/register" element={<Register />} /> 
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Route>
 
-        
+
         <Route path="/admin" element={<AdminLayout />}>
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="employee" element={<Employee />} />
           <Route path="booking" element={<Booking />} />
         </Route>
 
-    
+        <Route path="/publisher" element={<PublisherLayout />}>
+
+        </Route>
+
+
         <Route
           path="*"
           element={
