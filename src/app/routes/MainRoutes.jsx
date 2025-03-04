@@ -11,6 +11,8 @@ import AboutUs from "../pages/About Us/AboutUs";
 import Login from "../modules/Login/Login"; // Import Login
 import Register from "../modules/Register/Register";
 import PublisherLayout from "../layouts/PublisherLayOut";
+import AdvertiserLayout from "../layouts/AdvertiserLayout";
+import AdvertiserDashboard from "../pages/Advertiser/Dashboard/AdvertiserDashBoard";
 
 const PageNotFound = lazy(() => import("../layouts/PageNotFound"));
 const ServerError = lazy(() => import("../layouts/ServerError/ServerError"));
@@ -39,6 +41,11 @@ export default function MainRoutes() {
 
         </Route>
 
+
+        <Route path="/advertiser" element={<AdvertiserLayout />}>
+          <Route path="dashboard" element={<AdvertiserDashboard />} />
+
+        </Route>
 
         <Route
           path="*"
