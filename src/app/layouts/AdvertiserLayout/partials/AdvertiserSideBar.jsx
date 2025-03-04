@@ -16,10 +16,9 @@ const AdvertiserSidebar = () => {
   const menuItems = [
     { label: "Dashboard", icon: <DashboardOutlined />, link: "/advertiser/dashboard" },
     { label: "Fraud Rule", icon: <SecurityScanOutlined />, link: "/advertiser/fraud-rule" },
-    { label: "User Fraud Profile", icon: <UsergroupAddOutlined />, link: "/advertiser/user-fraud-profile" },
     { label: "Fraud Investigation", icon: <SearchOutlined />, link: "/advertiser/fraud-investigation" },
     { label: "Order Management", icon: <ShoppingCartOutlined />, link: "/advertiser/order-management" },
-    { label: "Advertiser Balance", icon: <DollarOutlined />, link: "/advertiser/advertiser-balance" },
+    { label: "Wallet", icon: <DollarOutlined />, link: "/advertiser/wallet" },
   ];
 
   return (

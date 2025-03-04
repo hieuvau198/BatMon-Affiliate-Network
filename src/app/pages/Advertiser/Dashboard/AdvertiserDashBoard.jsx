@@ -11,10 +11,9 @@ import {
   BankOutlined,
 } from "@ant-design/icons";
 import FraudRule from "./partials/FraudRule";
-import UserFraudProfile from "./partials/UserFraudProfile";
 import FraudInvestigation from "./partials/FraudInvestigation";
 import OrderManagement from "./partials/OrderManagement";
-import AdvertiserBalance from "./partials/AdvertiserBalance";
+import AdvertiserBalance from "./partials/Wallet";
 
 const { Header, Content } = Layout;
 
@@ -24,10 +23,9 @@ export default function AdvertiserDashboard() {
   const items = [
     { label: "Dashboard", key: "dashboard", icon: <BarChartOutlined /> },
     { label: "Fraud Rule", key: "fraud-rule", icon: <SafetyOutlined /> },
-    { label: "User Fraud Profile", key: "user-fraud-profile", icon: <UserOutlined /> },
     { label: "Fraud Investigation", key: "fraud-investigation", icon: <SearchOutlined /> },
     { label: "Order Management", key: "order-management", icon: <ShoppingCartOutlined /> },
-    { label: "Advertiser Balance", key: "advertiser-balance", icon: <BankOutlined /> },
+    { label: "Wallet", key: "wallet", icon: <BankOutlined /> },
   ];
 
   const onClick = (e) => setCurrent(e.key);
@@ -46,7 +44,6 @@ export default function AdvertiserDashboard() {
           </div>
           <Row gutter={[16, 16]}>
             <Col xs={24} lg={12}><FraudRule /></Col>
-            <Col xs={24} lg={12}><UserFraudProfile /></Col>
             <Col xs={24} lg={12}><FraudInvestigation /></Col>
             <Col xs={24} lg={12}><OrderManagement /></Col>
             <Col xs={24} lg={12}><AdvertiserBalance /></Col>
