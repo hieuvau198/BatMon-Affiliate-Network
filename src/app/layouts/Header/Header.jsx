@@ -188,15 +188,6 @@ export default function CustomHeader() {
             </>
           )}
         </Space>
-
-        {/* Mobile Menu Button */}
-        <Button
-          type="text"
-          icon={<MenuOutlined />}
-          onClick={() => setMobileMenuOpen(true)}
-          style={{ color: "white", fontSize: "20px" }}
-          className="mobile-menu-button"
-        />
       </div>
 
       {/* Mobile Menu Drawer */}

@@ -3,8 +3,11 @@ import { BrowserRouter, Route, Routes, Outlet } from "react-router-dom"; // Thê
 import AdminLayout from "../layouts/AdminLayout";
 import UserLayout from "../layouts/UserLayout/UserLayout";
 import AboutUs from "../pages/About Us/AboutUs";
-import Login from "../components/Login/Login"; // Import Login
-import Register from "../components/Register/Register";
+import Login from "../modules/Login/Login"; // Import Login
+import Register from "../modules/Register/Register";
+import PublisherLayout from "../layouts/PublisherLayOut";
+import AdvertiserLayout from "../layouts/AdvertiserLayout";
+import AdvertiserDashboard from "../pages/Advertiser/Dashboard/AdvertiserDashBoard";
 
 const PageNotFound = lazy(() => import("../layouts/PageNotFound"));
 const ServerError = lazy(() => import("../layouts/ServerError/ServerError"));
@@ -14,26 +17,29 @@ export default function MainRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Route cho UserLayout */}
-        <Route
-          element={
-            <UserLayout>            
-              <Outlet /> 
-            </UserLayout>
-          }
-        >
+
+        <Route element={<UserLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<AboutUs />} />
-          <Route path="/login" element={<Login />} /> 
-          <Route path="/register" element={<Register />} /> 
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Route>
 
-        
+
         <Route path="/admin" element={<AdminLayout />}>
           <Route path="dashboard" element={<Dashboard />} />
         </Route>
 
-    
+        <Route path="/publisher" element={<PublisherLayout />}>
+
+        </Route>
+
+
+        <Route path="/advertiser" element={<AdvertiserLayout />}>
+          <Route path="dashboard" element={<AdvertiserDashboard />} />
+
+        </Route>
+
         <Route
           path="*"
           element={

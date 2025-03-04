@@ -328,19 +328,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="bg-gray-800 text-white py-6 text-center rounded-t-2xl">
-          <p className="text-lg mb-2">Join AffiHub Today</p>
-          <Link
-            to="/register"
-            className="inline-block px-6 py-2 bg-orange-500 text-white font-semibold rounded-full hover:bg-orange-600 transition-all duration-300"
-          >
-            Sign Up
-          </Link>
-          <p className="text-sm mt-4">
-            © 2025 AffiHub. All rights reserved.
-          </p>
-        </footer>
       </div>
     </div>
   );
