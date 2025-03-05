@@ -10,6 +10,8 @@ import AdvertiserLayout from "../layouts/AdvertiserLayout";
 import AdvertiserDashboard from "../pages/Advertiser/Dashboard/AdvertiserDashBoard";
 import Home from "../pages/Home";
 import Loading from "../components/Loading";
+import CampaignList from "../pages/Publisher/Campaign/CampaignList";
+import CampaignDetail from "../pages/Publisher/Campaign/partials/CampaignDetail";
 const PageNotFound = lazy(() => import("../layouts/PageNotFound"));
 const ServerError = lazy(() => import("../layouts/ServerError/ServerError"));
 const Maintenance = lazy(() => import("../layouts/Maintenance/Maintenance"));
@@ -32,7 +34,8 @@ export default function MainRoutes() {
         </Route>
 
         <Route path="/publisher" element={<PublisherLayout />}>
-
+          <Route path="campaignlist" element={<CampaignList />} />
+          <Route path="campaignlist/campaigndetail" element={<CampaignDetail />} />
         </Route>
 
 
