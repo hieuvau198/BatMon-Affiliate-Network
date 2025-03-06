@@ -1,87 +1,22 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { 
-  Layout, 
-  Menu, 
-  Typography, 
-  Card, 
-  Table, 
-  Tag, 
-  Button, 
-  Input, 
-  Space, 
-  Select,
-  Tooltip,
-  Badge,
-  Divider,
-  Row,
-  Col
-} from "antd"
-import {
-  BarChartOutlined,
-  AimOutlined,
-  ClockCircleOutlined,
-  ToolOutlined,
-  WalletOutlined,
-  WarningOutlined,
-  BellOutlined,
-  UserOutlined,
-  SearchOutlined,
-  FilterOutlined,
-  SortAscendingOutlined,
-  EyeOutlined,
-  CheckCircleOutlined,
-  InfoCircleOutlined,
-  DollarOutlined,
-  ShoppingOutlined,
-  GlobalOutlined,
-  MobileOutlined
-} from "@ant-design/icons"
-import { Link } from "react-router-dom"
-
-const { Header, Content } = Layout
-const { Title, Text } = Typography
-const { Option } = Select
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function CampaignList() {
-  const [selectedKey, setSelectedKey] = useState("campaigns")
-  const [searchText, setSearchText] = useState("")
-  const [filterStatus, setFilterStatus] = useState("all")
-  const [filterCategory, setFilterCategory] = useState("all")
+  const [selectedKey, setSelectedKey] = useState("campaigns");
+  const [searchText, setSearchText] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [filterCategory, setFilterCategory] = useState("all");
 
   const menuItems = [
-    {
-      key: "overview",
-      icon: <BarChartOutlined style={{ fontSize: "20px" }} />,
-      label: "Tổng quan",
-    },
-    {
-      key: "campaigns",
-      icon: <AimOutlined style={{ fontSize: "20px" }} />,
-      label: "Chiến dịch",
-    },
-    {
-      key: "reports",
-      icon: <ClockCircleOutlined style={{ fontSize: "20px" }} />,
-      label: "Báo cáo",
-    },
-    {
-      key: "tools",
-      icon: <ToolOutlined style={{ fontSize: "20px" }} />,
-      label: "Tool",
-    },
-    {
-      key: "payments",
-      icon: <WalletOutlined style={{ fontSize: "20px" }} />,
-      label: "Thanh toán",
-    },
-    {
-      key: "violations",
-      icon: <WarningOutlined style={{ fontSize: "20px" }} />,
-      label: "Vi Phạm",
-    },
-  ]
+    { key: "overview", icon: "📊", label: "Tổng quan" },
+    { key: "campaigns", icon: "🎯", label: "Chiến dịch" },
+    { key: "reports", icon: "⏰", label: "Báo cáo" },
+    { key: "tools", icon: "🛠️", label: "Tool" },
+    { key: "payments", icon: "💳", label: "Thanh toán" },
+    { key: "violations", icon: "⚠️", label: "Vi Phạm" },
+  ];
 
   const campaigns = [
     {
@@ -144,190 +79,136 @@ export default function CampaignList() {
       earnings: "1,250,000đ",
       orders: 50,
     },
-  ]
+  ];
 
-  const columns = [
-    {
-      title: "Tên chiến dịch",
-      dataIndex: "name",
-      key: "name",
-      render: (text, record) => (
-        <Space direction="vertical" size={1}>
-          <Text strong>{text}</Text>
-          <Space size={4}>
-            {record.platform.includes("web") && (
-              <Tooltip title="Web">
-                <GlobalOutlined style={{ color: "#666" }} />
-              </Tooltip>
-            )}
-            {record.platform.includes("mobile") && (
-              <Tooltip title="Mobile">
-                <MobileOutlined style={{ color: "#666" }} />
-              </Tooltip>
-            )}
-          </Space>
-        </Space>
-      ),
-    },
-    {
-      title: "Merchant",
-      dataIndex: "merchant",
-      key: "merchant",
-      render: (text) => (
-        <Space>
-          <ShoppingOutlined />
-          <Text>{text}</Text>
-        </Space>
-      ),
-    },
-    {
-      title: "Hoa hồng",
-      dataIndex: "commission",
-      key: "commission",
-      render: (text, record) => (
-        <Space direction="vertical" size={1}>
-          <Text strong style={{ color: "#3a7bd5" }}>{text}</Text>
-          <Tag color="blue">{record.type}</Tag>
-        </Space>
-      ),
-    },
-    {
-      title: "Thời gian",
-      key: "time",
-      render: (_, record) => (
-        <Space direction="vertical" size={1}>
-          <Text>Bắt đầu: {record.startDate}</Text>
-          <Text>Kết thúc: {record.endDate}</Text>
-        </Space>
-      ),
-    },
-    {
-      title: "Trạng thái",
-      dataIndex: "status",
-      key: "status",
-      render: (status) => {
-        let color = "default"
-        let icon = null
-        
-        switch (status) {
-          case "Đang chạy":
-            color = "success"
-            icon = <CheckCircleOutlined />
-            break
-          case "Sắp diễn ra":
-            color = "processing"
-            icon = <ClockCircleOutlined />
-            break
-          case "Tạm dừng":
-            color = "warning"
-            icon = <WarningOutlined />
-            break
-          default:
-            break
-        }
-        
-        return (
-          <Tag color={color} icon={icon}>
-            {status}
-          </Tag>
-        )
-      },
-    },
-    {
-      title: "Thống kê",
-      key: "stats",
-      render: (_, record) => (
-        <Space direction="vertical" size={1}>
-          <Text>
-            <DollarOutlined /> Doanh thu: {record.earnings}
-          </Text>
-          <Text>
-            <ShoppingOutlined /> Đơn hàng: {record.orders}
-          </Text>
-        </Space>
-      ),
-    },
-    {
-      title: "Thao tác",
-      key: "action",
-      render: (_, record) => (
-        <Space size="middle">
-          <Tooltip title="Xem chi tiết">
-            <Link to={`/publisher/campaignlist/campaigndetail`}>
-              <Button type="primary" icon={<EyeOutlined />} size="small">
-                Chi tiết
-              </Button>
-            </Link>
-          </Tooltip>
-        </Space>
-      ),
-    },
-  ]
+  const filteredCampaigns = campaigns.filter((campaign) => {
+    const matchesSearch = campaign.name.toLowerCase().includes(searchText.toLowerCase()) ||
+                          campaign.merchant.toLowerCase().includes(searchText.toLowerCase());
+    const matchesStatus = filterStatus === "all" || campaign.status.toLowerCase() === filterStatus;
+    const matchesCategory = filterCategory === "all" || campaign.category.toLowerCase() === filterCategory;
+    return matchesSearch && matchesStatus && matchesCategory;
+  });
 
   return (
-    <Layout style={{ minHeight: "100vh", background: "#f5f7fa" }}>
-      <Content style={{ padding: "24px" }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          <Card bordered={false} style={{ borderRadius: "12px" }}>
-            <div style={{ marginBottom: "24px" }}>
-              <Row gutter={[16, 16]} align="middle" justify="space-between">
-                <Col>
-                  <Title level={4} style={{ margin: 0 }}>
-                    Danh sách chiến dịch
-                  </Title>
-                </Col>
-                <Col>
-                  <Space size="middle">
-                    <Input
-                      placeholder="Tìm kiếm chiến dịch..."
-                      prefix={<SearchOutlined />}
-                      style={{ width: 250 }}
-                      value={searchText}
-                      onChange={(e) => setSearchText(e.target.value)}
-                    />
-                    <Select
-                      defaultValue="all"
-                      style={{ width: 150 }}
-                      onChange={(value) => setFilterStatus(value)}
-                    >
-                      <Option value="all">Tất cả trạng thái</Option>
-                      <Option value="running">Đang chạy</Option>
-                      <Option value="upcoming">Sắp diễn ra</Option>
-                      <Option value="paused">Tạm dừng</Option>
-                    </Select>
-                    <Select
-                      defaultValue="all"
-                      style={{ width: 150 }}
-                      onChange={(value) => setFilterCategory(value)}
-                    >
-                      <Option value="all">Tất cả danh mục</Option>
-                      <Option value="ecommerce">E-commerce</Option>
-                      <Option value="food">Food & Beverage</Option>
-                      <Option value="travel">Travel</Option>
-                    </Select>
-                    <Tooltip title="Lọc nâng cao">
-                      <Button icon={<FilterOutlined />}>Lọc</Button>
-                    </Tooltip>
-                  </Space>
-                </Col>
-              </Row>
+    <div className="min-h-screen bg-gray-100 p-6">
+      <div className="max-w-6xl mx-auto">
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold mb-4 md:mb-0">Danh sách chiến dịch</h2>
+            <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+              <input
+                type="text"
+                placeholder="Tìm kiếm chiến dịch..."
+                className="w-full md:w-64 p-2 border rounded-lg"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+              />
+              <select
+                className="w-full md:w-40 p-2 border rounded-lg"
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+              >
+                <option value="all">Tất cả trạng thái</option>
+                <option value="đang chạy">Đang chạy</option>
+                <option value="sắp diễn ra">Sắp diễn ra</option>
+                <option value="tạm dừng">Tạm dừng</option>
+              </select>
+              <select
+                className="w-full md:w-40 p-2 border rounded-lg"
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+              >
+                <option value="all">Tất cả danh mục</option>
+                <option value="e-commerce">E-commerce</option>
+                <option value="food & beverage">Food & Beverage</option>
+                <option value="travel">Travel</option>
+              </select>
+              <button className="px-4 py-2 bg-gray-200 rounded-lg flex items-center">
+                <span className="mr-2">🔍</span> Lọc
+              </button>
             </div>
+          </div>
 
-            <Table
-              columns={columns}
-              dataSource={campaigns}
-              pagination={{
-                total: campaigns.length,
-                pageSize: 10,
-                showTotal: (total) => `Tổng ${total} chiến dịch`,
-                showSizeChanger: true,
-                showQuickJumper: true,
-              }}
-              style={{ marginTop: "8px" }}
-            />
-          </Card>
+          {/* Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="bg-gray-200">
+                <tr>
+                  <th className="p-2">Tên chiến dịch</th>
+                  <th className="p-2">Merchant</th>
+                  <th className="p-2">Hoa hồng</th>
+                  <th className="p-2">Thời gian</th>
+                  <th className="p-2">Trạng thái</th>
+                  <th className="p-2">Thống kê</th>
+                  <th className="p-2">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredCampaigns.map((campaign) => (
+                  <tr key={campaign.key} className="border-b">
+                    <td className="p-2">
+                      <div className="flex flex-col">
+                        <span className="font-semibold">{campaign.name}</span>
+                        <div className="flex space-x-2 mt-1">
+                          {campaign.platform.includes("web") && (
+                            <span title="Web" className="text-gray-600">🌐</span>
+                          )}
+                          {campaign.platform.includes("mobile") && (
+                            <span title="Mobile" className="text-gray-600">📱</span>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="p-2">
+                      <div className="flex items-center">
+                        <span className="mr-2">🛒</span> {campaign.merchant}
+                      </div>
+                    </td>
+                    <td className="p-2">
+                      <div className="flex flex-col">
+                        <span className="text-blue-600 font-semibold">{campaign.commission}</span>
+                        <span className="px-2 py-1 bg-blue-200 text-blue-800 rounded mt-1">{campaign.type}</span>
+                      </div>
+                    </td>
+                    <td className="p-2">
+                      <div className="flex flex-col">
+                        <span>Bắt đầu: {campaign.startDate}</span>
+                        <span>Kết thúc: {campaign.endDate}</span>
+                      </div>
+                    </td>
+                    <td className="p-2">
+                      <span
+                        className={`px-2 py-1 rounded ${
+                          campaign.status === "Đang chạy"
+                            ? "bg-green-200 text-green-800"
+                            : campaign.status === "Sắp diễn ra"
+                            ? "bg-blue-200 text-blue-800"
+                            : "bg-yellow-200 text-yellow-800"
+                        }`}
+                      >
+                        {campaign.status}
+                      </span>
+                    </td>
+                    <td className="p-2">
+                      <div className="flex flex-col">
+                        <span>💰 Doanh thu: {campaign.earnings}</span>
+                        <span>🛒 Đơn hàng: {campaign.orders}</span>
+                      </div>
+                    </td>
+                    <td className="p-2">
+                      <Link to={`/publisher/campaignlist/campaigndetail`}>
+                        <button className="px-2 py-1 bg-blue-600 text-white rounded flex items-center">
+                          <span className="mr-2">👁️</span> Chi tiết
+                        </button>
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </Content>
-    </Layout>
-  )
+      </div>
+    </div>
+  );
 }

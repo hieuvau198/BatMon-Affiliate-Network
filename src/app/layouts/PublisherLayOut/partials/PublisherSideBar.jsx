@@ -16,12 +16,10 @@ const PublisherSidebar = () => {
   const location = useLocation();
 
   const menuItems = [
-    { id: "overview", label: "Tổng quan", icon: <BarChartOutlined />, link: "/publisher/overview" },
+    { id: "overview", label: "Tổng quan", icon: <BarChartOutlined />, link: "/publisher/dashboard" },
     { id: "campaigns", label: "Chiến dịch", icon: <AimOutlined />, link: "/publisher/campaignlist" },
     { id: "reports", label: "Báo cáo", icon: <ClockCircleOutlined />, link: "/publisher/report" },
-    { id: "tools", label: "Tool", icon: <ToolOutlined />, link: "/publisher/tools" },
-    { id: "payments", label: "Thanh toán", icon: <WalletOutlined />, link: "/publisher/payments" },
-    { id: "violations", label: "Vi Phạm", icon: <WarningOutlined />, link: "/publisher/violations" },
+    { id: "violations", label: "Vi Phạm", icon: <WarningOutlined />, link: "/publisher/fraudtracking" },
   ];
 
   return (
