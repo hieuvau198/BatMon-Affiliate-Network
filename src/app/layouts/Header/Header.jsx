@@ -171,6 +171,7 @@ export default function CustomHeader() {
                   borderColor: "#2563eb",
                   fontWeight: "semibold",
                 }}
+                target="_top"
               >
                 Đăng Ký
               </Button>
@@ -182,6 +183,7 @@ export default function CustomHeader() {
                   color: "#2563eb",
                   fontWeight: "semibold",
                 }}
+                target="_top"
               >
                 Đăng Nhập
               </Button>
