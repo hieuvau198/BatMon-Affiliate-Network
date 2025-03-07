@@ -1,102 +1,21 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import {
-  Layout,
-  Menu,
-  Typography,
-  Card,
-  Button,
-  Space,
-  Tag,
-  Divider,
-  Row,
-  Col,
-  Tabs,
-  Descriptions,
-  Image,
-  Statistic,
-  Timeline,
-  List,
-  Avatar,
-  Tooltip,
-  Modal,
-  Form,
-  Checkbox,
-  Alert,
-  Progress
-} from "antd"
-import {
-  BarChartOutlined,
-  AimOutlined,
-  ClockCircleOutlined,
-  ToolOutlined,
-  WalletOutlined,
-  WarningOutlined,
-  BellOutlined,
-  UserOutlined,
-  ArrowLeftOutlined,
-  ShoppingOutlined,
-  DollarOutlined,
-  CalendarOutlined,
-  LinkOutlined,
-  CheckCircleOutlined,
-  InfoCircleOutlined,
-  FileTextOutlined,
-  QuestionCircleOutlined,
-  GlobalOutlined,
-  MobileOutlined,
-  LikeOutlined,
-  ShareAltOutlined,
-  StarOutlined,
-  StarFilled,
-  RightOutlined,
-  LeftOutlined
-} from "@ant-design/icons"
-
-const { Header, Content } = Layout
-const { Title, Text, Paragraph } = Typography
-const { TabPane } = Tabs
+import { useState } from "react";
 
 export default function CampaignDetail() {
-  const [selectedKey, setSelectedKey] = useState("campaigns")
-  const [isModalVisible, setIsModalVisible] = useState(false)
-  const [form] = Form.useForm()
+  const [selectedKey, setSelectedKey] = useState("campaigns");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [formData, setFormData] = useState({ agreement: false, promotion: false });
 
   const menuItems = [
-    {
-      key: "overview",
-      icon: <BarChartOutlined style={{ fontSize: "20px" }} />,
-      label: "Tổng quan",
-    },
-    {
-      key: "campaigns",
-      icon: <AimOutlined style={{ fontSize: "20px" }} />,
-      label: "Chiến dịch",
-    },
-    {
-      key: "reports",
-      icon: <ClockCircleOutlined style={{ fontSize: "20px" }} />,
-      label: "Báo cáo",
-    },
-    {
-      key: "tools",
-      icon: <ToolOutlined style={{ fontSize: "20px" }} />,
-      label: "Tool",
-    },
-    {
-      key: "payments",
-      icon: <WalletOutlined style={{ fontSize: "20px" }} />,
-      label: "Thanh toán",
-    },
-    {
-      key: "violations",
-      icon: <WarningOutlined style={{ fontSize: "20px" }} />,
-      label: "Vi Phạm",
-    },
-  ]
+    { key: "overview", icon: "📊", label: "Tổng quan" },
+    { key: "campaigns", icon: "🎯", label: "Chiến dịch" },
+    { key: "reports", icon: "⏰", label: "Báo cáo" },
+    { key: "tools", icon: "🛠️", label: "Tool" },
+    { key: "payments", icon: "💳", label: "Thanh toán" },
+    { key: "violations", icon: "⚠️", label: "Vi Phạm" },
+  ];
 
-  // Sample campaign data
   const campaign = {
     id: "SHOP12122023",
     name: "Shopee Siêu Sale 12.12",
@@ -112,7 +31,7 @@ export default function CampaignDetail() {
         { category: "Điện tử", rate: "8%" },
         { category: "Gia dụng", rate: "10%" },
         { category: "Mỹ phẩm", rate: "15%" },
-      ]
+      ],
     },
     status: "Đang chạy",
     platform: ["web", "mobile"],
@@ -142,7 +61,7 @@ export default function CampaignDetail() {
       publishers: 1245,
       orders: 45678,
       revenue: "12,345,678,000đ",
-      conversion: "3.5%"
+      conversion: "3.5%",
     },
     materials: [
       { type: "Banner", size: "728x90", url: "https://example.com/banner1.jpg" },
@@ -153,416 +72,241 @@ export default function CampaignDetail() {
     relatedCampaigns: [
       { id: "2", name: "Lazada Khuyến Mãi Tết", merchant: "Lazada", commission: "15% mọi đơn hàng" },
       { id: "3", name: "Tiki Săn Sale", merchant: "Tiki", commission: "10% + 50k/đơn" },
-    ]
-  }
+    ],
+  };
 
-  const handleRegister = () => {
-    setIsModalVisible(true)
-  }
+  const handleRegister = () => setIsModalVisible(true);
 
-  const handleModalOk = () => {
-    form.validateFields().then(values => {
-      console.log('Form values:', values)
-      setIsModalVisible(false)
-      // Show success message or redirect
-    })
-  }
+  const handleModalOk = (e) => {
+    e.preventDefault();
+    if (!formData.agreement) {
+      alert("Vui lòng đồng ý với điều khoản chiến dịch");
+      return;
+    }
+    console.log("Form values:", formData);
+    setIsModalVisible(false);
+  };
 
   return (
-    <Layout style={{ minHeight: "100vh", background: "#f5f7fa" }}>
-
-      <Content style={{ padding: "24px" }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          {/* Breadcrumb and back button */}
-          <div style={{ marginBottom: "16px", display: "flex", alignItems: "center" }}>
-            <Button
-              icon={<ArrowLeftOutlined />}
-              type="text"
-              style={{ marginRight: "16px", background: "blue" }}
-              onClick={() => window.history.back()}
-            >
-              Quay lại danh sách
-            </Button>
-            <Text type="secondary">
-              Chiến dịch / Chi tiết / {campaign.name}
-            </Text>
-          </div>
-
-          {/* Campaign Banner */}
-          <Card
-            bordered={false}
-            style={{
-              borderRadius: "12px",
-              marginBottom: "24px",
-              padding: 0,
-              overflow: "hidden"
-            }}
-            bodyStyle={{ padding: 0 }}
+    <div className="min-h-screen bg-gray-100 p-6">
+      <div className="max-w-6xl mx-auto">
+        {/* Breadcrumb and Back Button */}
+        <div className="flex items-center mb-4">
+          <button
+            onClick={() => window.history.back()}
+            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg mr-4"
           >
-            <div style={{ position: "relative" }}>
-              <Image
-                src={campaign.banner || "/placeholder.svg"}
-                alt={campaign.name}
-                preview={false}
-                style={{ width: "100%", maxHeight: "300px", objectFit: "cover" }}
-              />
-              <div style={{
-                position: "absolute",
-                bottom: 0,
-                left: 0,
-                right: 0,
-                background: "linear-gradient(to top, rgba(0,0,0,0.7), transparent)",
-                padding: "40px 24px 24px",
-                color: "white"
-              }}>
-                <Row align="middle" gutter={24}>
-                  <Col>
-                    <Avatar
-                      src={campaign.logo}
-                      size={80}
-                      style={{
-                        background: "white",
-                        padding: "8px",
-                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
-                      }}
-                    />
-                  </Col>
-                  <Col flex="1">
-                    <Title level={2} style={{ color: "white", margin: 0 }}>
-                      {campaign.name}
-                    </Title>
-                    <Space size="middle" style={{ marginTop: "8px" }}>
-                      <Tag color="blue" icon={<ShoppingOutlined />}>{campaign.merchant}</Tag>
-                      <Tag color="green" icon={<CheckCircleOutlined />}>{campaign.status}</Tag>
-                      <Tag color="orange" icon={<DollarOutlined />}>{campaign.commission.type}</Tag>
+            <span className="mr-2">⬅️</span> Quay lại danh sách
+          </button>
+          <span className="text-gray-500">Chiến dịch / Chi tiết / {campaign.name}</span>
+        </div>
+
+        {/* Campaign Banner */}
+        <div className="bg-white rounded-lg shadow mb-6 overflow-hidden">
+          <div className="relative">
+            <img
+              src={campaign.banner}
+              alt={campaign.name}
+              className="w-full h-64 object-cover"
+            />
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6 text-white">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <img
+                    src={campaign.logo}
+                    alt={campaign.merchant}
+                    className="w-20 h-20 bg-white p-2 rounded-full shadow"
+                  />
+                  <div>
+                    <h2 className="text-2xl font-semibold">{campaign.name}</h2>
+                    <div className="flex space-x-2 mt-2">
+                      <span className="px-2 py-1 bg-blue-600 rounded">{campaign.merchant}</span>
+                      <span className="px-2 py-1 bg-green-600 rounded">{campaign.status}</span>
+                      <span className="px-2 py-1 bg-orange-600 rounded">{campaign.commission.type}</span>
                       {campaign.platform.includes("web") && (
-                        <Tag icon={<GlobalOutlined />}>Web</Tag>
+                        <span className="px-2 py-1 bg-gray-600 rounded">Web</span>
                       )}
                       {campaign.platform.includes("mobile") && (
-                        <Tag icon={<MobileOutlined />}>Mobile</Tag>
+                        <span className="px-2 py-1 bg-gray-600 rounded">Mobile</span>
                       )}
-                    </Space>
-                  </Col>
-                  <Col>
-                    <Button
-                      type="primary"
-                      size="large"
-                      onClick={handleRegister}
-                      style={{
-                        background: "#ff4d4f",
-                        borderColor: "#ff4d4f",
-                        boxShadow: "0 4px 12px rgba(255,77,79,0.3)"
-                      }}
-                    >
-                      Đăng ký tham gia
-                    </Button>
-                  </Col>
-                </Row>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={handleRegister}
+                  className="px-6 py-3 bg-red-500 text-white rounded-lg shadow-lg"
+                >
+                  Đăng ký tham gia
+                </button>
               </div>
             </div>
-          </Card>
-
-          <Row gutter={24}>
-            {/* Main Content */}
-            <Col xs={24} lg={16}>
-              <Card bordered={false} style={{ borderRadius: "12px", marginBottom: "24px" }}>
-                <Tabs defaultActiveKey="overview">
-                  <TabPane
-                    tab={<span><InfoCircleOutlined /> Tổng quan</span>}
-                    key="overview"
-                  >
-                    <div style={{ marginBottom: "24px" }}>
-                      <Title level={4}>Mô tả chiến dịch</Title>
-                      <Paragraph>
-                        {campaign.description}
-                      </Paragraph>
-                      <Paragraph style={{ whiteSpace: "pre-line" }}>
-                        {campaign.longDescription}
-                      </Paragraph>
-                    </div>
-
-                    <Divider />
-
-                    <div style={{ marginBottom: "24px" }}>
-                      <Title level={4}>Thông tin hoa hồng</Title>
-                      <Descriptions bordered column={{ xs: 1, sm: 2 }}>
-                        <Descriptions.Item label="Loại hoa hồng">
-                          <Tag color="blue">{campaign.commission.type}</Tag>
-                        </Descriptions.Item>
-                        <Descriptions.Item label="Mức hoa hồng">
-                          <Text strong style={{ color: "#3a7bd5" }}>{campaign.commission.rate}</Text>
-                        </Descriptions.Item>
-                      </Descriptions>
-
-                      <Title level={5} style={{ marginTop: "16px" }}>Chi tiết theo danh mục</Title>
-                      <List
-                        bordered
-                        dataSource={campaign.commission.details}
-                        renderItem={item => (
-                          <List.Item>
-                            <Text>{item.category}</Text>
-                            <Text strong style={{ color: "#3a7bd5" }}>{item.rate}</Text>
-                          </List.Item>
-                        )}
-                      />
-                    </div>
-
-                    <Divider />
-
-                    <div>
-                      <Title level={4}>Quy định chiến dịch</Title>
-                      <List
-                        dataSource={campaign.rules}
-                        renderItem={(item, index) => (
-                          <List.Item>
-                            <Text>
-                              {index + 1}. {item}
-                            </Text>
-                          </List.Item>
-                        )}
-                      />
-                    </div>
-                  </TabPane>
-
-                  <TabPane
-                    tab={<span><FileTextOutlined /> Tài liệu quảng cáo</span>}
-                    key="materials"
-                  >
-                    <Title level={4}>Tài liệu quảng cáo</Title>
-                    <Paragraph>
-                      Sử dụng các tài liệu quảng cáo dưới đây để tăng hiệu quả cho chiến dịch của bạn.
-                    </Paragraph>
-
-                    <List
-                      grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 3 }}
-                      dataSource={campaign.materials}
-                      renderItem={item => (
-                        <List.Item>
-                          <Card
-                            hoverable
-                            cover={
-                              <div style={{
-                                height: "120px",
-                                background: "#f0f2f5",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center"
-                              }}>
-                                <FileTextOutlined style={{ fontSize: "32px", color: "#bfbfbf" }} />
-                              </div>
-                            }
-                          >
-                            <Card.Meta
-                              title={`${item.type} (${item.size})`}
-                              description={
-                                <Button type="link" icon={<LinkOutlined />} style={{ padding: 0 }}>
-                                  Tải xuống
-                                </Button>
-                              }
-                            />
-                          </Card>
-                        </List.Item>
-                      )}
-                    />
-                  </TabPane>
-
-                  <TabPane
-                    tab={<span><QuestionCircleOutlined /> Câu hỏi thường gặp</span>}
-                    key="faq"
-                  >
-                    <Title level={4}>Câu hỏi thường gặp</Title>
-
-                    <List
-                      itemLayout="vertical"
-                      dataSource={[
-                        {
-                          question: "Làm thế nào để tham gia chiến dịch này?",
-                          answer: "Bạn có thể nhấn vào nút 'Đăng ký tham gia' ở trên đầu trang để đăng ký tham gia chiến dịch. Sau khi đăng ký, bạn sẽ nhận được link tiếp thị và có thể bắt đầu quảng bá ngay."
-                        },
-                        {
-                          question: "Khi nào tôi sẽ nhận được hoa hồng?",
-                          answer: "Hoa hồng sẽ được duyệt sau 45-60 ngày kể từ khi đơn hàng hoàn thành. Sau khi được duyệt, hoa hồng sẽ được cộng vào ví của bạn và có thể rút về tài khoản ngân hàng."
-                        },
-                        {
-                          question: "Tôi có thể quảng bá chiến dịch này trên những kênh nào?",
-                          answer: "Bạn có thể quảng bá chiến dịch trên website, blog, mạng xã hội, email marketing, và các kênh online khác. Tuy nhiên, cần tuân thủ các quy định của chiến dịch về việc sử dụng từ khóa và hình ảnh."
-                        },
-                      ]}
-                      renderItem={item => (
-                        <List.Item>
-                          <Title level={5}>{item.question}</Title>
-                          <Paragraph>{item.answer}</Paragraph>
-                        </List.Item>
-                      )}
-                    />
-                  </TabPane>
-                </Tabs>
-              </Card>
-            </Col>
-
-            {/* Sidebar */}
-            <Col xs={24} lg={8}>
-              {/* Campaign Stats */}
-              <Card
-                title="Thống kê chiến dịch"
-                bordered={false}
-                style={{ borderRadius: "12px", marginBottom: "24px" }}
-              >
-                <Row gutter={[16, 16]}>
-                  <Col span={12}>
-                    <Statistic
-                      title="Publisher tham gia"
-                      value={campaign.stats.publishers}
-                      prefix={<UserOutlined />}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <Statistic
-                      title="Đơn hàng"
-                      value={campaign.stats.orders}
-                      prefix={<ShoppingOutlined />}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <Statistic
-                      title="Doanh thu"
-                      value={campaign.stats.revenue}
-                      prefix={<DollarOutlined />}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <Statistic
-                      title="Tỷ lệ chuyển đổi"
-                      value={campaign.stats.conversion}
-                      prefix={<CheckCircleOutlined />}
-                    />
-                  </Col>
-                </Row>
-              </Card>
-
-              {/* Campaign Info */}
-              <Card
-                title="Thông tin chiến dịch"
-                bordered={false}
-                style={{ borderRadius: "12px", marginBottom: "24px" }}
-              >
-                <Descriptions column={1}>
-                  <Descriptions.Item label="Mã chiến dịch">
-                    {campaign.id}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Thời gian bắt đầu">
-                    <Space>
-                      <CalendarOutlined />
-                      {campaign.startDate}
-                    </Space>
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Thời gian kết thúc">
-                    <Space>
-                      <CalendarOutlined />
-                      {campaign.endDate}
-                    </Space>
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Trạng thái">
-                    <Tag color="green" icon={<CheckCircleOutlined />}>{campaign.status}</Tag>
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Danh mục">
-                    {campaign.category}
-                  </Descriptions.Item>
-                </Descriptions>
-
-                <Divider />
-
-                <div>
-                  <Text strong>Tiến độ chiến dịch</Text>
-                  <Progress
-                    percent={75}
-                    status="active"
-                    style={{ marginTop: "8px" }}
-                  />
-                  <Text type="secondary">Còn 3 ngày nữa kết thúc</Text>
-                </div>
-              </Card>
-
-              {/* Related Campaigns */}
-              <Card
-                title="Chiến dịch liên quan"
-                bordered={false}
-                style={{ borderRadius: "12px" }}
-              >
-                <List
-                  itemLayout="horizontal"
-                  dataSource={campaign.relatedCampaigns}
-                  renderItem={item => (
-                    <List.Item
-                      actions={[
-                        <Button type="link" icon={<RightOutlined />}>Xem</Button>
-                      ]}
-                    >
-                      <List.Item.Meta
-                        title={item.name}
-                        description={
-                          <Space direction="vertical" size={0}>
-                            <Text>{item.merchant}</Text>
-                            <Text type="success">{item.commission}</Text>
-                          </Space>
-                        }
-                      />
-                    </List.Item>
-                  )}
-                />
-              </Card>
-            </Col>
-          </Row>
+          </div>
         </div>
-      </Content>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Content */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-lg shadow p-6">
+              {/* Tabs */}
+              <div className="flex border-b mb-4">
+                <button className="px-4 py-2 font-semibold text-blue-600 border-b-2 border-blue-600">
+                  ℹ️ Tổng quan
+                </button>
+                <button className="px-4 py-2 font-semibold text-gray-700">📄 Tài liệu quảng cáo</button>
+                <button className="px-4 py-2 font-semibold text-gray-700">❓ Câu hỏi thường gặp</button>
+              </div>
+
+              {/* Overview Tab */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Mô tả chiến dịch</h3>
+                <p>{campaign.description}</p>
+                <p className="mt-2 whitespace-pre-line">{campaign.longDescription}</p>
+
+                <hr className="my-6" />
+
+                <h3 className="text-lg font-semibold mb-4">Thông tin hoa hồng</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <p><strong>Loại hoa hồng:</strong> <span className="px-2 py-1 bg-blue-200 rounded">{campaign.commission.type}</span></p>
+                  </div>
+                  <div>
+                    <p><strong>Mức hoa hồng:</strong> <span className="text-blue-600 font-semibold">{campaign.commission.rate}</span></p>
+                  </div>
+                </div>
+                <h4 className="text-md font-semibold mt-4">Chi tiết theo danh mục</h4>
+                <ul className="border rounded-lg mt-2">
+                  {campaign.commission.details.map((item, index) => (
+                    <li key={index} className="flex justify-between p-2 border-b last:border-b-0">
+                      <span>{item.category}</span>
+                      <span className="text-blue-600 font-semibold">{item.rate}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <hr className="my-6" />
+
+                <h3 className="text-lg font-semibold mb-4">Quy định chiến dịch</h3>
+                <ul className="list-decimal pl-5">
+                  {campaign.rules.map((rule, index) => (
+                    <li key={index} className="mb-2">{rule}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div>
+            {/* Campaign Stats */}
+            <div className="bg-white rounded-lg shadow p-6 mb-6">
+              <h3 className="text-lg font-semibold mb-4">Thống kê chiến dịch</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-gray-600">Publisher tham gia</p>
+                  <p className="text-xl font-semibold">{campaign.stats.publishers}</p>
+                </div>
+                <div>
+                  <p className="text-gray-600">Đơn hàng</p>
+                  <p className="text-xl font-semibold">{campaign.stats.orders}</p>
+                </div>
+                <div>
+                  <p className="text-gray-600">Doanh thu</p>
+                  <p className="text-xl font-semibold">{campaign.stats.revenue}</p>
+                </div>
+                <div>
+                  <p className="text-gray-600">Tỷ lệ chuyển đổi</p>
+                  <p className="text-xl font-semibold">{campaign.stats.conversion}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Campaign Info */}
+            <div className="bg-white rounded-lg shadow p-6 mb-6">
+              <h3 className="text-lg font-semibold mb-4">Thông tin chiến dịch</h3>
+              <div className="space-y-2">
+                <p><strong>Mã chiến dịch:</strong> {campaign.id}</p>
+                <p><strong>Thời gian bắt đầu:</strong> 📅 {campaign.startDate}</p>
+                <p><strong>Thời gian kết thúc:</strong> 📅 {campaign.endDate}</p>
+                <p><strong>Trạng thái:</strong> <span className="px-2 py-1 bg-green-200 text-green-800 rounded">{campaign.status}</span></p>
+                <p><strong>Danh mục:</strong> {campaign.category}</p>
+              </div>
+              <hr className="my-4" />
+              <p className="font-semibold">Tiến độ chiến dịch</p>
+              <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: "75%" }}></div>
+              </div>
+              <p className="text-gray-500 text-sm mt-1">Còn 3 ngày nữa kết thúc</p>
+            </div>
+
+            {/* Related Campaigns */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <h3 className="text-lg font-semibold mb-4">Chiến dịch liên quan</h3>
+              <ul className="space-y-4">
+                {campaign.relatedCampaigns.map((item) => (
+                  <li key={item.id} className="flex justify-between items-center">
+                    <div>
+                      <p className="font-semibold">{item.name}</p>
+                      <p className="text-gray-600">{item.merchant}</p>
+                      <p className="text-green-600">{item.commission}</p>
+                    </div>
+                    <button className="text-blue-600">Xem ➡️</button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Registration Modal */}
-      <Modal
-        title="Đăng ký tham gia chiến dịch"
-        visible={isModalVisible}
-        onOk={handleModalOk}
-        onCancel={() => setIsModalVisible(false)}
-        width={600}
-        okText="Đăng ký"
-        cancelText="Hủy"
-        key="modal" // Added key prop here
-      >
-        <Alert
-          message="Thông tin quan trọng"
-          description="Bằng việc đăng ký tham gia chiến dịch này, bạn đồng ý tuân thủ tất cả các quy định của chiến dịch và điều khoản sử dụng của AffiHub."
-          type="info"
-          showIcon
-          style={{ marginBottom: "24px" }}
-        />
-
-        <Form form={form} layout="vertical">
-          <Form.Item
-            name="agreement"
-            valuePropName="checked"
-            rules={[
-              {
-                validator: (_, value) =>
-                  value
-                    ? Promise.resolve()
-                    : Promise.reject(new Error("Vui lòng đồng ý với điều khoản chiến dịch")),
-              },
-            ]}
-          >
-            <Checkbox>
-              Tôi đã đọc và đồng ý với <a href="#">quy định chiến dịch</a> và <a href="#">điều khoản sử dụng</a>
-            </Checkbox>
-          </Form.Item>
-
-          <Form.Item
-            name="promotion"
-            valuePropName="checked"
-          >
-            <Checkbox>
-              Tôi muốn nhận thông báo về các chiến dịch tương tự trong tương lai
-            </Checkbox>
-          </Form.Item>
-        </Form>
-      </Modal>
-    </Layout>
-  )
+      {isModalVisible && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg max-w-xl w-full">
+            <h3 className="text-lg font-semibold mb-4">Đăng ký tham gia chiến dịch</h3>
+            <div className="bg-blue-100 p-4 rounded-lg mb-6">
+              <p className="font-semibold">Thông tin quan trọng</p>
+              <p>
+                Bằng việc đăng ký tham gia chiến dịch này, bạn đồng ý tuân thủ tất cả các quy định của chiến dịch và điều khoản sử dụng của AffiHub.
+              </p>
+            </div>
+            <form onSubmit={handleModalOk} className="space-y-4">
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={formData.agreement}
+                  onChange={(e) => setFormData({ ...formData, agreement: e.target.checked })}
+                  className="h-4 w-4"
+                />
+                <span>
+                  Tôi đã đọc và đồng ý với <a href="#" className="text-blue-600">quy định chiến dịch</a> và{" "}
+                  <a href="#" className="text-blue-600">điều khoản sử dụng</a>
+                </span>
+              </label>
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={formData.promotion}
+                  onChange={(e) => setFormData({ ...formData, promotion: e.target.checked })}
+                  className="h-4 w-4"
+                />
+                <span>Tôi muốn nhận thông báo về các chiến dịch tương tự trong tương lai</span>
+              </label>
+              <div className="flex justify-end space-x-4">
+                <button
+                  type="button"
+                  onClick={() => setIsModalVisible(false)}
+                  className="px-4 py-2 bg-gray-200 rounded-lg"
+                >
+                  Hủy
+                </button>
+                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg">
+                  Đăng ký
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
