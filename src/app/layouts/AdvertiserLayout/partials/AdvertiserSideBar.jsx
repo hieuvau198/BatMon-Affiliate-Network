@@ -15,6 +15,7 @@ import logOut from "../../../modules/Logout";
 const AdvertiserSidebar = () => {
   const menuItems = [
     { label: "Dashboard", icon: <DashboardOutlined />, link: "/advertiser/dashboard" },
+    { label: "Campaign List", icon: <DashboardOutlined />, link: "/advertiser/campaignList" },
     { label: "Fraud Rule", icon: <SecurityScanOutlined />, link: "/advertiser/fraud-rule" },
     { label: "Fraud Investigation", icon: <SearchOutlined />, link: "/advertiser/fraud-investigation" },
     { label: "Order Management", icon: <ShoppingCartOutlined />, link: "/advertiser/order-management" },

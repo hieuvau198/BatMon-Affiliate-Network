@@ -11,6 +11,7 @@ import AdvertiserDashboard from "../pages/Advertiser/Dashboard/AdvertiserDashBoa
 import Home from "../pages/Home";
 import Loading from "../components/Loading";
 import CampaignList from "../pages/Publisher/Campaign/CampaignList";
+import CampaignAdList from "../pages/Advertiser/Campaign/CampaignAdList";
 import CampaignDetail from "../pages/Publisher/Campaign/partials/CampaignDetail";
 import ReportLostOrder from "../pages/Publisher/ReportLostOrder/Report";
 import FraudTracking from "../pages/Publisher/FraudTracking/FraudTracking";
@@ -49,7 +50,7 @@ export default function MainRoutes() {
 
         <Route path="/advertiser" element={<AdvertiserLayout />}>
           <Route path="dashboard" element={<AdvertiserDashboard />} />
-
+          <Route path="campaignList" element={<CampaignAdList />} />
         </Route>
 
         <Route
