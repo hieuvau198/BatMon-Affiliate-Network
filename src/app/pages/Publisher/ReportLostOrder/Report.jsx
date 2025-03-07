@@ -1,608 +1,391 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { 
-  Layout, 
-  Menu, 
-  Typography, 
-  Card, 
-  Button, 
-  Form, 
-  Input, 
-  Select, 
-  DatePicker, 
-  Upload, 
-  Table, 
-  Tag, 
-  Space, 
-  Divider, 
-  Steps, 
-  Collapse, 
-  Alert,
-  Row,
-  Col,
-  Tooltip,
-  Modal,
-  Descriptions,
-  Timeline
-} from "antd"
-import {
-  BarChartOutlined,
-  AimOutlined,
-  ClockCircleOutlined,
-  ToolOutlined,
-  WalletOutlined,
-  WarningOutlined,
-  BellOutlined,
-  UserOutlined,
-  QuestionCircleOutlined,
-  UploadOutlined,
-  SearchOutlined,
-  InfoCircleOutlined,
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  ExclamationCircleOutlined,
-  FileTextOutlined,
-  PlusOutlined,
-  ArrowLeftOutlined,
-  ShoppingOutlined,
-  DollarOutlined,
-  LinkOutlined
-} from "@ant-design/icons"
-
-const { Header, Content } = Layout
-const { Title, Text, Paragraph } = Typography
-const { Option } = Select
-const { Step } = Steps
-const { Panel } = Collapse
-const { TextArea } = Input
-const { RangePicker } = DatePicker
+import { useState } from "react";
 
 export default function ReportLostOrder() {
-  const [selectedKey, setSelectedKey] = useState("reports")
-  const [form] = Form.useForm()
-  const [isModalVisible, setIsModalVisible] = useState(false)
-  const [currentStep, setCurrentStep] = useState(0)
+  const [selectedKey, setSelectedKey] = useState("reports");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [formData, setFormData] = useState({});
 
   const menuItems = [
-    {
-      key: "overview",
-      icon: <BarChartOutlined style={{ fontSize: "20px" }} />,
-      label: "Tổng quan",
-    },
-    {
-      key: "campaigns",
-      icon: <AimOutlined style={{ fontSize: "20px" }} />,
-      label: "Chiến dịch",
-    },
-    {
-      key: "reports",
-      icon: <ClockCircleOutlined style={{ fontSize: "20px" }} />,
-      label: "Báo cáo",
-    },
-    {
-      key: "tools",
-      icon: <ToolOutlined style={{ fontSize: "20px" }} />,
-      label: "Tool",
-    },
-    {
-      key: "payments",
-      icon: <WalletOutlined style={{ fontSize: "20px" }} />,
-      label: "Thanh toán",
-    },
-    {
-      key: "violations",
-      icon: <WarningOutlined style={{ fontSize: "20px" }} />,
-      label: "Vi Phạm",
-    },
-  ]
+    { key: "overview", icon: "📊", label: "Tổng quan" },
+    { key: "campaigns", icon: "🎯", label: "Chiến dịch" },
+    { key: "reports", icon: "⏰", label: "Báo cáo" },
+    { key: "tools", icon: "🛠️", label: "Tool" },
+    { key: "payments", icon: "💳", label: "Thanh toán" },
+    { key: "violations", icon: "⚠️", label: "Vi Phạm" },
+  ];
 
-  // Sample data for previous reports
   const reportData = [
     {
-      key: '1',
-      id: 'LO-2023-001',
-      campaign: 'Shopee Siêu Sale 12.12',
-      orderDate: '10/12/2023',
-      reportDate: '15/12/2023',
-      amount: '1,250,000đ',
-      status: 'Đang xử lý',
+      key: "1",
+      id: "LO-2023-001",
+      campaign: "Shopee Siêu Sale 12.12",
+      orderDate: "10/12/2023",
+      reportDate: "15/12/2023",
+      amount: "1,250,000đ",
+      status: "Đang xử lý",
     },
     {
-      key: '2',
-      id: 'LO-2023-002',
-      campaign: 'Lazada Khuyến Mãi Tết',
-      orderDate: '05/12/2023',
-      reportDate: '08/12/2023',
-      amount: '850,000đ',
-      status: 'Đã duyệt',
+      key: "2",
+      id: "LO-2023-002",
+      campaign: "Lazada Khuyến Mãi Tết",
+      orderDate: "05/12/2023",
+      reportDate: "08/12/2023",
+      amount: "850,000đ",
+      status: "Đã duyệt",
     },
     {
-      key: '3',
-      id: 'LO-2023-003',
-      campaign: 'Tiki Săn Sale',
-      orderDate: '01/12/2023',
-      reportDate: '05/12/2023',
-      amount: '450,000đ',
-      status: 'Từ chối',
+      key: "3",
+      id: "LO-2023-003",
+      campaign: "Tiki Săn Sale",
+      orderDate: "01/12/2023",
+      reportDate: "05/12/2023",
+      amount: "450,000đ",
+      status: "Từ chối",
     },
-  ]
+  ];
 
-  const columns = [
-    {
-      title: 'Mã báo cáo',
-      dataIndex: 'id',
-      key: 'id',
-      render: (text) => <a>{text}</a>,
-    },
-    {
-      title: 'Chiến dịch',
-      dataIndex: 'campaign',
-      key: 'campaign',
-    },
-    {
-      title: 'Ngày đặt hàng',
-      dataIndex: 'orderDate',
-      key: 'orderDate',
-    },
-    {
-      title: 'Ngày báo cáo',
-      dataIndex: 'reportDate',
-      key: 'reportDate',
-    },
-    {
-      title: 'Giá trị',
-      dataIndex: 'amount',
-      key: 'amount',
-    },
-    {
-      title: 'Trạng thái',
-      key: 'status',
-      dataIndex: 'status',
-      render: (status) => {
-        let color = 'default';
-        let icon = null;
-        
-        if (status === 'Đã duyệt') {
-          color = 'success';
-          icon = <CheckCircleOutlined />;
-        } else if (status === 'Đang xử lý') {
-          color = 'processing';
-          icon = <ClockCircleOutlined />;
-        } else if (status === 'Từ chối') {
-          color = 'error';
-          icon = <CloseCircleOutlined />;
-        }
-        
-        return (
-          <Tag color={color} icon={icon}>
-            {status}
-          </Tag>
-        );
-      },
-    },
-    {
-      title: 'Thao tác',
-      key: 'action',
-      render: (_, record) => (
-        <Space size="middle">
-          <Button type="link" size="small" onClick={() => setIsModalVisible(true)}>
-            Chi tiết
-          </Button>
-        </Space>
-      ),
-    },
-  ]
-
-  const onFinish = (values) => {
-    console.log('Form values:', values);
-    // Handle form submission
+  const onFinish = (e) => {
+    e.preventDefault();
+    const form = new FormData(e.target);
+    const values = Object.fromEntries(form.entries());
+    console.log("Form values:", values);
+    setFormData(values);
     setCurrentStep(1);
     setTimeout(() => {
       setCurrentStep(2);
-      form.resetFields();
+      e.target.reset();
     }, 2000);
-  }
+  };
 
   return (
-    <Layout style={{ minHeight: "100vh", background: "#f5f7fa" }}>
-      <Content style={{ padding: "24px" }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          {/* Breadcrumb and back button */}
-          <div style={{ marginBottom: "16px", display: "flex", alignItems: "center" }}>
-            <Button 
-              icon={<ArrowLeftOutlined />} 
-              type="text"
-              style={{ marginRight: "16px", background:"blue"}}
-              onClick={() => window.history.back()}
-            >
-              Quay lại báo cáo
-            </Button>
-            <Text type="secondary">
-              Báo cáo / Báo cáo đơn hàng bị mất
-            </Text>
+    <div className="min-h-screen bg-gray-100 p-6">
+      <div className="max-w-6xl mx-auto">
+        {/* Breadcrumb and Back Button */}
+        <div className="flex items-center mb-4">
+          <button
+            onClick={() => window.history.back()}
+            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg mr-4"
+          >
+            <span className="mr-2">⬅️</span> Quay lại báo cáo
+          </button>
+          <span className="text-gray-500">Báo cáo / Báo cáo đơn hàng bị mất</span>
+        </div>
+
+        {/* Report Lost Order Card */}
+        <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <h2 className="text-lg font-semibold mb-4 flex items-center">
+            <span className="mr-2 text-yellow-500">⚠️</span> Báo Cáo Đơn Hàng Bị Mất
+          </h2>
+
+          <div className="bg-blue-100 p-4 rounded-lg mb-6">
+            <p className="font-semibold">Thông tin quan trọng</p>
+            <p>
+              Vui lòng cung cấp đầy đủ thông tin về đơn hàng bị mất để chúng tôi có thể xác minh và xử lý nhanh chóng.
+            </p>
+            <p>Thời gian xử lý báo cáo: 3-5 ngày làm việc.</p>
           </div>
 
-          <Card 
-            title={
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <WarningOutlined style={{ color: "#faad14", marginRight: "8px" }} />
-                <span>Báo Cáo Đơn Hàng Bị Mất</span>
-              </div>
-            } 
-            bordered={false} 
-            style={{ borderRadius: "12px", marginBottom: "24px" }}
-          >
-            <Alert
-              message="Thông tin quan trọng"
-              description={
+          {/* Steps */}
+          <div className="flex justify-between mb-8">
+            <div className={`text-center ${currentStep >= 0 ? "text-blue-600" : "text-gray-400"}`}>
+              <div className="text-2xl">📄</div>
+              <p>Gửi báo cáo</p>
+              <p className="text-sm">Điền thông tin</p>
+            </div>
+            <div className={`text-center ${currentStep >= 1 ? "text-blue-600" : "text-gray-400"}`}>
+              <div className="text-2xl">⏰</div>
+              <p>Đang xử lý</p>
+              <p className="text-sm">Xác minh thông tin</p>
+            </div>
+            <div className={`text-center ${currentStep >= 2 ? "text-blue-600" : "text-gray-400"}`}>
+              <div className="text-2xl">✅</div>
+              <p>Hoàn thành</p>
+              <p className="text-sm">Kết quả xử lý</p>
+            </div>
+          </div>
+
+          {currentStep === 0 && (
+            <form onSubmit={onFinish} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <p>Vui lòng cung cấp đầy đủ thông tin về đơn hàng bị mất để chúng tôi có thể xác minh và xử lý nhanh chóng.</p>
-                  <p>Thời gian xử lý báo cáo: 3-5 ngày làm việc.</p>
+                  <label className="block font-semibold mb-1">Chiến dịch</label>
+                  <select name="campaign" className="w-full p-2 border rounded-lg" required>
+                    <option value="">Chọn chiến dịch</option>
+                    <option value="shopee">Shopee Siêu Sale 12.12</option>
+                    <option value="lazada">Lazada Khuyến Mãi Tết</option>
+                    <option value="tiki">Tiki Săn Sale</option>
+                  </select>
                 </div>
-              }
-              type="info"
-              showIcon
-              style={{ marginBottom: "24px" }}
-            />
+                <div>
+                  <label className="block font-semibold mb-1">Ngày đặt hàng</label>
+                  <input
+                    type="date"
+                    name="orderDate"
+                    className="w-full p-2 border rounded-lg"
+                    required
+                  />
+                </div>
+              </div>
 
-            <Steps 
-              current={currentStep} 
-              style={{ marginBottom: "32px" }}
-              items={[
-                {
-                  title: 'Gửi báo cáo',
-                  description: 'Điền thông tin',
-                  icon: <FileTextOutlined />
-                },
-                {
-                  title: 'Đang xử lý',
-                  description: 'Xác minh thông tin',
-                  icon: <ClockCircleOutlined />
-                },
-                {
-                  title: 'Hoàn thành',
-                  description: 'Kết quả xử lý',
-                  icon: <CheckCircleOutlined />
-                }
-              ]}
-            />
-
-            {currentStep === 0 && (
-              <Form
-                form={form}
-                layout="vertical"
-                onFinish={onFinish}
-                requiredMark="optional"
-              >
-                <Row gutter={24}>
-                  <Col xs={24} md={12}>
-                    <Form.Item
-                      name="campaign"
-                      label="Chiến dịch"
-                      rules={[{ required: true, message: 'Vui lòng chọn chiến dịch' }]}
-                    >
-                      <Select placeholder="Chọn chiến dịch">
-                        <Option value="shopee">Shopee Siêu Sale 12.12</Option>
-                        <Option value="lazada">Lazada Khuyến Mãi Tết</Option>
-                        <Option value="tiki">Tiki Săn Sale</Option>
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24} md={12}>
-                    <Form.Item
-                      name="orderDate"
-                      label="Ngày đặt hàng"
-                      rules={[{ required: true, message: 'Vui lòng chọn ngày đặt hàng' }]}
-                    >
-                      <DatePicker style={{ width: '100%' }} placeholder="Chọn ngày" />
-                    </Form.Item>
-                  </Col>
-                </Row>
-
-                <Row gutter={24}>
-                  <Col xs={24} md={12}>
-                    <Form.Item
-                      name="orderID"
-                      label="Mã đơn hàng"
-                      rules={[{ required: true, message: 'Vui lòng nhập mã đơn hàng' }]}
-                    >
-                      <Input placeholder="Nhập mã đơn hàng" />
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24} md={12}>
-                    <Form.Item
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block font-semibold mb-1">Mã đơn hàng</label>
+                  <input
+                    type="text"
+                    name="orderID"
+                    placeholder="Nhập mã đơn hàng"
+                    className="w-full p-2 border rounded-lg"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold mb-1">Giá trị đơn hàng</label>
+                  <div className="flex">
+                    <input
+                      type="text"
                       name="orderAmount"
-                      label="Giá trị đơn hàng"
-                      rules={[{ required: true, message: 'Vui lòng nhập giá trị đơn hàng' }]}
-                    >
-                      <Input placeholder="Nhập giá trị đơn hàng" addonAfter="VNĐ" />
-                    </Form.Item>
-                  </Col>
-                </Row>
+                      placeholder="Nhập giá trị đơn hàng"
+                      className="w-full p-2 border rounded-l-lg"
+                      required
+                    />
+                    <span className="p-2 bg-gray-200 border rounded-r-lg">VNĐ</span>
+                  </div>
+                </div>
+              </div>
 
-                <Form.Item
-                  name="trackingLink"
-                  label="Link theo dõi đơn hàng (nếu có)"
-                >
-                  <Input 
-                    placeholder="https://" 
-                    addonBefore={<LinkOutlined />} 
+              <div>
+                <label className="block font-semibold mb-1">Link theo dõi đơn hàng (nếu có)</label>
+                <div className="flex">
+                  <span className="p-2 bg-gray-200 border rounded-l-lg">🔗</span>
+                  <input
+                    type="url"
+                    name="trackingLink"
+                    placeholder="https://"
+                    className="w-full p-2 border rounded-r-lg"
                   />
-                </Form.Item>
+                </div>
+              </div>
 
-                <Form.Item
+              <div>
+                <label className="block font-semibold mb-1 flex items-center">
+                  Thông tin khách hàng
+                  <span className="ml-2 text-gray-500" title="Chỉ cung cấp thông tin cần thiết để xác minh đơn hàng">ℹ️</span>
+                </label>
+                <input
+                  type="text"
                   name="customerInfo"
-                  label={
-                    <span>
-                      Thông tin khách hàng
-                      <Tooltip title="Chỉ cung cấp thông tin cần thiết để xác minh đơn hàng, đảm bảo tuân thủ quy định bảo mật">
-                        <InfoCircleOutlined style={{ marginLeft: 8 }} />
-                      </Tooltip>
-                    </span>
-                  }
-                >
-                  <Input placeholder="Tên khách hàng hoặc thông tin liên hệ (nếu có)" />
-                </Form.Item>
+                  placeholder="Tên khách hàng hoặc thông tin liên hệ (nếu có)"
+                  className="w-full p-2 border rounded-lg"
+                />
+              </div>
 
-                <Form.Item
-                  name="reason"
-                  label="Lý do báo cáo"
-                  rules={[{ required: true, message: 'Vui lòng nhập lý do báo cáo' }]}
-                >
-                  <Select placeholder="Chọn lý do">
-                    <Option value="not_tracked">Đơn hàng không được ghi nhận</Option>
-                    <Option value="wrong_commission">Hoa hồng không chính xác</Option>
-                    <Option value="cancelled">Đơn hàng bị hủy nhưng đã giao thành công</Option>
-                    <Option value="other">Lý do khác</Option>
-                  </Select>
-                </Form.Item>
+              <div>
+                <label className="block font-semibold mb-1">Lý do báo cáo</label>
+                <select name="reason" className="w-full p-2 border rounded-lg" required>
+                  <option value="">Chọn lý do</option>
+                  <option value="not_tracked">Đơn hàng không được ghi nhận</option>
+                  <option value="wrong_commission">Hoa hồng không chính xác</option>
+                  <option value="cancelled">Đơn hàng bị hủy nhưng đã giao thành công</option>
+                  <option value="other">Lý do khác</option>
+                </select>
+              </div>
 
-                <Form.Item
+              <div>
+                <label className="block font-semibold mb-1">Mô tả chi tiết</label>
+                <textarea
                   name="description"
-                  label="Mô tả chi tiết"
-                  rules={[{ required: true, message: 'Vui lòng mô tả chi tiết vấn đề' }]}
-                >
-                  <TextArea 
-                    rows={4} 
-                    placeholder="Mô tả chi tiết về đơn hàng và lý do bạn tin rằng đơn hàng này thuộc về bạn" 
-                  />
-                </Form.Item>
+                  rows={4}
+                  placeholder="Mô tả chi tiết về đơn hàng và lý do bạn tin rằng đơn hàng này thuộc về bạn"
+                  className="w-full p-2 border rounded-lg"
+                  required
+                />
+              </div>
 
-                <Form.Item
+              <div>
+                <label className="block font-semibold mb-1">Bằng chứng</label>
+                <input
+                  type="file"
                   name="evidence"
-                  label="Bằng chứng"
-                  extra="Hỗ trợ định dạng: JPG, PNG, PDF. Kích thước tối đa: 5MB"
-                  rules={[{ required: true, message: 'Vui lòng tải lên bằng chứng' }]}
-                >
-                  <Upload 
-                    name="file" 
-                    action="/upload.do" 
-                    listType="picture"
-                    maxCount={3}
-                    beforeUpload={() => false} // Prevent actual upload in this demo
-                  >
-                    <Button icon={<UploadOutlined />}>Tải lên bằng chứng</Button>
-                  </Upload>
-                </Form.Item>
-
-                <Form.Item>
-                  <Space>
-                    <Button type="primary" htmlType="submit">
-                      Gửi báo cáo
-                    </Button>
-                    <Button onClick={() => form.resetFields()}>
-                      Làm lại
-                    </Button>
-                  </Space>
-                </Form.Item>
-              </Form>
-            )}
-
-            {currentStep === 1 && (
-              <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                <div style={{ marginBottom: '24px' }}>
-                  <ClockCircleOutlined style={{ fontSize: '48px', color: '#1890ff' }} />
-                </div>
-                <Title level={3}>Đang xử lý báo cáo của bạn</Title>
-                <Paragraph>
-                  Chúng tôi đang xác minh thông tin đơn hàng. Vui lòng đợi trong giây lát...
-                </Paragraph>
+                  multiple
+                  accept=".jpg,.png,.pdf"
+                  className="w-full p-2 border rounded-lg"
+                  required
+                />
+                <p className="text-sm text-gray-500">Hỗ trợ định dạng: JPG, PNG, PDF. Kích thước tối đa: 5MB</p>
               </div>
-            )}
 
-            {currentStep === 2 && (
-              <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                <div style={{ marginBottom: '24px' }}>
-                  <CheckCircleOutlined style={{ fontSize: '48px', color: '#52c41a' }} />
-                </div>
-                <Title level={3}>Báo cáo đã được gửi thành công!</Title>
-                <Paragraph>
-                  Mã báo cáo của bạn là: <Text strong>LO-2023-004</Text>
-                </Paragraph>
-                <Paragraph>
-                  Chúng tôi sẽ xem xét báo cáo của bạn trong vòng 3-5 ngày làm việc. 
-                  Bạn có thể theo dõi trạng thái báo cáo trong danh sách bên dưới.
-                </Paragraph>
-                <Button 
-                  type="primary" 
-                  onClick={() => setCurrentStep(0)}
-                  style={{ marginTop: '16px' }}
+              <div className="flex gap-4">
+                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg">
+                  Gửi báo cáo
+                </button>
+                <button
+                  type="reset"
+                  className="px-4 py-2 bg-gray-200 rounded-lg"
+                  onClick={() => setFormData({})}
                 >
-                  Tạo báo cáo mới
-                </Button>
+                  Làm lại
+                </button>
               </div>
-            )}
-          </Card>
+            </form>
+          )}
 
-          <Card 
-            title="Các báo cáo đã gửi" 
-            bordered={false} 
-            style={{ borderRadius: "12px" }}
-            extra={
-              <Button 
-                type="primary" 
-                icon={<PlusOutlined />}
-                onClick={() => {
-                  setCurrentStep(0);
-                  form.resetFields();
-                }}
+          {currentStep === 1 && (
+            <div className="text-center py-10">
+              <div className="text-5xl text-blue-600 mb-6">⏰</div>
+              <h3 className="text-xl font-semibold">Đang xử lý báo cáo của bạn</h3>
+              <p>Vui lòng đợi trong giây lát...</p>
+            </div>
+          )}
+
+          {currentStep === 2 && (
+            <div className="text-center py-10">
+              <div className="text-5xl text-green-600 mb-6">✅</div>
+              <h3 className="text-xl font-semibold">Báo cáo đã được gửi thành công!</h3>
+              <p>
+                Mã báo cáo của bạn là: <strong>LO-2023-004</strong>
+              </p>
+              <p>
+                Chúng tôi sẽ xem xét báo cáo của bạn trong vòng 3-5 ngày làm việc. Bạn có thể theo dõi trạng thái báo cáo trong danh sách bên dưới.
+              </p>
+              <button
+                onClick={() => setCurrentStep(0)}
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg"
               >
                 Tạo báo cáo mới
-              </Button>
-            }
-          >
-            <Table 
-              columns={columns} 
-              dataSource={reportData} 
-              pagination={{ pageSize: 5 }}
-            />
-          </Card>
-
-          <Card 
-            title="Câu hỏi thường gặp" 
-            bordered={false} 
-            style={{ borderRadius: "12px", marginTop: "24px" }}
-          >
-            <Collapse bordered={false}>
-              <Panel 
-                header="Khi nào tôi nên báo cáo đơn hàng bị mất?" 
-                key="1"
-              >
-                <p>
-                  Bạn nên báo cáo đơn hàng bị mất khi bạn chắc chắn rằng đơn hàng đã được đặt thông qua link tiếp thị của bạn nhưng không được ghi nhận trong hệ thống. Trước khi báo cáo, hãy đảm bảo:
-                </p>
-                <ul>
-                  <li>Đã qua thời gian xử lý thông thường (24-48 giờ)</li>
-                  <li>Đơn hàng đã được xác nhận và thanh toán</li>
-                  <li>Bạn có bằng chứng về việc khách hàng đã sử dụng link tiếp thị của bạn</li>
-                </ul>
-              </Panel>
-              <Panel 
-                header="Tôi cần cung cấp những bằng chứng gì?" 
-                key="2"
-              >
-                <p>
-                  Các bằng chứng hữu ích bao gồm:
-                </p>
-                <ul>
-                  <li>Ảnh chụp màn hình xác nhận đơn hàng</li>
-                  <li>Email xác nhận từ merchant</li>
-                  <li>Lịch sử click từ khách hàng (nếu có)</li>
-                  <li>Thông tin liên hệ của khách hàng (nếu được phép)</li>
-                  <li>Bất kỳ thông tin nào khác có thể giúp xác minh đơn hàng thuộc về bạn</li>
-                </ul>
-              </Panel>
-              <Panel 
-                header="Mất bao lâu để xử lý báo cáo?" 
-                key="3"
-              >
-                <p>
-                  Thông thường, chúng tôi sẽ xử lý báo cáo trong vòng 3-5 ngày làm việc. Tuy nhiên, thời gian có thể kéo dài hơn trong các trường hợp sau:
-                </p>
-                <ul>
-                  <li>Cần thêm thông tin để xác minh</li>
-                  <li>Cần liên hệ với merchant để xác nhận đơn hàng</li>
-                  <li>Trong các dịp cao điểm hoặc chương trình khuyến mãi lớn</li>
-                </ul>
-              </Panel>
-              <Panel 
-                header="Tôi có thể hủy báo cáo không?" 
-                key="4"
-              >
-                <p>
-                  Bạn có thể hủy báo cáo nếu nó đang ở trạng thái "Đang xử lý". Sau khi báo cáo đã được xử lý (Đã duyệt hoặc Từ chối), bạn không thể hủy báo cáo.
-                </p>
-              </Panel>
-              <Panel 
-                header="Nếu báo cáo bị từ chối thì sao?" 
-                key="5"
-              >
-                <p>
-                  Nếu báo cáo bị từ chối, bạn sẽ nhận được thông báo về lý do từ chối. Trong một số trường hợp, bạn có thể gửi lại báo cáo với thông tin bổ sung nếu bạn vẫn tin rằng đơn hàng thuộc về bạn.
-                </p>
-              </Panel>
-            </Collapse>
-          </Card>
+              </button>
+            </div>
+          )}
         </div>
-      </Content>
+
+        {/* Previous Reports Card */}
+        <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold">Các báo cáo đã gửi</h2>
+            <button
+              onClick={() => setCurrentStep(0)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg flex items-center"
+            >
+              <span className="mr-2">➕</span> Tạo báo cáo mới
+            </button>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="bg-gray-200">
+                <tr>
+                  <th className="p-2">Mã báo cáo</th>
+                  <th className="p-2">Chiến dịch</th>
+                  <th className="p-2">Ngày đặt hàng</th>
+                  <th className="p-2">Ngày báo cáo</th>
+                  <th className="p-2">Giá trị</th>
+                  <th className="p-2">Trạng thái</th>
+                  <th className="p-2">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reportData.map((item) => (
+                  <tr key={item.key}>
+                    <td className="p-2">
+                      <a href="#" className="text-blue-600">{item.id}</a>
+                    </td>
+                    <td className="p-2">{item.campaign}</td>
+                    <td className="p-2">{item.orderDate}</td>
+                    <td className="p-2">{item.reportDate}</td>
+                    <td className="p-2">{item.amount}</td>
+                    <td className="p-2">
+                      <span
+                        className={`px-2 py-1 rounded ${
+                          item.status === "Đã duyệt"
+                            ? "bg-green-200 text-green-800"
+                            : item.status === "Đang xử lý"
+                            ? "bg-blue-200 text-blue-800"
+                            : "bg-red-200 text-red-800"
+                        }`}
+                      >
+                        {item.status}
+                      </span>
+                    </td>
+                    <td className="p-2">
+                      <button
+                        onClick={() => setIsModalVisible(true)}
+                        className="text-blue-600"
+                      >
+                        Chi tiết
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* FAQ Card */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-lg font-semibold mb-4">Câu hỏi thường gặp</h2>
+          <div className="space-y-4">
+            {[
+              {
+                q: "Khi nào tôi nên báo cáo đơn hàng bị mất?",
+                a: "Bạn nên báo cáo khi đơn hàng đã được đặt qua link của bạn nhưng không được ghi nhận. Đảm bảo qua 24-48 giờ, đơn hàng đã xác nhận và bạn có bằng chứng."
+              },
+              {
+                q: "Tôi cần cung cấp những bằng chứng gì?",
+                a: "Ảnh chụp xác nhận đơn hàng, email từ merchant, lịch sử click, thông tin khách hàng (nếu được phép)."
+              },
+              {
+                q: "Mất bao lâu để xử lý báo cáo?",
+                a: "Thông thường 3-5 ngày làm việc, có thể lâu hơn nếu cần thêm thông tin hoặc trong dịp cao điểm."
+              },
+            ].map((faq, index) => (
+              <details key={index} className="border-b pb-2">
+                <summary className="font-semibold cursor-pointer">{faq.q}</summary>
+                <p className="mt-2 text-gray-700">{faq.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* Detail Modal */}
-      <Modal
-        title="Chi tiết báo cáo"
-        visible={isModalVisible}
-        onCancel={() => setIsModalVisible(false)}
-        footer={[
-          <Button key="back" onClick={() => setIsModalVisible(false)}>
-            Đóng
-          </Button>
-        ]}
-        width={700}
-      >
-        <Descriptions bordered column={{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}>
-          <Descriptions.Item label="Mã báo cáo">LO-2023-001</Descriptions.Item>
-          <Descriptions.Item label="Trạng thái">
-            <Tag color="processing" icon={<ClockCircleOutlined />}>Đang xử lý</Tag>
-          </Descriptions.Item>
-          <Descriptions.Item label="Chiến dịch">Shopee Siêu Sale 12.12</Descriptions.Item>
-          <Descriptions.Item label="Ngày đặt hàng">10/12/2023</Descriptions.Item>
-          <Descriptions.Item label="Mã đơn hàng">SP12345678</Descriptions.Item>
-          <Descriptions.Item label="Giá trị đơn hàng">1,250,000đ</Descriptions.Item>
-          <Descriptions.Item label="Ngày báo cáo">15/12/2023</Descriptions.Item>
-          <Descriptions.Item label="Lý do báo cáo">Đơn hàng không được ghi nhận</Descriptions.Item>
-          <Descriptions.Item label="Mô tả" span={2}>
-            Khách hàng đã click vào link của tôi và đặt hàng thành công, nhưng đơn hàng không được ghi nhận trong hệ thống. Tôi đã kiểm tra và xác nhận khách hàng đã nhận được sản phẩm.
-          </Descriptions.Item>
-          <Descriptions.Item label="Bằng chứng" span={2}>
-            <Space>
-              <Button type="link" icon={<FileTextOutlined />}>
-                order_confirmation.jpg
-              </Button>
-              <Button type="link" icon={<FileTextOutlined />}>
-                tracking_info.pdf
-              </Button>
-            </Space>
-          </Descriptions.Item>
-          <Descriptions.Item label="Ghi chú từ Admin" span={2}>
-            Đang xác minh thông tin với Shopee. Dự kiến hoàn thành xử lý vào ngày 18/12/2023.
-          </Descriptions.Item>
-        </Descriptions>
-
-        <Divider />
-
-        <Title level={5}>Lịch sử xử lý</Title>
-        <Timeline
-          items={[
-            {
-              color: 'green',
-              children: (
-                <>
-                  <p><Text strong>Đã tiếp nhận báo cáo</Text></p>
-                  <p>15/12/2023 10:30</p>
-                </>
-              ),
-            },
-            {
-              color: 'blue',
-              children: (
-                <>
-                  <p><Text strong>Đang xác minh với Merchant</Text></p>
-                  <p>16/12/2023 14:45</p>
-                </>
-              ),
-            },
-            {
-              color: 'gray',
-              children: (
-                <>
-                  <p><Text strong>Dự kiến hoàn thành</Text></p>
-                  <p>18/12/2023</p>
-                </>
-              ),
-            },
-          ]}
-        />
-      </Modal>
-    </Layout>
-  )
+      {isModalVisible && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg max-w-2xl w-full">
+            <h3 className="text-lg font-semibold mb-4">Chi tiết báo cáo</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <p><strong>Mã báo cáo:</strong> LO-2023-001</p>
+              <p><strong>Trạng thái:</strong> <span className="px-2 py-1 bg-blue-200 text-blue-800 rounded">Đang xử lý</span></p>
+              <p><strong>Chiến dịch:</strong> Shopee Siêu Sale 12.12</p>
+              <p><strong>Ngày đặt hàng:</strong> 10/12/2023</p>
+              <p><strong>Mã đơn hàng:</strong> SP12345678</p>
+              <p><strong>Giá trị đơn hàng:</strong> 1,250,000đ</p>
+              <p><strong>Ngày báo cáo:</strong> 15/12/2023</p>
+              <p><strong>Lý do báo cáo:</strong> Đơn hàng không được ghi nhận</p>
+            </div>
+            <p className="mb-4"><strong>Mô tả:</strong> Khách hàng đã click vào link của tôi và đặt hàng thành công, nhưng đơn hàng không được ghi nhận trong hệ thống.</p>
+            <p className="mb-4"><strong>Bằng chứng:</strong> <a href="#" className="text-blue-600">order_confirmation.jpg</a>, <a href="#" className="text-blue-600">tracking_info.pdf</a></p>
+            <p className="mb-4"><strong>Ghi chú từ Admin:</strong> Đang xác minh thông tin với Shopee. Dự kiến hoàn thành xử lý vào ngày 18/12/2023.</p>
+            <hr className="my-4" />
+            <h4 className="font-semibold mb-2">Lịch sử xử lý</h4>
+            <ul className="space-y-2">
+              <li>✅ <strong>Đã tiếp nhận báo cáo:</strong> 15/12/2023 10:30</li>
+              <li>⏰ <strong>Đang xác minh với Merchant:</strong> 16/12/2023 14:45</li>
+              <li>⏳ <strong>Dự kiến hoàn thành:</strong> 18/12/2023</li>
+            </ul>
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setIsModalVisible(false)}
+                className="px-4 py-2 bg-gray-200 rounded-lg"
+              >
+                Đóng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }

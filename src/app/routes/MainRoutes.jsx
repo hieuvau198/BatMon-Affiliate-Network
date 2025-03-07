@@ -13,6 +13,9 @@ import Loading from "../components/Loading";
 import CampaignList from "../pages/Publisher/Campaign/CampaignList";
 import CampaignDetail from "../pages/Publisher/Campaign/partials/CampaignDetail";
 import ReportLostOrder from "../pages/Publisher/ReportLostOrder/Report";
+import FraudTracking from "../pages/Publisher/FraudTracking/FraudTracking";
+import Dashboard from "../pages/Publisher/Dashboard/Dashboard";
+import Wallet from "../pages/Publisher/Dashboard/partials/Wallet";
 const PageNotFound = lazy(() => import("../layouts/PageNotFound"));
 const ServerError = lazy(() => import("../layouts/ServerError/ServerError"));
 const Maintenance = lazy(() => import("../layouts/Maintenance/Maintenance"));
@@ -35,9 +38,12 @@ export default function MainRoutes() {
         </Route>
 
         <Route path="/publisher" element={<PublisherLayout />}>
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="dashboard/wallet" element={<Wallet />} />
           <Route path="campaignlist" element={<CampaignList />} />
           <Route path="campaignlist/campaigndetail" element={<CampaignDetail />} />
           <Route path="report" element={<ReportLostOrder />} />
+          <Route path="fraudtracking" element={<FraudTracking />}/>
         </Route>
 
 
