@@ -1,0 +1,80 @@
+[
+    {
+      "key": "1",
+      "stt": "1",
+      "policy": "",
+      "regulation": "1. Nghiêm cấm vi phạm SEM brandname: Hành vi chạy từ khóa thương hiệu hoặc sử dụng từ khóa cố tình viết sai thương hiệu để gây nhầm lẫn",
+      "appliedTo": "Tùy theo campaign (nếu chiến dịch không cấm SEM sẽ ghi tại dashboard)",
+      "penaltyInfo": {
+        "title": "Xử phạt vi phạm SEM brandname",
+        "content": "Cảnh cáo lần đầu. Phạt tiền từ 1-5 triệu đồng cho lần vi phạm tiếp theo. Chấm dứt hợp đồng nếu tái phạm nhiều lần."
+      }
+    },
+    {
+      "key": "2",
+      "stt": "2",
+      "policy": "",
+      "regulation": " 2. Nghiêm cấm spam data người dùng, spam lead rác: Detail: Nghiêm cấm các hành vi spam data rác, dữ liệu người dùng và điền thông tin khi không được sự cho phép hoặc đồng ý từ người dùng",
+      "appliedTo": "Tất cả campaign",
+      "penaltyInfo": {
+        "title": "Xử phạt spam data người dùng",
+        "content": "Phạt tiền từ 2-10 triệu đồng. Đình chỉ tài khoản từ 7-30 ngày. Chấm dứt hợp đồng nếu tái phạm."
+      }
+    },
+    {
+      "key": "3",
+      "stt": "3",
+      "policy": "",
+      "regulation": " 3. Nghiêm cấm cố tình gian lận làm giả thông tin người dùng Detail: Nghiêm cấm publisher tự đặt hàng rồi hoàn trả, mạo danh Advertiser lừa đảo thông tin người dùng hoặc các hành vi gian lận khác.  Nghiêm cấm các hành vi làm giả dữ liệu người dùng, tạo các dữ liệu ảo và cấu kết với người dùng để thực hiện các hành vi vi phạm",
+      "appliedTo": "Tất cả campaign",
+      "penaltyInfo": {
+        "title": "Xử phạt gian lận thông tin người dùng",
+        "content": "Phạt tiền từ 5-20 triệu đồng. Đình chỉ tài khoản 30 ngày. Chấm dứt hợp đồng và báo cáo cơ quan chức năng nếu nghiêm trọng."
+      }
+    },
+    {
+      "key": "4",
+      "stt": "4",
+      "policy": "Chính sách quảng cáo chung",
+      "regulation": "4. Nghiêm cấm quảng cáo trên các kênh của Nhà cung cấp, đối thủ: Detail: - Sử dụng link affiliate hoặc các thông tin của Nhà cung cấp (advertiser) để thực hiện việc quảng cáo trên các diễn đàn, group, cộng đồng, Facebook của các Nhà cung cấp đối thủ.( post bài, bình luận,....)",
+      "appliedTo": "Tất cả campaign",
+      "penaltyInfo": {
+        "title": "Xử phạt quảng cáo trên kênh đối thủ",
+        "content": "Cảnh cáo và yêu cầu gỡ bỏ ngay lập tức. Phạt tiền từ 3-15 triệu đồng nếu không tuân thủ. Đình chỉ tài khoản từ 15-45 ngày."
+      }
+    },
+    {
+      "key": "5",
+      "stt": "5",
+      "policy": "",
+      "regulation": "5. Nghiêm cấm reseller: Là hoạt động đầu cơ tích trữ, mua đi bán lại các sản phẩm của nhà cung cấp nhằm thu lợi bất chính.",
+      "appliedTo": "Tất cả campaign",
+      "penaltyInfo": {
+        "title": "Xử phạt hành vi reseller",
+        "content": "Phạt tiền từ 10-50 triệu đồng. Đình chỉ tài khoản vĩnh viễn. Yêu cầu bồi thường thiệt hại nếu có."
+      }
+    },
+    {
+      "key": "6",
+      "stt": "6",
+      "policy": "",
+      "regulation": "6. Nghiêm cấm hành vi tạo ra lượng truy cập (impression, click, data) ảo, hoặc sử dụng các traffic cấm (tuỳ thuộc yêu cầu từng camp) đối với các chương trình của nhà quảng cáo.",
+      "appliedTo": "Tất cả campaign",
+      "penaltyInfo": {
+        "title": "Xử phạt tạo lượng truy cập ảo",
+        "content": "Phạt tiền từ 5-25 triệu đồng. Đình chỉ tài khoản từ 30-90 ngày. Thu hồi toàn bộ hoa hồng liên quan đến dữ liệu giả mạo."
+      }
+    },
+    {
+      "key": "7",
+      "stt": "7",
+      "policy": "",
+      "regulation": "7. Nghiêm cấm hành vi cố tình gây hiểu nhầm là nhà quảng cáo ( lập fanpage, website, group,... gây hiểu nhầm là nhà cung cấp)  VD: Dùng tên thương hiệu, viết sai, viết tắt tên thương hiệu của nhà cung cấp, sử dụng logo của nhà cung cấp.",
+      "appliedTo": "Tất cả campaign",
+      "penaltyInfo": {
+        "title": "Xử phạt giả mạo nhà quảng cáo",
+        "content": "Phạt tiền từ 20-100 triệu đồng. Đình chỉ tài khoản vĩnh viễn. Báo cáo cơ quan chức năng và yêu cầu bồi thường thiệt hại."
+      }
+    }
+  ]
+  
