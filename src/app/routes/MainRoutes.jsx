@@ -39,6 +39,11 @@ export default function MainRoutes() {
 
         <Route path="/admin" element={<AdminLayout />}>
           {/* <Route path="dashboard" element={<Dashboard />} /> */}
+          <Route path="AdminCampaignApproval" element={<CampaignApproval />} /> 
+          <Route path="CampaignAdminList" element={<CampaignAdminList />} />
+          <Route path="CompliancePolicy" element={<CompliancePolicy />} />
+          <Route path="TaxReporting" element={<TaxReporting />} />
+
         </Route>
 
         <Route path="/publisher" element={<PublisherLayout />}>
