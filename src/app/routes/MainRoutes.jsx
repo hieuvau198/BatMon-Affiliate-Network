@@ -3,8 +3,8 @@ import { BrowserRouter, Route, Routes, Outlet } from "react-router-dom"; // Thê
 import AdminLayout from "../layouts/AdminLayout";
 import UserLayout from "../layouts/UserLayout/UserLayout";
 import AboutUs from "../pages/About Us/AboutUs";
-import Login from "../modules/Login/Login"; // Import Login
-import Register from "../modules/Register/Register";
+import Login from "../components/Login/Login"; // Import Login
+import Register from "../components/Register/Register";
 import PublisherLayout from "../layouts/PublisherLayOut";
 import AdvertiserLayout from "../layouts/AdvertiserLayout";
 import AdverDashboard from "../pages/Advertiser/Dashboard/AdvertiserDashBoard";

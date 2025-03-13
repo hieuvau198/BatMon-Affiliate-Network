@@ -9,7 +9,7 @@ import React from "react";
 import { FaChartPie } from "react-icons/fa";
 import { TbLogout } from "react-icons/tb";
 import { Link } from "react-router-dom";
-import logOut from "../../../modules/Logout";
+import logOut from "../../../components/Logout";
 
 const AdminSidebar = ({ activeMenu, setActiveMenu }) => {
   const menuItems = [
@@ -25,7 +25,7 @@ const AdminSidebar = ({ activeMenu, setActiveMenu }) => {
     <div className="fixed top-0 left-0 h-screen lg:w-64 md:w-56 bg-white shadow-md z-50 flex flex-col items-center">
       <div className="mt-4">
         <img
-          src="https://cms.imgworlds.com/assets/473cfc50-242c-46f8-80be-68b867e28919.jpg?key=home-gallery" 
+          src="https://cms.imgworlds.com/assets/473cfc50-242c-46f8-80be-68b867e28919.jpg?key=home-gallery"
           alt="Logo"
           className="w-20 h-20 rounded-full"
         />
@@ -36,11 +36,10 @@ const AdminSidebar = ({ activeMenu, setActiveMenu }) => {
           {menuItems.map((item) => (
             <li
               key={item.id}
-              className={`group flex items-center justify-center gap-3 px-6 py-3 cursor-pointer rounded-lg ${
-                activeMenu === item.label
+              className={`group flex items-center justify-center gap-3 px-6 py-3 cursor-pointer rounded-lg ${activeMenu === item.label
                   ? "bg-blue-500 hover:bg-blue-600 text-white shadow-md"
                   : "text-gray-500 hover:bg-gray-200 hover:text-gray-800"
-              }`}
+                }`}
               onClick={() => setActiveMenu(item.label)}
             >
               <Link to={item.link} className="flex items-center gap-3 w-full">
