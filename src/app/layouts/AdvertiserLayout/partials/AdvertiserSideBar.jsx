@@ -19,6 +19,7 @@ const AdvertiserSidebar = () => {
     { label: "Fraud Rule", icon: <SecurityScanOutlined />, link: "/advertiser/fraud-rule" },
     { label: "Fraud Investigation", icon: <SearchOutlined />, link: "/advertiser/fraud-investigation" },
     { label: "Order Management", icon: <ShoppingCartOutlined />, link: "/advertiser/order-management" },
+    { label: "Publisher Management", icon: <ShoppingCartOutlined />, link: "/advertiser/publisher-management" },
     { label: "Wallet", icon: <DollarOutlined />, link: "/advertiser/wallet" },
   ];
 

@@ -102,7 +102,8 @@ export default function CampaignList() {
       key: "actions",
       render: (text, record) => (
         <div className="space-x-2">
-          <Link to={`/advertiser/campaignList/campaigndetail`}>
+          {/* Truyền ID động */}
+          <Link to={`/advertiser/campaignList/campaigndetail/${record.id}`}>
             <Button type="primary">Chi tiết</Button>
           </Link>
           <Button type="default" onClick={() => openEditModal(record)}>
@@ -113,11 +114,12 @@ export default function CampaignList() {
           </Button>
         </div>
       ),
-    },
+    }
+    ,
   ];
 
   return (
-    <div className="p-6 max-w-[1270px]">
+    <div className="p-4 max-w-[1500px]">
       <div className="p-6 bg-white rounded-md shadow-md min-h-[640px]">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Quản lý chiến dịch</h2>
@@ -137,7 +139,7 @@ export default function CampaignList() {
       {/* Modal chỉnh sửa */}
       <Modal
         title="Chỉnh sửa chiến dịch"
-        visible={editModal}
+        open={editModal}
         onCancel={() => setEditModal(false)}
         onOk={handleEditSubmit}
       >

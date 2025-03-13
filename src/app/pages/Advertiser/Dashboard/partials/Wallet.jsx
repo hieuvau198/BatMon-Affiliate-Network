@@ -119,7 +119,7 @@ export default function Wallet() {
   ];
 
   return (
-    <div className="p-6 max-w-[1500x]">
+    <div className="p-4 max-w-[1500x]">
       <div className="p-6 bg-white rounded-md shadow-md min-h-[640px]">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Wallet Transactions</h2>
@@ -139,7 +139,7 @@ export default function Wallet() {
       {/* Modal chỉnh sửa */}
       <Modal
         title={selectedTransaction?.id ? "Edit Transaction" : "Add New Transaction"}
-        visible={editModal}
+        open={editModal}
         onCancel={() => setEditModal(false)}
         onOk={handleEditSubmit}
       >

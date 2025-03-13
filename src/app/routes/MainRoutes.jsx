@@ -15,6 +15,8 @@ import CampaignAdverList from "../pages/Advertiser/Campaign/CampaignAdList";
 import AdverWallet from "../pages/Advertiser/Dashboard/partials/Wallet";
 import AdverFraudRule from "../pages/Advertiser/Dashboard/partials/FraudRule";
 import AdverOrderManagement from "../pages/Advertiser/Dashboard/partials/OrderManagement";
+import PublisherManagement from "../pages/Advertiser/Dashboard/partials/PubManagement";
+import PubMaDetail from "../pages/Advertiser/Dashboard/partials/pubpartials/PubMaDetail";
 import AdverFraudInves from "../pages/Advertiser/Dashboard/partials/FraudInvestigation";
 import CampaignAdverDetail from "../pages/Advertiser/Campaign/partials/CampaignAdDetail";
 import CampaignAdverCreate from "../pages/Advertiser/Campaign/partials/CampaignCreating";
@@ -66,11 +68,13 @@ export default function MainRoutes() {
         <Route path="/advertiser" element={<AdvertiserLayout />}>
           <Route path="dashboard" element={<AdverDashboard />} />
           <Route path="campaignList" element={<CampaignAdverList />} />
-          <Route path="campaignList/campaigndetail" element={<CampaignAdverDetail />} />
+          <Route path="campaignList/campaigndetail/:campaignId" element={<CampaignAdverDetail />} />
           <Route path="campaignList/CampaignCreating" element={<CampaignAdverCreate />} />
           <Route path="wallet" element={<AdverWallet />} />
           <Route path="fraud-rule" element={<AdverFraudRule />} />
           <Route path="order-management" element={<AdverOrderManagement />} />
+          <Route path="publisher-management" element={<PublisherManagement />} />
+          <Route path="publisher-management/publisherdetail/:publisherId" element={<PubMaDetail />} />
           <Route path="fraud-investigation" element={<AdverFraudInves />} />
         </Route>
 

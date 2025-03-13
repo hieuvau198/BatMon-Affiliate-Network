@@ -108,7 +108,7 @@ export default function OrderManagement() {
   ];
 
   return (
-    <div className="p-6 max-w-[1500px]">
+    <div className="p-4 max-w-[1500px]">
       <div className="p-6 bg-white rounded-md shadow-md min-h-[640px]">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Order Management</h2>
@@ -128,7 +128,7 @@ export default function OrderManagement() {
       {/* Modal chỉnh sửa */}
       <Modal
         title={selectedOrder?.id ? "Edit Order" : "Add New Order"}
-        visible={editModal}
+        open={editModal}
         onCancel={() => setEditModal(false)}
         onOk={handleEditSubmit}
       >
