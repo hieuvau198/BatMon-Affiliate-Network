@@ -7,11 +7,17 @@ import Login from "../modules/Login/Login"; // Import Login
 import Register from "../modules/Register/Register";
 import PublisherLayout from "../layouts/PublisherLayOut";
 import AdvertiserLayout from "../layouts/AdvertiserLayout";
-import AdvertiserDashboard from "../pages/Advertiser/Dashboard/AdvertiserDashBoard";
+import AdverDashboard from "../pages/Advertiser/Dashboard/AdvertiserDashBoard";
 import Home from "../pages/Home";
 import Loading from "../components/Loading";
 import CampaignList from "../pages/Publisher/Campaign/CampaignList";
-import CampaignAdList from "../pages/Advertiser/Campaign/CampaignAdList";
+import CampaignAdverList from "../pages/Advertiser/Campaign/CampaignAdList";
+import AdverWallet from "../pages/Advertiser/Dashboard/partials/Wallet";
+import AdverFraudRule from "../pages/Advertiser/Dashboard/partials/FraudRule";
+import AdverOrderManagement from "../pages/Advertiser/Dashboard/partials/OrderManagement";
+import AdverFraudInves from "../pages/Advertiser/Dashboard/partials/FraudInvestigation";
+import CampaignAdverDetail from "../pages/Advertiser/Campaign/partials/CampaignAdDetail";
+import CampaignAdverCreate from "../pages/Advertiser/Campaign/partials/CampaignCreating";
 import CampaignDetail from "../pages/Publisher/Campaign/partials/CampaignDetail";
 import ReportLostOrder from "../pages/Publisher/ReportLostOrder/Report";
 import FraudTracking from "../pages/Publisher/FraudTracking/FraudTracking";
@@ -49,8 +55,14 @@ export default function MainRoutes() {
 
 
         <Route path="/advertiser" element={<AdvertiserLayout />}>
-          <Route path="dashboard" element={<AdvertiserDashboard />} />
-          <Route path="campaignList" element={<CampaignAdList />} />
+          <Route path="dashboard" element={<AdverDashboard />} />
+          <Route path="campaignList" element={<CampaignAdverList />} />
+          <Route path="campaignList/campaigndetail" element={<CampaignAdverDetail />} />
+          <Route path="campaignList/CampaignCreating" element={<CampaignAdverCreate />} />
+          <Route path="wallet" element={<AdverWallet />} />
+          <Route path="fraud-rule" element={<AdverFraudRule />} />
+          <Route path="order-management" element={<AdverOrderManagement />} />
+          <Route path="fraud-investigation" element={<AdverFraudInves />} />
         </Route>
 
         <Route
