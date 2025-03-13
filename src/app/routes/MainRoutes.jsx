@@ -23,6 +23,10 @@ import ReportLostOrder from "../pages/Publisher/ReportLostOrder/Report";
 import FraudTracking from "../pages/Publisher/FraudTracking/FraudTracking";
 import Dashboard from "../pages/Publisher/Dashboard/Dashboard";
 import Wallet from "../pages/Publisher/Dashboard/partials/Wallet";
+import CampaignApproval from "../pages/Admin/CampaignApproval/AdminCampaignApproval";
+import CampaignAdminList from "../pages/Admin/CampaignAdminList/CampaignAdminList";
+import TaxReporting from "../pages/Admin/TaxReporting/TaxReporting";
+import CompliancePolicy from "../pages/Admin/CompliancePolicy/CompliancePolicy";
 const PageNotFound = lazy(() => import("../layouts/PageNotFound"));
 const ServerError = lazy(() => import("../layouts/ServerError/ServerError"));
 const Maintenance = lazy(() => import("../layouts/Maintenance/Maintenance"));
@@ -42,6 +46,11 @@ export default function MainRoutes() {
 
         <Route path="/admin" element={<AdminLayout />}>
           {/* <Route path="dashboard" element={<Dashboard />} /> */}
+          <Route path="AdminCampaignApproval" element={<CampaignApproval />} /> 
+          <Route path="CampaignAdminList" element={<CampaignAdminList />} />
+          <Route path="CompliancePolicy" element={<CompliancePolicy />} />
+          <Route path="TaxReporting" element={<TaxReporting />} />
+
         </Route>
 
         <Route path="/publisher" element={<PublisherLayout />}>
