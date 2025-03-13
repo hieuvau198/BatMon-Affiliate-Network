@@ -22,7 +22,7 @@ import {
   LogoutOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
-import logOut from "../../modules/Logout";
+import logOut from "../../components/Logout";
 import logo from "../../assets/img/download (1).png";
 const { Header } = Layout;
 
