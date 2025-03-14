@@ -15,8 +15,7 @@ const AdminSidebar = ({ activeMenu, setActiveMenu }) => {
   const menuItems = [
     { id: "/dashboard", label: "Dashboard", icon: <FaChartPie />, link: "/admin/dashboard" },
     { id: "/Campaign", label: "Campaign", icon: <LineChartOutlined />, link: "/admin/AdminCampaignApproval" },
-    { id: "/TaxReporting", label: "TaxReporting", icon: <FileTextOutlined />, link: "/admin/TaxReporting" },
-    { id: "/employee", label: "Employee", icon: <LineChartOutlined />, link: "/admin/employee" },
+    { id: "/TaxDashboard", label: "TaxDashboard", icon: <FileTextOutlined />, link: "/admin/TaxDashboard" },
     { id: "/feedback", label: "Feedback", icon: <MessageOutlined />, link: "/admin/feedback" },
     { id: "/settings", label: "Settings", icon: <SettingOutlined />, link: "/admin/settings" },
   ];
@@ -38,8 +37,8 @@ const AdminSidebar = ({ activeMenu, setActiveMenu }) => {
               key={item.id}
               className={`group flex items-center justify-center gap-3 px-6 py-3 cursor-pointer rounded-lg ${
                 activeMenu === item.label
-                  ? "bg-blue-500 hover:bg-blue-600 text-white shadow-md"
-                  : "text-gray-500 hover:bg-gray-200 hover:text-gray-800"
+                  ? "bg-blue-600 w-[200px] hover:bg-blue-600 text-white shadow-md"
+                  : "text-gray-500 w-[200px] hover:bg-gray-200 hover:text-gray-800"
               }`}
               onClick={() => setActiveMenu(item.label)}
             >

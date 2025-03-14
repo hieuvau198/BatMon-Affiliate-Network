@@ -29,6 +29,8 @@ import CampaignApproval from "../pages/Admin/CampaignApproval/AdminCampaignAppro
 import CampaignAdminList from "../pages/Admin/CampaignAdminList/CampaignAdminList";
 import TaxReporting from "../pages/Admin/TaxReporting/TaxReporting";
 import CompliancePolicy from "../pages/Admin/CompliancePolicy/CompliancePolicy";
+import TaxDashboard from "../pages/Admin/TaxDashboard/TaxDashboard";
+import TaxPayment from "../pages/Admin/TaxPayment/TaxPayment";
 const PageNotFound = lazy(() => import("../layouts/PageNotFound"));
 const ServerError = lazy(() => import("../layouts/ServerError/ServerError"));
 const Maintenance = lazy(() => import("../layouts/Maintenance/Maintenance"));
@@ -51,7 +53,9 @@ export default function MainRoutes() {
           <Route path="AdminCampaignApproval" element={<CampaignApproval />} /> 
           <Route path="CampaignAdminList" element={<CampaignAdminList />} />
           <Route path="CompliancePolicy" element={<CompliancePolicy />} />
+          <Route path="TaxDashboard" element={<TaxDashboard />} />
           <Route path="TaxReporting" element={<TaxReporting />} />
+          <Route path="TaxPayment" element={<TaxPayment />} />
 
         </Route>
 
