@@ -1,0 +1,86 @@
+[
+    {
+      "campaignId": 1,
+      "totalClicks": 12500,
+      "totalConversions": 1250,
+      "totalRevenue": 50000000,
+      "conversionRate": 10,
+      "averageOrderValue": 40000,
+      "commissionRate": 12,
+      "estimatedRevenue": 6000000,
+      "clicksByDay": [
+        { "date": "2025-03-01", "clicks": 1500, "conversions": 130 },
+        { "date": "2025-03-02", "clicks": 1800, "conversions": 160 },
+        { "date": "2025-03-03", "clicks": 2000, "conversions": 180 },
+        { "date": "2025-03-04", "clicks": 2200, "conversions": 190 },
+        { "date": "2025-03-05", "clicks": 2500, "conversions": 210 }
+      ],
+      "topTrafficSources": [
+        { "source": "Google Ads", "clicks": 5000, "conversions": 600 },
+        { "source": "Facebook Ads", "clicks": 4000, "conversions": 450 },
+        { "source": "Organic SEO", "clicks": 2000, "conversions": 150 },
+        { "source": "Affiliate Links", "clicks": 1500, "conversions": 100 }
+      ],
+      "geoPerformance": [
+        { "country": "Vietnam", "clicks": 8000, "conversions": 1000 },
+        { "country": "Thailand", "clicks": 5000, "conversions": 650 },
+        { "country": "Malaysia", "clicks": 4000, "conversions": 500 },
+        { "country": "Singapore", "clicks": 3000, "conversions": 400 },
+        { "country": "Philippines", "clicks": 3000, "conversions": 250 }
+      ],
+      "devicePerformance": [
+        { "device": "Mobile", "clicks": 15000, "conversions": 1900 },
+        { "device": "Desktop", "clicks": 5000, "conversions": 600 },
+        { "device": "Tablet", "clicks": 3000, "conversions": 300 }
+      ],
+      "bestPerformingAds": [
+        { "adName": "Lazada Banner #1", "clicks": 5000, "conversions": 600, "conversionRate": 12 },
+        { "adName": "Lazada Video Ad", "clicks": 4000, "conversions": 520, "conversionRate": 13 },
+        { "adName": "Lazada Flash Sale Ad", "clicks": 3500, "conversions": 480, "conversionRate": 13.7 }
+      ]
+    },
+    {
+      "campaignId": 8,
+      "totalClicks": 23000,
+      "totalConversions": 2800,
+      "totalRevenue": 96000000,
+      "conversionRate": 12.2,
+      "averageOrderValue": 45000,
+      "commissionRate": 10,
+      "estimatedRevenue": 12600000,
+      "clicksByDay": [
+        { "date": "2025-03-01", "clicks": 1800, "conversions": 200 },
+        { "date": "2025-03-02", "clicks": 2200, "conversions": 250 },
+        { "date": "2025-03-03", "clicks": 2700, "conversions": 320 },
+        { "date": "2025-03-04", "clicks": 3000, "conversions": 360 },
+        { "date": "2025-03-05", "clicks": 3200, "conversions": 380 },
+        { "date": "2025-03-06", "clicks": 3500, "conversions": 420 },
+        { "date": "2025-03-07", "clicks": 3800, "conversions": 470 }
+      ],
+      "topTrafficSources": [
+        { "source": "Google Ads", "clicks": 7000, "conversions": 900 },
+        { "source": "Facebook Ads", "clicks": 6000, "conversions": 750 },
+        { "source": "YouTube Ads", "clicks": 5000, "conversions": 600 },
+        { "source": "Organic SEO", "clicks": 3000, "conversions": 350 },
+        { "source": "Affiliate Links", "clicks": 2000, "conversions": 200 }
+      ],
+      "geoPerformance": [
+        { "country": "Vietnam", "clicks": 8000, "conversions": 1000 },
+        { "country": "Thailand", "clicks": 5000, "conversions": 650 },
+        { "country": "Malaysia", "clicks": 4000, "conversions": 500 },
+        { "country": "Singapore", "clicks": 3000, "conversions": 400 },
+        { "country": "Philippines", "clicks": 3000, "conversions": 250 }
+      ],
+      "devicePerformance": [
+        { "device": "Mobile", "clicks": 15000, "conversions": 1900 },
+        { "device": "Desktop", "clicks": 5000, "conversions": 600 },
+        { "device": "Tablet", "clicks": 3000, "conversions": 300 }
+      ],
+      "bestPerformingAds": [
+        { "adName": "Lazada Banner #1", "clicks": 5000, "conversions": 600, "conversionRate": 12 },
+        { "adName": "Lazada Video Ad", "clicks": 4000, "conversions": 520, "conversionRate": 13 },
+        { "adName": "Lazada Flash Sale Ad", "clicks": 3500, "conversions": 480, "conversionRate": 13.7 }
+      ]
+    }
+  ]
+  

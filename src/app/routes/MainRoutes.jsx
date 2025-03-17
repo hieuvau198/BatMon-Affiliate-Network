@@ -19,6 +19,8 @@ import PublisherManagement from "../pages/Advertiser/Dashboard/partials/PubManag
 import PubMaDetail from "../pages/Advertiser/Dashboard/partials/pubpartials/PubMaDetail";
 import AdverFraudInves from "../pages/Advertiser/Dashboard/partials/FraudInvestigation";
 import CampaignAdverDetail from "../pages/Advertiser/Campaign/partials/CampaignAdDetail";
+import CampaignPolicy from "../pages/Advertiser/Campaign/partials/CampaignPolicy";
+import CampaignPerformance from "../pages/Advertiser/Campaign/partials/CampaignPerformance";
 import CampaignAdverCreate from "../pages/Advertiser/Campaign/partials/CampaignCreating";
 import CampaignDetail from "../pages/Publisher/Campaign/partials/CampaignDetail";
 import ReportLostOrder from "../pages/Publisher/ReportLostOrder/Report";
@@ -89,6 +91,8 @@ export default function MainRoutes() {
           <Route path="dashboard" element={<AdverDashboard />} />
           <Route path="campaignList" element={<CampaignAdverList />} />
           <Route path="campaignList/campaigndetail/:campaignId" element={<CampaignAdverDetail />} />
+          <Route path="campaignList/campaigndetail/:campaignId/CampaignPolicy" element={<CampaignPolicy />} />
+          <Route path="campaignList/campaigndetail/:campaignId/CampaignPerformance" element={<CampaignPerformance />} />
           <Route path="campaignList/CampaignCreating" element={<CampaignAdverCreate />} />
           <Route path="wallet" element={<AdverWallet />} />
           <Route path="fraud-rule" element={<AdverFraudRule />} />
