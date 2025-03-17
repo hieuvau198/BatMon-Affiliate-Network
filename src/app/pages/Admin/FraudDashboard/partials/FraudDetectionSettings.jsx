@@ -710,6 +710,11 @@ const FraudDetectionSettings = () => {
       </Card>
       
       <div className="flex justify-end">
+        <Link to="../FraudDashboard">
+              <Button type="primary" >
+                  Quay lại
+              </Button>
+         </Link>
         <Button
           type="primary"
           icon={<SaveOutlined />}
@@ -717,7 +722,7 @@ const FraudDetectionSettings = () => {
           disabled={!formChanged}
         >
           Lưu thay đổi
-        </Button>
+        </Button>     
       </div>
     </div>
   );
