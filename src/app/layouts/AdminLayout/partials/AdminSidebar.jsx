@@ -13,12 +13,9 @@ import logOut from "../../../components/Logout";
 
 const AdminSidebar = ({ activeMenu, setActiveMenu }) => {
   const menuItems = [
-    { id: "/dashboard", label: "Dashboard", icon: <FaChartPie />, link: "/admin/dashboard" },
-    { id: "/Campaign", label: "Campaign", icon: <LineChartOutlined />, link: "/admin/AdminCampaignApproval" },
-    { id: "/TaxReporting", label: "TaxReporting", icon: <FileTextOutlined />, link: "/admin/TaxReporting" },
-    { id: "/employee", label: "Employee", icon: <LineChartOutlined />, link: "/admin/employee" },
-    { id: "/feedback", label: "Feedback", icon: <MessageOutlined />, link: "/admin/feedback" },
-    { id: "/settings", label: "Settings", icon: <SettingOutlined />, link: "/admin/settings" },
+    { id: "/FraudDashboard", label: "FraudDash", icon: <FaChartPie />, link: "/admin/FraudDashboard" },
+    { id: "/TaxDashboard", label: "TaxDashboard", icon: <FileTextOutlined />, link: "/admin/TaxDashboard" },
+    { id: "/Campaign", label: "Campaign", icon: <LineChartOutlined />, link: "/admin/AdminCampaignApproval" },   
   ];
 
   return (

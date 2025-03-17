@@ -29,6 +29,16 @@ import CampaignApproval from "../pages/Admin/CampaignApproval/AdminCampaignAppro
 import CampaignAdminList from "../pages/Admin/CampaignAdminList/CampaignAdminList";
 import TaxReporting from "../pages/Admin/TaxReporting/TaxReporting";
 import CompliancePolicy from "../pages/Admin/CompliancePolicy/CompliancePolicy";
+import TaxDashboard from "../pages/Admin/TaxDashboard/TaxDashboard";
+import TaxPayment from "../pages/Admin/TaxPayment/TaxPayment";
+import FraudDashboard from "../pages/Admin/FraudDashboard/FraudDashboard";
+import FraudReportsList from "../pages/Admin/FraudDashboard/partials/FraudReportsList"
+import FraudCasesList from "../pages/Admin/FraudDashboard/partials/FraudCasesList"
+import FraudCaseDetail from "../pages/Admin/FraudDashboard/partials/FraudCaseDetail";
+import FraudReportDetail from "../pages/Admin/FraudDashboard/partials/FraudReportDetail";
+import FraudAdjustmentForm from "../pages/Admin/FraudDashboard/partials/FraudAdjustmentForm";
+import FraudAdjustmentsList from "../pages/Admin/FraudDashboard/partials/FraudAdjustmentsList";
+import FraudDetectionSettings from "../pages/Admin/FraudDashboard/partials/FraudDetectionSettings";
 const PageNotFound = lazy(() => import("../layouts/PageNotFound"));
 const ServerError = lazy(() => import("../layouts/ServerError/ServerError"));
 const Maintenance = lazy(() => import("../layouts/Maintenance/Maintenance"));
@@ -51,7 +61,17 @@ export default function MainRoutes() {
           <Route path="AdminCampaignApproval" element={<CampaignApproval />} /> 
           <Route path="CampaignAdminList" element={<CampaignAdminList />} />
           <Route path="CompliancePolicy" element={<CompliancePolicy />} />
+          <Route path="TaxDashboard" element={<TaxDashboard />} />
           <Route path="TaxReporting" element={<TaxReporting />} />
+          <Route path="TaxPayment" element={<TaxPayment />} />
+          <Route path="FraudDashboard" element={<FraudDashboard />} />
+          <Route path="FraudDashboard/FraudCasesList" element={<FraudCasesList />} />
+          <Route path="FraudDashboard/FraudCaseDetail" element={<FraudCaseDetail />} />
+          <Route path="FraudDashboard/FraudReportsList" element={<FraudReportsList />} />
+          <Route path="FraudDashboard/FraudReportDetail" element={<FraudReportDetail />} />
+          <Route path="FraudDashboard/FraudAdjustmentForm" element={<FraudAdjustmentForm />} />
+          <Route path="FraudDashboard/FraudAdjustmentsList" element={<FraudAdjustmentsList />} />
+          <Route path="FraudDashboard/FraudDetectionSettings" element={<FraudDetectionSettings />} />
 
         </Route>
 
