@@ -1,0 +1,57 @@
+[
+{
+    "campaignId": 1,
+    "policyTitle": "Chính sách quảng cáo Shopee Super Sale",
+    "description": "Chính sách áp dụng cho chiến dịch quảng cáo Shopee Super Sale 12.12.",
+    "rules": [
+      "Không được sử dụng từ khóa thương hiệu Shopee trong quảng cáo tìm kiếm.",
+      "Không được chạy quảng cáo trên các trang web có nội dung không phù hợp.",
+      "Tất cả các quảng cáo phải tuân theo quy định pháp luật Việt Nam.",
+      "Hoa hồng sẽ được thanh toán vào ngày 15 hàng tháng.",
+      "Cookie tracking có thời hạn 30 ngày."
+    ],
+    "commissionStructure": {
+      "type": "CPS",
+      "rate": "12%",
+      "details": [
+        { "category": "Thời trang", "rate": "12%" },
+        { "category": "Điện tử", "rate": "8%" },
+        { "category": "Gia dụng", "rate": "10%" }
+      ]
+    },
+    "restrictions": [
+      "Không quảng cáo trên các trang web có nội dung người lớn.",
+      "Không sử dụng quảng cáo pop-up gây phiền toái cho người dùng.",
+      "Không sử dụng mã giảm giá giả mạo."
+    ],
+    "penalty": "Những vi phạm chính sách có thể dẫn đến việc tài khoản bị khóa vĩnh viễn hoặc tạm dừng thanh toán hoa hồng."
+  },
+  {
+    "campaignId": 8,
+    "policyTitle": "Chính sách quảng cáo Shopee Super Sale",
+    "description": "Chính sách áp dụng cho chiến dịch quảng cáo Shopee Super Sale 12.12.",
+    "rules": [
+      "Không được sử dụng từ khóa thương hiệu Shopee trong quảng cáo tìm kiếm.",
+      "Không được chạy quảng cáo trên các trang web có nội dung không phù hợp.",
+      "Tất cả các quảng cáo phải tuân theo quy định pháp luật Việt Nam.",
+      "Hoa hồng sẽ được thanh toán vào ngày 15 hàng tháng.",
+      "Cookie tracking có thời hạn 30 ngày."
+    ],
+    "commissionStructure": {
+      "type": "CPS",
+      "rate": "12%",
+      "details": [
+        { "category": "Thời trang", "rate": "12%" },
+        { "category": "Điện tử", "rate": "8%" },
+        { "category": "Gia dụng", "rate": "10%" }
+      ]
+    },
+    "restrictions": [
+      "Không quảng cáo trên các trang web có nội dung người lớn.",
+      "Không sử dụng quảng cáo pop-up gây phiền toái cho người dùng.",
+      "Không sử dụng mã giảm giá giả mạo."
+    ],
+    "penalty": "Những vi phạm chính sách có thể dẫn đến việc tài khoản bị khóa vĩnh viễn hoặc tạm dừng thanh toán hoa hồng."
+  }
+]
+  
