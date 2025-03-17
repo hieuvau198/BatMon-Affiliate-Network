@@ -1,0 +1,107 @@
+[
+    {
+      "id": 1,
+      "requestId": "REQ-20250310-001",
+      "paymentMethodId": 1,
+      "paymentMethod": "Chuyển khoản ngân hàng",
+      "amount": 15000000,
+      "paymentDate": "2025-03-10",
+      "transactionId": "TRX-25030001",
+      "status": "Completed",
+      "notes": "Thuế GTGT tháng 02/2025",
+      "requestType": "GTGT",
+      "currencyCode": "VND"
+    },
+    {
+      "id": 2,
+      "requestId": "REQ-20250225-002",
+      "paymentMethodId": 2,
+      "paymentMethod": "Ví điện tử",
+      "amount": 5000000,
+      "paymentDate": "2025-02-25",
+      "transactionId": "TRX-25020005",
+      "status": "Completed",
+      "notes": "Thuế TNCN tháng 01/2025",
+      "requestType": "TNCN",
+      "currencyCode": "VND"
+    },
+    {
+      "id": 3,
+      "requestId": "REQ-20250305-003",
+      "paymentMethodId": 1,
+      "paymentMethod": "Chuyển khoản ngân hàng",
+      "amount": 30000000,
+      "paymentDate": "2025-03-05",
+      "transactionId": "TRX-25030010",
+      "status": "Completed",
+      "notes": "Thuế TNDN quý 4/2024",
+      "requestType": "TNDN",
+      "currencyCode": "VND"
+    },
+    {
+      "id": 4,
+      "requestId": "REQ-20250312-004",
+      "paymentMethodId": 3,
+      "paymentMethod": "Nộp tiền mặt",
+      "amount": 7500000,
+      "paymentDate": "2025-03-12",
+      "transactionId": "TRX-25030015",
+      "status": "Pending",
+      "notes": "Thuế GTGT tháng 02/2025 - Phần còn lại",
+      "requestType": "GTGT",
+      "currencyCode": "VND"
+    },
+    {
+      "id": 5,
+      "requestId": "REQ-20250305-005",
+      "paymentMethodId": 2,
+      "paymentMethod": "Ví điện tử",
+      "amount": 3500000,
+      "paymentDate": "2025-03-05",
+      "transactionId": "TRX-25030022",
+      "status": "Failed",
+      "notes": "Lỗi thanh toán - Thử lại",
+      "requestType": "TNCN",
+      "currencyCode": "VND"
+    },
+    {
+      "id": 6,
+      "requestId": "REQ-20250228-006",
+      "paymentMethodId": 1,
+      "paymentMethod": "Chuyển khoản ngân hàng",
+      "amount": 22000000,
+      "paymentDate": "2025-02-28",
+      "transactionId": "TRX-25020030",
+      "status": "Completed",
+      "notes": "Nộp thuế TNDN bổ sung năm 2024",
+      "requestType": "TNDN",
+      "currencyCode": "VND"
+    },
+    {
+      "id": 7,
+      "requestId": "REQ-20250301-007",
+      "paymentMethodId": 1,
+      "paymentMethod": "Chuyển khoản ngân hàng",
+      "amount": 8500000,
+      "paymentDate": "2025-03-01",
+      "transactionId": "TRX-25030035",
+      "status": "Completed",
+      "notes": "Thuế TNCN tháng 02/2025",
+      "requestType": "TNCN",
+      "currencyCode": "VND"
+    },
+    {
+      "id": 8,
+      "requestId": "REQ-20250313-008",
+      "paymentMethodId": 2,
+      "paymentMethod": "Ví điện tử",
+      "amount": 4500000,
+      "paymentDate": "2025-03-13",
+      "transactionId": "TRX-25030042",
+      "status": "Processing",
+      "notes": "Phí xử lý hồ sơ thuế",
+      "requestType": "Phí",
+      "currencyCode": "VND"
+    }
+  ]
+  
