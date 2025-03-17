@@ -1,12 +1,14 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+"use client"
+
+import { useState } from "react"
+import { Link } from "react-router-dom"
 import {
   LineChart,
   BarChart,
   WalletCards,
   DoughnutChart,
   TransactionList,
-} from "./partials";
+} from "./partials"
 import {
   ArrowUpOutlined,
   ArrowDownOutlined,
@@ -18,211 +20,230 @@ import {
   DownloadOutlined,
   FilterOutlined,
   PlusOutlined,
-} from "@ant-design/icons";
-import { Layout, Typography } from "antd";
+} from "@ant-design/icons"
+import { Layout, Typography, Card, Row, Col, Button, Statistic, Space, Select } from "antd"
 
-const { Content } = Layout;
-const { Title } = Typography;
+const { Content } = Layout
+const { Title, Text } = Typography
+const { Option } = Select
 
 export default function EarningsDashboard() {
+  const [activeTimeRange, setActiveTimeRange] = useState("7days")
+  const [activeCampaignRange, setActiveCampaignRange] = useState("thisMonth")
+  const [activeDistributionRange, setActiveDistributionRange] = useState("thisMonth")
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="sticky top-0 z-40 w-full border-b bg-white shadow-sm">
-        <div className="container flex h-16 items-center justify-between py-4">
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900">Earnings Dashboard</h2>
-          <div className="flex items-center gap-4">
-            <Link
-              to="/publisher/dashboard/wallet"
-              className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-100 hover:text-gray-900"
-            >
-              View Balance
+    <Content className="site-layout-background" style={{ padding: '24px', minHeight: 280 }}>
+      {/* Page Title */}
+      <div className="flex items-center justify-between mb-6">
+        <Title level={3} style={{ margin: 0 }}>Earnings Dashboard</Title>
+        <Space>
+          <Button type="default">
+            <Link to="/publisher/dashboard/wallet">View Balance</Link>
+          </Button>
+          <Button type="primary">
+            <Link to="/earnings/withdraw">Withdraw Funds</Link>
+          </Button>
+        </Space>
+      </div>
+
+      {/* Stats Overview */}
+      <Row gutter={[16, 16]} className="mb-6">
+        {/* Total Earnings */}
+        <Col xs={24} sm={12} lg={6}>
+          <Card bordered={false} className="h-full shadow-sm hover:shadow-md transition-shadow">
+            <Statistic
+              title={<Text className="text-gray-600">Total Earnings</Text>}
+              value={24563.00}
+              precision={2}
+              valueStyle={{ color: '#333' }}
+              prefix="$"
+              suffix={
+                <span className="ml-2 text-green-600 text-sm flex items-center">
+                  <ArrowUpOutlined /> 12.5%
+                </span>
+              }
+            />
+            <Text type="secondary" className="text-xs">Compared to last month</Text>
+          </Card>
+        </Col>
+
+        {/* Available Balance */}
+        <Col xs={24} sm={12} lg={6}>
+          <Card bordered={false} className="h-full shadow-sm hover:shadow-md transition-shadow">
+            <Statistic
+              title={<Text className="text-gray-600">Available Balance</Text>}
+              value={5240.00}
+              precision={2}
+              valueStyle={{ color: '#333' }}
+              prefix="$"
+              suffix={<WalletOutlined className="ml-2 text-blue-600" />}
+            />
+            <Link to="/earnings/withdraw" className="text-blue-600 text-sm flex items-center mt-1">
+              Withdraw Now <ArrowRightOutlined className="ml-1" />
             </Link>
-            <Link
-              to="/earnings/withdraw"
-              className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow transition-colors hover:bg-blue-700"
-            >
-              Withdraw Funds
-            </Link>
-          </div>
-        </div>
-      </header>
+          </Card>
+        </Col>
 
-      <main className="container py-8">
-        {/* Stats Overview */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Total Earnings */}
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-gray-600">Total Earnings</p>
-              <span className="rounded-lg bg-green-100 p-1.5">
-                <ArrowUpOutlined className="h-4 w-4 text-green-600" />
-              </span>
-            </div>
-            <div className="mt-2 flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-gray-900">$24,563.00</span>
-              <span className="text-sm text-green-600">+12.5%</span>
-            </div>
-            <p className="mt-1 text-xs text-gray-500">Compared to last month</p>
-          </div>
+        {/* This Month */}
+        <Col xs={24} sm={12} lg={6}>
+          <Card bordered={false} className="h-full shadow-sm hover:shadow-md transition-shadow">
+            <Statistic
+              title={<Text className="text-gray-600">This Month</Text>}
+              value={3890.00}
+              precision={2}
+              valueStyle={{ color: '#333' }}
+              prefix="$"
+              suffix={
+                <span className="ml-2 text-green-600 text-sm flex items-center">
+                  <ArrowUpOutlined /> 8.2%
+                </span>
+              }
+            />
+            <Text type="secondary" className="text-xs">20 days remaining</Text>
+          </Card>
+        </Col>
 
-          {/* Available Balance */}
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-gray-600">Available Balance</p>
-              <span className="rounded-lg bg-blue-100 p-1.5">
-                <WalletOutlined className="h-4 w-4 text-blue-600" />
-              </span>
-            </div>
-            <div className="mt-2 flex items-baseline">
-              <span className="text-2xl font-bold text-gray-900">$5,240.00</span>
-            </div>
-            <div className="mt-1 flex items-center gap-1 text-xs">
-              <Link to="/earnings/withdraw" className="text-blue-600 hover:underline">
-                Withdraw Now
-              </Link>
-              <ArrowRightOutlined className="h-3 w-3 text-gray-600" />
-            </div>
-          </div>
+        {/* Pending */}
+        <Col xs={24} sm={12} lg={6}>
+          <Card bordered={false} className="h-full shadow-sm hover:shadow-md transition-shadow">
+            <Statistic
+              title={<Text className="text-gray-600">Pending</Text>}
+              value={1890.00}
+              precision={2}
+              valueStyle={{ color: '#333' }}
+              prefix="$"
+              suffix={<ClockCircleOutlined className="ml-2 text-yellow-600" />}
+            />
+            <Text type="secondary" className="text-xs">Will be available in 45 days</Text>
+          </Card>
+        </Col>
+      </Row>
 
-          {/* This Month */}
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-gray-600">This Month</p>
-              <span className="rounded-lg bg-green-100 p-1.5">
-                <DollarOutlined className="h-4 w-4 text-green-600" />
-              </span>
-            </div>
-            <div className="mt-2 flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-gray-900">$3,890.00</span>
-              <span className="text-sm text-green-600">+8.2%</span>
-            </div>
-            <p className="mt-1 text-xs text-gray-500">20 days remaining</p>
-          </div>
-
-          {/* Pending */}
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-gray-600">Pending</p>
-              <span className="rounded-lg bg-yellow-100 p-1.5">
-                <ClockCircleOutlined className="h-4 w-4 text-yellow-600" />
-              </span>
-            </div>
-            <div className="mt-2 flex items-baseline">
-              <span className="text-2xl font-bold text-gray-900">$1,890.00</span>
-            </div>
-            <p className="mt-1 text-xs text-gray-500">Will be available in 45 days</p>
-          </div>
-        </div>
-
-        {/* Charts Section */}
-        <div className="mt-8 grid gap-6 lg:grid-cols-2">
-          {/* Earnings Trend */}
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-gray-900">Earnings Trend</h3>
-              <select className="rounded-lg border border-gray-300 bg-white px-2 py-1 text-sm text-gray-700">
-                <option>Last 7 Days</option>
-                <option>Last 30 Days</option>
-                <option>Last 90 Days</option>
-              </select>
-            </div>
-            <div className="mt-4 h-[300px]">
+      {/* Charts Section */}
+      <Row gutter={[16, 16]} className="mb-6">
+        {/* Earnings Trend */}
+        <Col xs={24} lg={12}>
+          <Card 
+            title="Earnings Trend" 
+            bordered={false} 
+            className="shadow-sm"
+            extra={
+              <Select 
+                defaultValue="7days" 
+                style={{ width: 120 }} 
+                onChange={setActiveTimeRange}
+              >
+                <Option value="7days">Last 7 Days</Option>
+                <Option value="30days">Last 30 Days</Option>
+                <Option value="90days">Last 90 Days</Option>
+              </Select>
+            }
+          >
+            <div style={{ height: 300 }}>
               <LineChart />
             </div>
-          </div>
+          </Card>
+        </Col>
 
-          {/* Revenue by Campaign */}
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-gray-900">Revenue by Campaign</h3>
-              <select className="rounded-lg border border-gray-300 bg-white px-2 py-1 text-sm text-gray-700">
-                <option>This Month</option>
-                <option>Last Month</option>
-                <option>Last 3 Months</option>
-              </select>
-            </div>
-            <div className="mt-4 h-[300px]">
+        {/* Revenue by Campaign */}
+        <Col xs={24} lg={12}>
+          <Card 
+            title="Revenue by Campaign" 
+            bordered={false} 
+            className="shadow-sm"
+            extra={
+              <Select 
+                defaultValue="thisMonth" 
+                style={{ width: 120 }} 
+                onChange={setActiveCampaignRange}
+              >
+                <Option value="thisMonth">This Month</Option>
+                <Option value="lastMonth">Last Month</Option>
+                <Option value="last3Months">Last 3 Months</Option>
+              </Select>
+            }
+          >
+            <div style={{ height: 300 }}>
               <BarChart />
             </div>
-          </div>
-        </div>
+          </Card>
+        </Col>
+      </Row>
 
-        {/* Wallet Cards */}
-        <div className="mt-8">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-gray-900">Your Wallets</h3>
-            <button className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-1 text-sm text-gray-700 hover:bg-gray-100">
-              <PlusOutlined className="h-4 w-4 text-gray-600" />
-              Add New
-            </button>
-          </div>
-          <div className="mt-4">
-            <WalletCards />
-          </div>
+      {/* Wallet Cards */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <Title level={4} style={{ margin: 0 }}>Your Wallets</Title>
+          <Button icon={<PlusOutlined />}>Add New</Button>
         </div>
+        <WalletCards />
+      </div>
 
-        {/* Bottom Grid */}
-        <div className="mt-8 grid gap-6 lg:grid-cols-2">
-          {/* Recent Transactions */}
-          <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
-            <div className="flex items-center justify-between border-b border-gray-200 p-6">
-              <h3 className="font-semibold text-gray-900">Recent Transactions</h3>
-              <div className="flex items-center gap-2">
-                <button className="inline-flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-2 py-1 text-sm text-gray-700 hover:bg-gray-100">
-                  <FilterOutlined className="h-4 w-4 text-gray-600" />
-                  Filter
-                </button>
-                <button className="inline-flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-2 py-1 text-sm text-gray-700 hover:bg-gray-100">
-                  <DownloadOutlined className="h-4 w-4 text-gray-600" />
-                  Export
-                </button>
-              </div>
-            </div>
-            <div className="p-6">
-              <TransactionList />
-            </div>
-            <div className="border-t border-gray-200 p-4">
-              <Link
-                to="/earnings/transactions"
-                className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-blue-600"
-              >
-                View All Transactions
-                <RightOutlined className="h-4 w-4" />
+      {/* Bottom Grid */}
+      <Row gutter={[16, 16]}>
+        {/* Recent Transactions */}
+        <Col xs={24} lg={12}>
+          <Card 
+            title="Recent Transactions" 
+            bordered={false} 
+            className="shadow-sm"
+            extra={
+              <Space>
+                <Button icon={<FilterOutlined />} size="small">Filter</Button>
+                <Button icon={<DownloadOutlined />} size="small">Export</Button>
+              </Space>
+            }
+          >
+            <TransactionList />
+            <div className="mt-4 pt-4 border-t text-right">
+              <Link to="/earnings/transactions" className="text-gray-600 hover:text-blue-600 text-sm flex items-center justify-end">
+                View All Transactions <RightOutlined className="ml-1" />
               </Link>
             </div>
-          </div>
+          </Card>
+        </Col>
 
-          {/* Revenue Distribution */}
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-gray-900">Revenue Distribution</h3>
-              <select className="rounded-lg border border-gray-300 bg-white px-2 py-1 text-sm text-gray-700">
-                <option>This Month</option>
-                <option>Last Month</option>
-                <option>Last 3 Months</option>
-              </select>
+        {/* Revenue Distribution */}
+        <Col xs={24} lg={12}>
+          <Card 
+            title="Revenue Distribution" 
+            bordered={false} 
+            className="shadow-sm"
+            extra={
+              <Select 
+                defaultValue="thisMonth" 
+                style={{ width: 120 }} 
+                onChange={setActiveDistributionRange}
+              >
+                <Option value="thisMonth">This Month</Option>
+                <Option value="lastMonth">Last Month</Option>
+                <Option value="last3Months">Last 3 Months</Option>
+              </Select>
+            }
+          >
+            <div className="flex justify-center" style={{ height: 300 }}>
+              <DoughnutChart />
             </div>
-            <div className="mt-4 flex items-center justify-center">
-              <div className="h-[300px] w-[300px]">
-                <DoughnutChart />
-              </div>
-            </div>
-            <div className="mt-4 grid grid-cols-2 gap-4">
-              <div className="rounded-lg border border-gray-200 p-4">
-                <p className="text-sm font-medium text-gray-600">Top Campaign</p>
-                <p className="mt-1 text-lg font-semibold text-gray-900">Shopee 12.12</p>
-                <p className="text-sm text-green-600">$2,450.00</p>
-              </div>
-              <div className="rounded-lg border border-gray-200 p-4">
-                <p className="text-sm font-medium text-gray-600">Top Category</p>
-                <p className="mt-1 text-lg font-semibold text-gray-900">E-commerce</p>
-                <p className="text-sm text-green-600">$4,320.00</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
-  );
+            <Row gutter={16} className="mt-4">
+              <Col span={12}>
+                <Card size="small" bordered>
+                  <Text type="secondary" className="text-sm">Top Campaign</Text>
+                  <div className="text-lg font-medium">Shopee 12.12</div>
+                  <div className="text-green-600">$2,450.00</div>
+                </Card>
+              </Col>
+              <Col span={12}>
+                <Card size="small" bordered>
+                  <Text type="secondary" className="text-sm">Top Category</Text>
+                  <div className="text-lg font-medium">E-commerce</div>
+                  <div className="text-green-600">$4,320.00</div>
+                </Card>
+              </Col>
+            </Row>
+          </Card>
+        </Col>
+      </Row>
+    </Content>
+  )
 }
