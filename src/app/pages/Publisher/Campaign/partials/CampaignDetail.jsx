@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Descriptions, Spin, message, Button } from "antd";
-import getCampaignDetail from "../../../../modules/Publisher/getCampaignDetail";
+import getCampaignDetail from "../../../../modules/Campaign/getCampaignDetail";
 
 export default function CampaignDetail() {
   const { campaignId } = useParams();

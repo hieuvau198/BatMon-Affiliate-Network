@@ -2,11 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Input, Select, Table, Tag, Button, Spin, message, Modal, Form } from "antd";
-import { EyeOutlined, PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import getCampaignList from "../../../modules/Publisher/getCampaignList";
-import createCampaign from "../../../modules/Publisher/createCampaign";
-import deleteCampaign from "../../../modules/Publisher/deleteCampaign";
+import { Input, Select, Table, Tag, Button, Spin, message } from "antd";
+import { EyeOutlined, LinkOutlined } from "@ant-design/icons";
+import getCampaignList from "../../../modules/Campaign/getCampaignList";
 
 const { Option } = Select;
 
@@ -14,9 +12,7 @@ export default function CampaignList() {
   const [campaigns, setCampaigns] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
-  const [loading, setLoading,] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,29 +29,11 @@ export default function CampaignList() {
     fetchCampaigns();
   }, []);
 
-  const handleCreateCampaign = async (values) => {
-    try {
-      await createCampaign(values);
-      message.success("Chiến dịch đã được tạo thành công!");
-      setIsModalOpen(false);
-      navigate(0);
-    } catch (error) {
-      message.error("Không thể tạo chiến dịch.");
-    }
+  const handleCreateLink = (campaignId) => {
+    // Placeholder for link creation logic
+    message.success(`Đã tạo link cho chiến dịch ID: ${campaignId}`);
+    // Add your link creation logic here, e.g., navigating to a new page or generating a URL
   };
-
-  const handleDeleteCampaign = async (campaignId) => {
-    try {
-      await deleteCampaign(campaignId);
-      message.success("Chiến dịch đã được xóa thành công!");
-      setCampaigns((prev) => prev.filter((campaign) => campaign.campaignId !== campaignId));
-    } catch (error) {
-      message.error("Không thể xóa chiến dịch.");
-    }
-  };
-
-  const openCreateModal = () => setIsModalOpen(true);
-  const closeCreateModal = () => setIsModalOpen(false);
 
   const filteredCampaigns = campaigns.filter((campaign) => {
     const matchesSearch = campaign.name
@@ -114,17 +92,10 @@ export default function CampaignList() {
             </Button>
           </Link>
           <Button
-            icon={<EditOutlined />}
-            onClick={() => navigate(`/publisher/campaignlist/edit/${record.campaignId}`)}
+            icon={<LinkOutlined />}
+            onClick={() => handleCreateLink(record.campaignId)}
           >
-            Sửa
-          </Button>
-          <Button
-            icon={<DeleteOutlined />}
-            danger
-            onClick={() => handleDeleteCampaign(record.campaignId)}
-          >
-            Xóa
+            Tạo Link
           </Button>
         </div>
       ),
@@ -137,9 +108,6 @@ export default function CampaignList() {
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-semibold">Danh sách chiến dịch</h2>
-            <Button type="primary" icon={<PlusOutlined />} onClick={openCreateModal}>
-              Tạo Chiến Dịch
-            </Button>
           </div>
 
           <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
@@ -175,29 +143,6 @@ export default function CampaignList() {
           )}
         </div>
       </div>
-
-      <Modal
-        title="Tạo Chiến Dịch"
-        open={isModalOpen}
-        onCancel={closeCreateModal}
-        onOk={() => form.submit()}
-      >
-        <Form form={form} layout="vertical" onFinish={handleCreateCampaign}>
-          <Form.Item name="advertiserId" label="ID Nhà Quảng Cáo" rules={[{ required: true }]}> <Input type="number" /> </Form.Item>
-          <Form.Item name="name" label="Tên chiến dịch" rules={[{ required: true }]}> <Input /> </Form.Item>
-          <Form.Item name="description" label="Mô tả"> <Input /> </Form.Item>
-          <Form.Item name="budget" label="Ngân sách" rules={[{ required: true }]}> <Input type="number" /> </Form.Item>
-          <Form.Item name="dailyCap" label="Hạn mức hàng ngày"> <Input type="number" /> </Form.Item>
-          <Form.Item name="monthlyCap" label="Hạn mức hàng tháng"> <Input type="number" /> </Form.Item>
-          <Form.Item name="startDate" label="Ngày bắt đầu" rules={[{ required: true }]}> <Input type="date" /> </Form.Item>
-          <Form.Item name="endDate" label="Ngày kết thúc" rules={[{ required: true }]}> <Input type="date" /> </Form.Item>
-          <Form.Item name="targetingCountries" label="Quốc gia mục tiêu"> <Input /> </Form.Item>
-          <Form.Item name="targetingDevices" label="Thiết bị mục tiêu"> <Input /> </Form.Item>
-          <Form.Item name="isPrivate" label="Riêng tư" valuePropName="checked"> <Input type="checkbox" /> </Form.Item>
-          <Form.Item name="conversionRate" label="Tỉ lệ chuyển đổi"> <Input type="number" /> </Form.Item>
-          <Form.Item name="currencyCode" label="Mã tiền tệ"> <Input /> </Form.Item>
-        </Form>
-      </Modal>
     </div>
   );
 }
