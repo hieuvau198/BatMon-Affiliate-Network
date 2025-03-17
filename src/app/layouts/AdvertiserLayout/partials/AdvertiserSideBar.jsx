@@ -10,7 +10,7 @@ import {
   DollarOutlined,
 } from "@ant-design/icons";
 import { TbLogout } from "react-icons/tb";
-import logOut from "../../../modules/Logout";
+import logOut from "../../../components/Logout";
 
 const AdvertiserSidebar = () => {
   const menuItems = [

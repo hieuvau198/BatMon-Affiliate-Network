@@ -3,8 +3,8 @@ import { BrowserRouter, Route, Routes, Outlet } from "react-router-dom"; // Thê
 import AdminLayout from "../layouts/AdminLayout";
 import UserLayout from "../layouts/UserLayout/UserLayout";
 import AboutUs from "../pages/About Us/AboutUs";
-import Login from "../modules/Login/Login"; // Import Login
-import Register from "../modules/Register/Register";
+import Login from "../components/Login/Login"; // Import Login
+import Register from "../components/Register/Register";
 import PublisherLayout from "../layouts/PublisherLayOut";
 import AdvertiserLayout from "../layouts/AdvertiserLayout";
 import AdverDashboard from "../pages/Advertiser/Dashboard/AdvertiserDashBoard";
@@ -31,6 +31,14 @@ import TaxReporting from "../pages/Admin/TaxReporting/TaxReporting";
 import CompliancePolicy from "../pages/Admin/CompliancePolicy/CompliancePolicy";
 import TaxDashboard from "../pages/Admin/TaxDashboard/TaxDashboard";
 import TaxPayment from "../pages/Admin/TaxPayment/TaxPayment";
+import FraudDashboard from "../pages/Admin/FraudDashboard/FraudDashboard";
+import FraudReportsList from "../pages/Admin/FraudDashboard/partials/FraudReportsList"
+import FraudCasesList from "../pages/Admin/FraudDashboard/partials/FraudCasesList"
+import FraudCaseDetail from "../pages/Admin/FraudDashboard/partials/FraudCaseDetail";
+import FraudReportDetail from "../pages/Admin/FraudDashboard/partials/FraudReportDetail";
+import FraudAdjustmentForm from "../pages/Admin/FraudDashboard/partials/FraudAdjustmentForm";
+import FraudAdjustmentsList from "../pages/Admin/FraudDashboard/partials/FraudAdjustmentsList";
+import FraudDetectionSettings from "../pages/Admin/FraudDashboard/partials/FraudDetectionSettings";
 const PageNotFound = lazy(() => import("../layouts/PageNotFound"));
 const ServerError = lazy(() => import("../layouts/ServerError/ServerError"));
 const Maintenance = lazy(() => import("../layouts/Maintenance/Maintenance"));
@@ -56,6 +64,14 @@ export default function MainRoutes() {
           <Route path="TaxDashboard" element={<TaxDashboard />} />
           <Route path="TaxReporting" element={<TaxReporting />} />
           <Route path="TaxPayment" element={<TaxPayment />} />
+          <Route path="FraudDashboard" element={<FraudDashboard />} />
+          <Route path="FraudDashboard/FraudCasesList" element={<FraudCasesList />} />
+          <Route path="FraudDashboard/FraudCaseDetail" element={<FraudCaseDetail />} />
+          <Route path="FraudDashboard/FraudReportsList" element={<FraudReportsList />} />
+          <Route path="FraudDashboard/FraudReportDetail" element={<FraudReportDetail />} />
+          <Route path="FraudDashboard/FraudAdjustmentForm" element={<FraudAdjustmentForm />} />
+          <Route path="FraudDashboard/FraudAdjustmentsList" element={<FraudAdjustmentsList />} />
+          <Route path="FraudDashboard/FraudDetectionSettings" element={<FraudDetectionSettings />} />
 
         </Route>
 
@@ -63,7 +79,7 @@ export default function MainRoutes() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="dashboard/wallet" element={<Wallet />} />
           <Route path="campaignlist" element={<CampaignList />} />
-          <Route path="campaignlist/campaigndetail" element={<CampaignDetail />} />
+          <Route path="campaignlist/campaigndetail/:campaignId" element={<CampaignDetail />} />
           <Route path="report" element={<ReportLostOrder />} />
           <Route path="fraudtracking" element={<FraudTracking />}/>
         </Route>
