@@ -78,14 +78,14 @@ export default function MainRoutes() {
         </Route>
 
         <Route path="/publisher" element={<PublisherLayout />}>
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="dashboard/wallet" element={<Wallet />} />
+          {/* <Route path="dashboard" element={<Dashboard />} /> */}
+          {/* <Route path="dashboard/wallet" element={<Wallet />} /> */}
           <Route path="campaignlist" element={<CampaignList />} />
-          <Route path="campaignlist/campaigndetail/:campaignId" element={<CampaignDetail />} />
           <Route path="report" element={<ReportLostOrder />} />
           <Route path="fraudtracking" element={<FraudTracking />}/>
         </Route>
 
+        <Route path="campaigndetail/:campaignId" element={<CampaignDetail />} />
 
         <Route path="/advertiser" element={<AdvertiserLayout />}>
           <Route path="dashboard" element={<AdverDashboard />} />

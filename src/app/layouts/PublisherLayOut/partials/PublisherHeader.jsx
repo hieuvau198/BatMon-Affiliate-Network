@@ -1,38 +1,106 @@
-"use client";
+"use client"
 
-import { BellOutlined } from "@ant-design/icons";
-import { useLocation } from "react-router-dom";
-import React from "react";
+import {
+  BellOutlined,
+  // GlobalOutlined,
+  SearchOutlined,
+  UserOutlined,
+} from "@ant-design/icons"
+import { Avatar, Badge, Dropdown, Input, Menu, Tooltip } from "antd"
+import { motion } from "framer-motion"
+import logout from "../../../components/Logout"
 
-export default function PublisherHeader() {
-    const location = useLocation();
-    const pageTitle = location.pathname.split("/")[2]?.replace("-", " ") || "Dashboard";
+const PublisherHeader = () => {
+  const profileMenu = (
+    <Menu
+      items={[
+        { key: "1", label: "Your Profile" },
+        { key: "2", label: "Settings" },
+        {
+          key: "3",
+          label: "Logout",
+          onClick: () => logout(),
+          style: { color: '#F97316' }
+        },
+      ]}
+    />
+  )
 
-    return (
-        <div className="fixed top-0 left-64 w-[calc(100%-16rem)] flex items-center justify-between bg-white px-6 py-4 shadow-md z-50">
-            {/* Tiêu đề động từ URL */}
-            <h1 className="text-2xl font-semibold text-gray-800 capitalize">{pageTitle}</h1>
-
-            {/* Phần bên phải: Nút thông báo + Avatar User */}
-            <div className="flex items-center gap-6">
-                {/* Nút thông báo */}
-                <button className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200">
-                    <BellOutlined className="text-xl text-gray-600" />
-                </button>
-
-                {/* Thông tin User */}
-                <div className="flex items-center gap-3 cursor-pointer">
-                    <img
-                        src="https://randomuser.me/api/portraits/men/75.jpg"
-                        alt="Hoàng - Publisher"
-                        className="w-10 h-10 rounded-full"
-                    />
-                    <div className="text-gray-600">
-                        <p className="font-semibold">Hoàng</p>
-                        <p className="text-sm">Publisher</p>
-                    </div>
-                </div>
-            </div>
+  return (
+    <header className="bg-gradient-to-r from-[#4B2E1E] to-[#8B5A2B] shadow-md sticky top-0 z-10">
+      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        {/* Left Section: Logo and Name */}
+        <div className="flex items-center space-x-2">
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="w-8 h-8 rounded-md bg-blue-500 flex items-center justify-center"
+          >
+            {/* <GlobalOutlined className="text-white" /> */}
+          </motion.div>
+          <motion.h1
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="text-xl font-bold text-white"
+          >
+            AffiHub
+          </motion.h1>
         </div>
-    );
+
+        {/* Middle Section: Search Bar */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+          className="flex-1 mx-4 max-w-2xl"
+        >
+          <Input
+            prefix={<SearchOutlined className="text-gray-500 text-lg flex items-center" />}
+            placeholder="Search..."
+            className="w-full h-10 text-sm rounded-full bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#A855F7] focus:border-transparent"
+            style={{ paddingLeft: '2.75rem', paddingRight: '1rem', paddingTop: '0.5rem', paddingBottom: '0.5rem' }}
+          />
+        </motion.div>
+
+        {/* Right Section: Notification and Profile */}
+        <div className="flex items-center space-x-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+          >
+            <Badge dot>
+              <Tooltip title="Notifications">
+                <BellOutlined className="text-xl text-white cursor-pointer hover:text-[#A855F7]" />
+              </Tooltip>
+            </Badge>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.8, duration: 0.5 }}
+          >
+            <Dropdown overlay={profileMenu} trigger={["click"]}>
+              <a
+                onClick={(e) => e.preventDefault()}
+                className="flex items-center space-x-2"
+              >
+                <Avatar
+                  style={{ backgroundColor: "#A855F7" }}
+                  icon={<UserOutlined />}
+                />
+                <span className="text-sm font-medium text-white hidden sm:inline-block">
+                  John Doe
+                </span>
+              </a>
+            </Dropdown>
+          </motion.div>
+        </div>
+      </div>
+    </header>
+  )
 }
+
+export default PublisherHeader

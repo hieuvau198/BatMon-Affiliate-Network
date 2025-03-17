@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Input, Select, Table, Tag, Button, Spin, message } from "antd";
-import { EyeOutlined, LinkOutlined } from "@ant-design/icons";
-import getCampaignList from "../../../modules/Campaign/getCampaignList";
+import { Link } from "react-router-dom";
+import { Input, Select, Table, Tag, Spin } from "antd";
+import { EyeOutlined } from "@ant-design/icons";
+import { motion } from "framer-motion";
+import mockData from "../../Publisher/Campaign/partials/mockdata.json";
 
 const { Option } = Select;
 
@@ -13,35 +14,20 @@ export default function CampaignList() {
   const [searchText, setSearchText] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCampaigns = async () => {
-      try {
-        const data = await getCampaignList();
-        setCampaigns(data);
-      } catch (error) {
-        message.error("Không thể tải danh sách chiến dịch.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCampaigns();
+    setTimeout(() => {
+      setCampaigns(mockData);
+      setLoading(false);
+    }, 1000);
   }, []);
-
-  const handleCreateLink = (campaignId) => {
-    // Placeholder for link creation logic
-    message.success(`Đã tạo link cho chiến dịch ID: ${campaignId}`);
-    // Add your link creation logic here, e.g., navigating to a new page or generating a URL
-  };
 
   const filteredCampaigns = campaigns.filter((campaign) => {
     const matchesSearch = campaign.name
       ?.toLowerCase()
       .includes(searchText.toLowerCase());
     const matchesStatus =
-      filterStatus === "all" ||
-      campaign.status.toLowerCase() === filterStatus.toLowerCase();
+      filterStatus === "all" || campaign.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
 
@@ -50,7 +36,14 @@ export default function CampaignList() {
       title: "Tên chiến dịch",
       dataIndex: "name",
       key: "name",
-      render: (text) => <strong>{text}</strong>,
+      render: (text, record) => (
+        <Link
+          to={`/campaigndetail/${String(record.campaignId)}`}
+          className="text-blue-500 hover:underline"
+        >
+          {text}
+        </Link>
+      ),
     },
     {
       title: "Mô tả",
@@ -78,71 +71,47 @@ export default function CampaignList() {
       dataIndex: "status",
       key: "status",
       render: (status) => (
-        <Tag color={status === "Active" ? "green" : "yellow"}>{status}</Tag>
-      ),
-    },
-    {
-      title: "Thao tác",
-      key: "action",
-      render: (_, record) => (
-        <div className="flex gap-2">
-          <Link to={`/publisher/campaignlist/campaigndetail/${record.campaignId}`}>
-            <Button icon={<EyeOutlined />} type="primary">
-              Xem Chi tiết
-            </Button>
-          </Link>
-          <Button
-            icon={<LinkOutlined />}
-            onClick={() => handleCreateLink(record.campaignId)}
-          >
-            Tạo Link
-          </Button>
-        </div>
+        <Tag color={status === "Đang hoạt động" ? "green" : "yellow"}>{status}</Tag>
       ),
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-semibold">Danh sách chiến dịch</h2>
-          </div>
-
-          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-            <Input
-              placeholder="Tìm kiếm chiến dịch..."
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              className="md:w-64"
-            />
-
-            <Select
-              value={filterStatus}
-              onChange={setFilterStatus}
-              className="md:w-40"
-            >
-              <Option value="all">Tất cả trạng thái</Option>
-              <Option value="Active">Đang chạy</Option>
-              <Option value="Draft">Tạm dừng</Option>
-            </Select>
-          </div>
-
-          {loading ? (
-            <div className="text-center">
-              <Spin size="large" />
-            </div>
-          ) : (
-            <Table
-              columns={columns}
-              dataSource={filteredCampaigns}
-              rowKey="campaignId"
-              pagination={{ pageSize: 5 }}
-            />
-          )}
-        </div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 0.5, duration: 0.8 }}
+      className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8"
+    >
+      <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
+        Featured Campaigns
+      </h2>
+      <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+        <Input
+          placeholder="Tìm kiếm chiến dịch..."
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          className="md:w-64"
+        />
+        <Select value={filterStatus} onChange={setFilterStatus} className="md:w-40">
+          <Option value="all">Tất cả trạng thái</Option>
+          <Option value="Đang hoạt động">Đang hoạt động</Option>
+          <Option value="Chưa bắt đầu">Chưa bắt đầu</Option>
+        </Select>
       </div>
-    </div>
+      {loading ? (
+        <div className="text-center">
+          <Spin size="large" />
+        </div>
+      ) : (
+        <Table
+          columns={columns}
+          dataSource={filteredCampaigns}
+          rowKey="campaignId"
+          pagination={{ pageSize: 5 }}
+          rowClassName="hover:bg-gray-50 transition-colors duration-200"
+        />
+      )}
+    </motion.div>
   );
 }

@@ -1,273 +1,398 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import logo from "../../assets/img/download (1).png";
+"use client"
 
-export default function Login() {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+import {
+  BellOutlined,
+  CreditCardOutlined,
+  GlobalOutlined,
+  SearchOutlined,
+  UserOutlined,
+  LineChartOutlined,
+  TrophyOutlined,
+  FileTextOutlined,
+  QuestionCircleOutlined,
+} from "@ant-design/icons"
+import { Avatar, Badge, Dropdown, Input, Menu, Tooltip, Table, Progress } from "antd"
+import { motion, useAnimation } from "framer-motion"
+import { useEffect } from "react"
 
-  const onFinish = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const values = { email, password };
-      console.log("Login values:", values);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      alert("Login successful!");
-      // navigate("/dashboard");
-    } catch (error) {
-      console.error("Login error:", error);
-      alert("Login failed. Please check your information again!");
-    } finally {
-      setLoading(false);
-    }
-  };
+export default function PublisherLayout() {
+  const profileMenu = (
+    <Menu
+      items={[
+        {
+          key: "1",
+          label: "Your Profile",
+        },
+        {
+          key: "2",
+          label: "Settings",
+        },
+        {
+          key: "3",
+          label: "Sign out",
+        },
+      ]}
+    />
+  )
+
+  const campaigns = [
+    {
+      key: "1",
+      name: "Mobile Game Campaign",
+      category: "Gaming",
+      conversionRate: "5.1%",
+      revenue: "$1,200",
+      progress: 70,
+    },
+    {
+      key: "2",
+      name: "Finance App Campaign",
+      category: "Finance",
+      conversionRate: "4.7%",
+      revenue: "$2,500",
+      progress: 85,
+    },
+    {
+      key: "3",
+      name: "E-commerce Campaign",
+      category: "Shopping",
+      conversionRate: "3.2%",
+      revenue: "$1,800",
+      progress: 60,
+    },
+  ]
+
+  const columns = [
+    {
+      title: "Campaign Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Category",
+      dataIndex: "category",
+      key: "category",
+    },
+    {
+      title: "Conversion Rate",
+      dataIndex: "conversionRate",
+      key: "conversionRate",
+    },
+    {
+      title: "Revenue",
+      dataIndex: "revenue",
+      key: "revenue",
+    },
+    {
+      title: "Progress",
+      dataIndex: "progress",
+      key: "progress",
+      render: (progress) => <Progress percent={progress} status="active" />,
+    },
+  ]
+
+  // Animation variants
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  }
+
+  const staggerContainer = {
+    hidden: { opacity: 1 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+  }
+
+  const fadeIn = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.8 } },
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 flex items-center justify-center p-4">
-      {/* Back Button */}
-      <button
-        onClick={() => navigate(-1)}
-        className="absolute top-5 left-5 flex items-center px-4 py-2 text-gray-700 bg-white bg-opacity-80 rounded-full shadow-md hover:bg-opacity-100 transition-all duration-300"
-      >
-        <svg
-          className="w-4 h-4 mr-2"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-        Back
-      </button>
-
-      {/* Main Card */}
-      <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden">
-        <div className="flex flex-col lg:flex-row">
-          {/* Left Side - Promotional Content */}
-          <div className="lg:w-7/12 p-8">
-            {/* Advertiser Card */}
-            <div className="relative bg-gradient-to-br from-orange-400 to-pink-500 rounded-2xl shadow-lg p-8 mb-6 overflow-hidden">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.2)_0%,transparent_60%)]"></div>
-              <div className="relative z-10">
-                <div className="flex items-center gap-3">
-                  <div className="bg-white rounded-full p-3 shadow-md">
-                    <svg
-                      className="w-6 h-6 text-orange-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 3h18M3 9h18m-9 6h9M3 15h6m-6 6h18"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="text-2xl font-semibold text-white">Advertiser</h3>
-                </div>
-                <div className="mt-4">
-                  <h4 className="text-lg font-medium text-white">CONNECT FOR SUCCESS WITH</h4>
-                  <h2 className="text-3xl font-bold text-white mt-2">AFFIHUB</h2>
-                  <p className="text-white text-opacity-90 mt-2">
-                    The leading effective revenue growth platform in Vietnam & SEASIA
-                  </p>
-                </div>
-                <button className="mt-5 flex items-center px-6 py-3 bg-white text-orange-400 font-semibold rounded-full shadow-lg hover:bg-opacity-90 transition-all duration-300">
-                  <svg
-                    className="w-5 h-5 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                    />
-                  </svg>
-                  CONSULT ME
-                </button>
-              </div>
-            </div>
-
-            {/* Publisher Card */}
-            <div className="relative bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl shadow-lg p-8 overflow-hidden">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.2)_0%,transparent_60%)]"></div>
-              <div className="relative z-10">
-                <div className="flex items-center gap-3">
-                  <div className="bg-white rounded-full p-3 shadow-md">
-                    <svg
-                      className="w-6 h-6 text-blue-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 1.857h5M21 4a2 2 0 00-2-2h-5a2 2 0 00-2 2v2M3 4a2 2 0 012-2h5a2 2 0 012 2v2m-9 6h18"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="text-2xl font-semibold text-white">Publisher</h3>
-                </div>
-                <div className="mt-4">
-                  <h4 className="text-lg font-medium text-white">JOIN THE NETWORK OF</h4>
-                  <div className="flex items-baseline mt-2">
-                    <h2 className="text-3xl font-bold text-white">2.5</h2>
-                    <h3 className="text-2xl font-semibold text-white ml-2">MILLION PUBLISHERS</h3>
-                  </div>
-                  <p className="text-white text-opacity-90 font-semibold mt-2">LARGEST IN VIETNAM</p>
-                </div>
-                <button className="mt-5 flex items-center px-6 py-3 bg-white text-blue-500 font-semibold rounded-full shadow-lg hover:bg-opacity-90 transition-all duration-300">
-                  <svg
-                    className="w-5 h-5 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  LEARN MORE
-                </button>
-              </div>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
+      {/* Header */}
+      <header className="bg-white shadow-md sticky top-0 z-10">
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="w-8 h-8 rounded-md bg-blue-500 flex items-center justify-center"
+            >
+              <GlobalOutlined className="text-white" />
+            </motion.div>
+            <motion.h1
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="text-xl font-bold text-gray-900"
+            >
+              AccessMedia
+            </motion.h1>
           </div>
-
-          {/* Right Side - Login Form */}
-          <div className="lg:w-5/12 bg-white p-8 flex flex-col items-center justify-center">
-            <div className="relative ">
-              <div className="absolute w-24 h-24 bg-[radial-gradient(circle,rgba(58,123,213,0.1)_0%,transparent_70%)] rounded-full -top-2 -left-2"></div>
-              <img
-                src={logo} // Thay logo đã import vào đây
-                alt="AffiHub Logo"
-                className="w-64 h-64 relative z-10 object-contain" // Thêm h-20 và object-contain để đảm bảo kích thước hợp lý
+          <div className="flex items-center space-x-4">
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+            >
+              <Input
+                prefix={<SearchOutlined className="text-gray-400" />}
+                placeholder="Search..."
+                className="w-64 hidden md:block"
               />
-            </div>
-
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">LOGIN</h2>
-
-            <form onSubmit={onFinish} className="w-full max-w-sm">
-              {/* Input cho Username or Email */}
-              <div className="mb-6">
-                <div className="relative">
-                  <svg
-                    className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    placeholder="Username or Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* Input cho Password */}
-              <div className="mb-6">
-                <div className="relative">
-                  <svg
-                    className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 11c0-1.104-.896-2-2-2s-2 .896-2 2c0 .738.402 1.376 1 1.723V16h2v-3.277c.598-.347 1-.985 1-1.723zm9-5v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2z"
-                    />
-                  </svg>
-                  <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-3 bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-semibold rounded-lg shadow-md hover:bg-opacity-90 transition-all duration-300"
-              >
-                {loading ? "Logging in..." : "Login"}
-              </button>
-
-              <div className="text-center mt-6">
-                <div className="flex justify-center gap-4 text-sm text-gray-600">
-                  <a href="/forgot-password" className="text-blue-500 font-medium hover:underline">
-                    Forgot password?
-                  </a>
-                </div>
-              </div>
-
-
-              <div className="flex items-center justify-center mt-6 text-sm text-gray-500">
-                <span className="flex-grow h-px bg-gray-200"></span>
-                <span className="px-4">Or login with</span>
-                <span className="flex-grow h-px bg-gray-200"></span>
-              </div>
-
-              <button
-                type="button"
-                className="w-full mt-4 py-3 border border-gray-200 rounded-lg text-gray-600 font-medium flex items-center justify-center shadow-sm hover:bg-gray-50 transition-all duration-300"
-              >
-                <svg
-                  className="w-5 h-5 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+            >
+              <Badge dot>
+                <Tooltip title="Notifications">
+                  <BellOutlined className="text-xl text-gray-500 cursor-pointer hover:text-blue-500" />
+                </Tooltip>
+              </Badge>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.8, duration: 0.5 }}
+            >
+              <Dropdown overlay={profileMenu} trigger={["click"]}>
+                <a
+                  onClick={(e) => e.preventDefault()}
+                  className="flex items-center space-x-2"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 0h-4"
+                  <Avatar
+                    style={{ backgroundColor: "#1890ff" }}
+                    icon={<UserOutlined />}
                   />
-                </svg>
-                Google
-              </button>
-            </form>
+                  <span className="text-sm font-medium text-gray-700 hidden sm:inline-block">
+                    John Doe
+                  </span>
+                </a>
+              </Dropdown>
+            </motion.div>
           </div>
         </div>
+      </header>
+
+      {/* Hero Section */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        className="relative w-full h-96 bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1567&q=80')",
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/80 to-blue-500/50 flex flex-col items-start justify-center px-8 md:px-16">
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
+            className="text-4xl font-bold text-white mb-4"
+          >
+            Boost Your Online Earnings
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+            className="text-white/90 max-w-xl text-lg"
+          >
+            Unlock the potential of your website with our powerful affiliate
+            marketing platform. Join thousands of publishers and start earning
+            today!
+          </motion.p>
+          <motion.button
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+            className="mt-8 bg-white text-blue-600 py-3 px-6 rounded-full font-semibold hover:bg-blue-100 transition-colors"
+          >
+            Get Started Now
+          </motion.button>
+        </div>
+      </motion.div>
+
+      {/* Content Section */}
+      <div className="container mx-auto px-4 py-8">
+        {/* Info Boxes */}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
+        >
+          {[1, 2, 3].map((item) => (
+            <motion.div
+              key={item}
+              variants={fadeInUp}
+              className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300 group"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-gray-800 group-hover:text-blue-500 transition-colors">
+                  Access Affiliate
+                </h2>
+                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                  <GlobalOutlined className="text-blue-500" />
+                </div>
+              </div>
+              <p className="text-gray-600">
+                Monetize your content with our diverse range of affiliate offers.
+              </p>
+              <div className="mt-4 pt-4 border-t border-gray-100">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-500">Conversion Rate</span>
+                  <span className="text-sm font-medium text-gray-900">3.2%</span>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Featured Campaigns */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+          className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8"
+        >
+          <h2 className="text-2xl font-semibold mb-6">Featured Campaigns</h2>
+          <Table dataSource={campaigns} columns={columns} pagination={false} />
+        </motion.div>
+
+        {/* Statistics Section */}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+          className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8"
+        >
+          <h2 className="text-2xl font-semibold mb-6">Your Statistics</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[1, 2, 3].map((item) => (
+              <motion.div
+                key={item}
+                variants={fadeIn}
+                className="bg-blue-50 p-6 rounded-lg"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-blue-800">Total Earnings</h3>
+                  <LineChartOutlined className="text-blue-500 text-2xl" />
+                </div>
+                <p className="text-3xl font-bold text-blue-800">$12,345</p>
+                <p className="text-sm text-blue-600">+15% from last month</p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Leaderboard Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.8 }}
+          className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8"
+        >
+          <h2 className="text-2xl font-semibold mb-6">Top Publishers</h2>
+          <div className="space-y-4">
+            {[1, 2, 3, 4, 5].map((item) => (
+              <div key={item} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-4">
+                  <TrophyOutlined className="text-yellow-500 text-2xl" />
+                  <span className="text-lg font-medium">Publisher {item}</span>
+                </div>
+                <span className="text-lg font-bold">${10000 - item * 1000}</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Blog Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7, duration: 0.8 }}
+          className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8"
+        >
+          <h2 className="text-2xl font-semibold mb-6">Latest Blog Posts</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[1, 2, 3].map((item) => (
+              <div key={item} className="bg-gray-50 p-6 rounded-lg">
+                <FileTextOutlined className="text-blue-500 text-2xl mb-4" />
+                <h3 className="text-lg font-semibold mb-2">How to Maximize Your Earnings</h3>
+                <p className="text-gray-600">Learn the best strategies to boost your affiliate revenue.</p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* FAQ Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8, duration: 0.8 }}
+          className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8"
+        >
+          <h2 className="text-2xl font-semibold mb-6">Frequently Asked Questions</h2>
+          <div className="space-y-4">
+            {[1, 2, 3].map((item) => (
+              <div key={item} className="p-4 bg-gray-50 rounded-lg">
+                <QuestionCircleOutlined className="text-blue-500 text-2xl mb-2" />
+                <h3 className="text-lg font-semibold">How do I get started?</h3>
+                <p className="text-gray-600">Sign up, choose a campaign, and start promoting!</p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
       </div>
+
+      {/* Footer */}
+      <motion.footer
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1, duration: 0.8 }}
+        className="bg-white border-t border-gray-200"
+      >
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <h3 className="text-lg font-semibold mb-4">AccessMedia</h3>
+              <p className="text-gray-600">Empowering publishers to earn more.</p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+              <ul className="space-y-2">
+                <li><a href="#" className="text-gray-600 hover:text-blue-500">Home</a></li>
+                <li><a href="#" className="text-gray-600 hover:text-blue-500">Campaigns</a></li>
+                <li><a href="#" className="text-gray-600 hover:text-blue-500">Blog</a></li>
+                <li><a href="#" className="text-gray-600 hover:text-blue-500">Contact</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Legal</h3>
+              <ul className="space-y-2">
+                <li><a href="#" className="text-gray-600 hover:text-blue-500">Privacy Policy</a></li>
+                <li><a href="#" className="text-gray-600 hover:text-blue-500">Terms of Service</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
+              <p className="text-gray-600">Email: support@accessmedia.com</p>
+              <p className="text-gray-600">Phone: +1 (123) 456-7890</p>
+            </div>
+          </div>
+        </div>
+      </motion.footer>
     </div>
-  );
+  )
 }
