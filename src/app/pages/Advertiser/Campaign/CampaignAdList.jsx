@@ -1,39 +1,39 @@
-import { Table, Button, Modal, Input, Select } from "antd";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Table, Button, Modal, Input, Select, message } from "antd";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import getCampaignList from "../../../modules/Campaign/getCampaignList";
+import deleteCampaign from "../../../modules/Campaign/deleteCampaign";
+import editCampaign from "../../../modules/Campaign/editCampaign";
 
 export default function CampaignList() {
-  const [campaigns, setCampaigns] = useState([
-    {
-      id: "1",
-      name: "Shopee Super Sale 12.12",
-      category: "E-commerce",
-      status: "Đang chạy",
-      budget: "50,000,000đ",
-      impressions: 120000,
-      clicks: 8500,
-      conversions: 450,
-      revenue: "12,500,000đ",
-      startDate: "01/12/2023",
-      endDate: "12/12/2023",
-    },
-    {
-      id: "2",
-      name: "Lazada Tết Sale",
-      category: "E-commerce",
-      status: "Sắp diễn ra",
-      budget: "30,000,000đ",
-      impressions: 0,
-      clicks: 0,
-      conversions: 0,
-      revenue: "0đ",
-      startDate: "15/12/2023",
-      endDate: "31/12/2023",
-    },
-  ]);
-
+  const [campaigns, setCampaigns] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchCampaigns();
+  }, []);
+
+  const fetchCampaigns = async () => {
+    setLoading(true);
+    const data = await getCampaignList();
+    setCampaigns(data);
+    setLoading(false);
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa chiến dịch này?")) {
+      try {
+        await deleteCampaign(id);
+        message.success("Chiến dịch đã được xoá!");
+        fetchCampaigns();
+      } catch (error) {
+        message.error("Xóa chiến dịch thất bại!");
+      }
+    }
+  };
 
   const openEditModal = (campaign) => {
     setSelectedCampaign({ ...campaign });
@@ -44,16 +44,13 @@ export default function CampaignList() {
     setSelectedCampaign({ ...selectedCampaign, [e.target.name]: e.target.value });
   };
 
-  const handleEditSubmit = () => {
-    setCampaigns(
-      campaigns.map((camp) => (camp.id === selectedCampaign.id ? selectedCampaign : camp))
-    );
-    setEditModal(false);
-  };
-
-  const handleDelete = (id) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa chiến dịch này?")) {
-      setCampaigns(campaigns.filter((campaign) => campaign.id !== id));
+  const handleEditSubmit = async () => {
+    try {
+      await editCampaign(selectedCampaign.campaignId, selectedCampaign);
+      setEditModal(false);
+      fetchCampaigns();
+    } catch (error) {
+      message.error("Cập nhật chiến dịch thất bại!");
     }
   };
 
@@ -70,9 +67,9 @@ export default function CampaignList() {
       key: "name",
     },
     {
-      title: "Danh mục",
-      dataIndex: "category",
-      key: "category",
+      title: "Mô tả",
+      dataIndex: "description",
+      key: "description",
     },
     {
       title: "Trạng thái",
@@ -81,10 +78,8 @@ export default function CampaignList() {
       render: (status) => (
         <span
           className={`px-2 py-1 rounded ${
-            status === "Đang chạy"
+            status === "Active"
               ? "bg-green-200 text-green-800"
-              : status === "Sắp diễn ra"
-              ? "bg-blue-200 text-blue-800"
               : "bg-yellow-200 text-yellow-800"
           }`}
         >
@@ -93,89 +88,59 @@ export default function CampaignList() {
       ),
     },
     {
-      title: "Ngân sách",
-      dataIndex: "budget",
-      key: "budget",
-    },
-    {
       title: "Thao tác",
       key: "actions",
       render: (text, record) => (
         <div className="space-x-2">
-          {/* Truyền ID động */}
-          <Link to={`/advertiser/campaignList/campaigndetail/${record.id}`}>
+          <Link to={`/advertiser/campaignList/campaigndetail/${record.campaignId}`}>
             <Button type="primary">Chi tiết</Button>
           </Link>
           <Button type="default" onClick={() => openEditModal(record)}>
             Chỉnh sửa
           </Button>
-          <Button danger onClick={() => handleDelete(record.id)}>
+          <Button danger onClick={() => handleDelete(record.campaignId)}>
             Xóa
           </Button>
         </div>
       ),
-    }
-    ,
+    },
   ];
 
   return (
-    <div className="p-4 max-w-[1500px]">
+    <div className="p-4 max-w-[1200px]">
       <div className="p-6 bg-white rounded-md shadow-md min-h-[640px]">
+        
+        {/* Header: Tiêu đề + Nút tạo chiến dịch */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Quản lý chiến dịch</h2>
-          <Link to={`/advertiser/campaignList/CampaignCreating`}>
-            <Button type="primary">+ Tạo chiến dịch</Button>
-          </Link>
+          <Button type="primary" onClick={() => navigate("/advertiser/campaignList/CampaignCreating")}>
+            + Tạo chiến dịch
+          </Button>
         </div>
+
+        {/* Bảng danh sách chiến dịch */}
         <Table
           columns={columns}
-          dataSource={campaigns.map((camp) => ({ ...camp, key: camp.id }))}
+          dataSource={campaigns.map((camp) => ({ ...camp, key: camp.campaignId }))}
           pagination={{ pageSize: 10 }}
           bordered
           scroll={{ x: "max-content", y: 400 }}
+          loading={loading}
         />
       </div>
 
-      {/* Modal chỉnh sửa */}
-      <Modal
-        title="Chỉnh sửa chiến dịch"
-        open={editModal}
-        onCancel={() => setEditModal(false)}
-        onOk={handleEditSubmit}
-      >
+      {/* Modal chỉnh sửa chiến dịch */}
+      <Modal title="Chỉnh sửa chiến dịch" open={editModal} onCancel={() => setEditModal(false)} onOk={handleEditSubmit}>
         <div className="space-y-4">
-          <div>
-            <label className="block font-semibold">Tên chiến dịch</label>
-            <Input
-              name="name"
-              value={selectedCampaign?.name}
-              onChange={handleEditChange}
-            />
-          </div>
-
-          <div>
-            <label className="block font-semibold">Ngân sách</label>
-            <Input
-              name="budget"
-              type="number"
-              value={selectedCampaign?.budget}
-              onChange={handleEditChange}
-            />
-          </div>
-
-          <div>
-            <label className="block font-semibold">Trạng thái</label>
-            <Select
-              name="status"
-              value={selectedCampaign?.status}
-              onChange={(value) => setSelectedCampaign({ ...selectedCampaign, status: value })}
-              className="w-full"
-            >
-              <Select.Option value="Đang chạy">Đang chạy</Select.Option>
-              <Select.Option value="Sắp diễn ra">Sắp diễn ra</Select.Option>
-              <Select.Option value="Tạm dừng">Tạm dừng</Select.Option>
-            </Select>
-          </div>
+          <Input name="name" placeholder="Tên chiến dịch" value={selectedCampaign?.name} onChange={handleEditChange} />
+          <Input name="description" placeholder="Mô tả" value={selectedCampaign?.description} onChange={handleEditChange} />
+          <Input name="budget" placeholder="Ngân sách" type="number" value={selectedCampaign?.budget} onChange={handleEditChange} />
+          <Input name="startDate" placeholder="Ngày bắt đầu" type="date" value={selectedCampaign?.startDate} onChange={handleEditChange} />
+          <Input name="endDate" placeholder="Ngày kết thúc" type="date" value={selectedCampaign?.endDate} onChange={handleEditChange} />
+          <Select name="status" value={selectedCampaign?.status} onChange={(value) => setSelectedCampaign({ ...selectedCampaign, status: value })} className="w-full">
+            <Select.Option value="Active">Đang chạy</Select.Option>
+            <Select.Option value="Paused">Tạm dừng</Select.Option>
+          </Select>
         </div>
       </Modal>
     </div>

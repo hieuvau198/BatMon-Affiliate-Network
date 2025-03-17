@@ -1,0 +1,49 @@
+[
+    {
+      "key": "1",
+      "stt": 1,
+      "tenToKhai": "Tờ khai thuế GTGT",
+      "loaiToKhai": "Tháng",
+      "lanNop": 1,
+      "ngayGuiFile": "2025-02-15",
+      "nguoiGui": "Nguyễn Văn A"
+    },
+    {
+      "key": "2",
+      "stt": 2,
+      "tenToKhai": "Tờ khai thuế TNCN",
+      "loaiToKhai": "Quý",
+      "lanNop": 2,
+      "ngayGuiFile": "2025-03-01",
+      "nguoiGui": "Trần Thị B"
+    },
+    {
+      "key": "3",
+      "stt": 3,
+      "tenToKhai": "Tờ khai thuế TNDN",
+      "loaiToKhai": "Năm",
+      "lanNop": 1,
+      "ngayGuiFile": "2025-03-10",
+      "nguoiGui": "Lê Văn C"
+    },
+    {
+      "key": "4",
+      "stt": 4,
+      "tenToKhai": "Tờ khai thuế GTGT",
+      "loaiToKhai": "Tháng",
+      "lanNop": 2,
+      "ngayGuiFile": "2025-03-15",
+      "nguoiGui": "Phạm Thị D"
+    },
+    {
+      "key": "5",
+      "stt": 5,
+      "tenToKhai": "Tờ khai thuế TNCN",
+      "loaiToKhai": "Quý",
+      "lanNop": 1,
+      "ngayGuiFile": "2025-03-20",
+      "nguoiGui": "Hoàng Văn E"
+    }
+  ]
+
+  
