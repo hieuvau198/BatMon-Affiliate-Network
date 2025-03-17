@@ -59,7 +59,7 @@ export default function MainRoutes() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="dashboard/wallet" element={<Wallet />} />
           <Route path="campaignlist" element={<CampaignList />} />
-          <Route path="campaignlist/campaigndetail" element={<CampaignDetail />} />
+          <Route path="campaignlist/campaigndetail/:campaignId" element={<CampaignDetail />} />
           <Route path="report" element={<ReportLostOrder />} />
           <Route path="fraudtracking" element={<FraudTracking />}/>
         </Route>
