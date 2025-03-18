@@ -56,7 +56,7 @@ export default function CustomHeader() {
     },
     {
       key: "advertiser",
-      label: <Link to="/advertiser" className="text-white hover:text-orange-300">Advertiser</Link>,
+      label: <Link to="/advertiser/dashboard" className="text-white hover:text-orange-300">Advertiser</Link>,
       icon: <TeamOutlined />,
     },
     {
