@@ -51,7 +51,7 @@ export default function CustomHeader() {
   const menuItems = [
     {
       key: "publisher",
-      label: <Link to="/publisher" className="text-white hover:text-orange-300">Publisher</Link>,
+      label: <Link to="/publisher/publisherhome" className="text-white hover:text-orange-300">Publisher</Link>,
       icon: <HomeOutlined />,
     },
     {

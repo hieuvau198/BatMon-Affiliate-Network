@@ -1,11 +1,8 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Input, Select, Table, Tag, Spin } from "antd";
-import { EyeOutlined } from "@ant-design/icons";
 import { motion } from "framer-motion";
-import mockData from "../../Publisher/Campaign/partials/mockdata.json";
+import getCampaign from "../../../modules/Publisher/getCampaign";
 
 const { Option } = Select;
 
@@ -13,13 +10,23 @@ export default function CampaignList() {
   const [campaigns, setCampaigns] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [statusOptions, setStatusOptions] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setTimeout(() => {
-      setCampaigns(mockData);
-      setLoading(false);
-    }, 1000);
+    const fetchCampaigns = async () => {
+      try {
+        const data = await getCampaign();
+        setCampaigns(data);
+        setStatusOptions([...new Set(data.map(campaign => campaign.status))]);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching campaigns:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchCampaigns();
   }, []);
 
   const filteredCampaigns = campaigns.filter((campaign) => {
@@ -71,7 +78,7 @@ export default function CampaignList() {
       dataIndex: "status",
       key: "status",
       render: (status) => (
-        <Tag color={status === "Đang hoạt động" ? "green" : "yellow"}>{status}</Tag>
+        <Tag color={status === "Active" ? "green" : "yellow"}>{status}</Tag>
       ),
     },
   ];
@@ -93,10 +100,17 @@ export default function CampaignList() {
           onChange={(e) => setSearchText(e.target.value)}
           className="md:w-64"
         />
-        <Select value={filterStatus} onChange={setFilterStatus} className="md:w-40">
+        <Select
+          value={filterStatus}
+          onChange={setFilterStatus}
+          className="md:w-40"
+        >
           <Option value="all">Tất cả trạng thái</Option>
-          <Option value="Đang hoạt động">Đang hoạt động</Option>
-          <Option value="Chưa bắt đầu">Chưa bắt đầu</Option>
+          {statusOptions.map((status) => (
+            <Option key={status} value={status}>
+              {status}
+            </Option>
+          ))}
         </Select>
       </div>
       {loading ? (

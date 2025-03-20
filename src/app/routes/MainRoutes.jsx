@@ -1,46 +1,45 @@
 import React, { Suspense, lazy } from "react";
-import { BrowserRouter, Route, Routes, Outlet } from "react-router-dom"; // Thêm Outlet để hiển thị nội dung con
-import AdminLayout from "../layouts/AdminLayout";
-import UserLayout from "../layouts/UserLayout/UserLayout";
-import AboutUs from "../pages/About Us/AboutUs";
+import { BrowserRouter, Route, Routes } from "react-router-dom"; // Thêm Outlet để hiển thị nội dung con
+import Loading from "../components/Loading";
 import Login from "../components/Login/Login"; // Import Login
 import Register from "../components/Register/Register";
-import PublisherLayout from "../layouts/PublisherLayOut";
+import AdminLayout from "../layouts/AdminLayout";
 import AdvertiserLayout from "../layouts/AdvertiserLayout";
-import AdverDashboard from "../pages/Advertiser/Dashboard/AdvertiserDashBoard";
-import Home from "../pages/Home";
-import Loading from "../components/Loading";
-import CampaignList from "../pages/Publisher/Campaign/CampaignList";
+import PublisherLayout from "../layouts/PublisherLayOut";
+import UserLayout from "../layouts/UserLayout/UserLayout";
+import AboutUs from "../pages/About Us/AboutUs";
+import CampaignAdminList from "../pages/Admin/CampaignAdminList/CampaignAdminList";
+import CampaignApproval from "../pages/Admin/CampaignApproval/AdminCampaignApproval";
+import CompliancePolicy from "../pages/Admin/CompliancePolicy/CompliancePolicy";
+import FraudDashboard from "../pages/Admin/FraudDashboard/FraudDashboard";
+import FraudAdjustmentForm from "../pages/Admin/FraudDashboard/partials/FraudAdjustmentForm";
+import FraudAdjustmentsList from "../pages/Admin/FraudDashboard/partials/FraudAdjustmentsList";
+import FraudCaseDetail from "../pages/Admin/FraudDashboard/partials/FraudCaseDetail";
+import FraudCasesList from "../pages/Admin/FraudDashboard/partials/FraudCasesList";
+import FraudDetectionSettings from "../pages/Admin/FraudDashboard/partials/FraudDetectionSettings";
+import FraudReportDetail from "../pages/Admin/FraudDashboard/partials/FraudReportDetail";
+import FraudReportsList from "../pages/Admin/FraudDashboard/partials/FraudReportsList";
+import TaxDashboard from "../pages/Admin/TaxDashboard/TaxDashboard";
+import TaxPayment from "../pages/Admin/TaxPayment/TaxPayment";
+import TaxReporting from "../pages/Admin/TaxReporting/TaxReporting";
 import CampaignAdverList from "../pages/Advertiser/Campaign/CampaignAdList";
-import AdverWallet from "../pages/Advertiser/Dashboard/partials/Wallet";
+import CampaignAdverDetail from "../pages/Advertiser/Campaign/partials/CampaignAdDetail";
+import CampaignAdverCreate from "../pages/Advertiser/Campaign/partials/CampaignCreating";
+import CampaignPerformance from "../pages/Advertiser/Campaign/partials/CampaignPerformance";
+import CampaignPolicy from "../pages/Advertiser/Campaign/partials/CampaignPolicy";
+import AdverDashboard from "../pages/Advertiser/Dashboard/AdvertiserDashBoard";
+import AdverFraudInves from "../pages/Advertiser/Dashboard/partials/FraudInvestigation";
 import AdverFraudRule from "../pages/Advertiser/Dashboard/partials/FraudRule";
 import AdverOrderManagement from "../pages/Advertiser/Dashboard/partials/OrderManagement";
 import PublisherManagement from "../pages/Advertiser/Dashboard/partials/PubManagement";
 import PubMaDetail from "../pages/Advertiser/Dashboard/partials/pubpartials/PubMaDetail";
-import AdverFraudInves from "../pages/Advertiser/Dashboard/partials/FraudInvestigation";
-import CampaignAdverDetail from "../pages/Advertiser/Campaign/partials/CampaignAdDetail";
-import CampaignPolicy from "../pages/Advertiser/Campaign/partials/CampaignPolicy";
-import CampaignPerformance from "../pages/Advertiser/Campaign/partials/CampaignPerformance";
-import CampaignAdverCreate from "../pages/Advertiser/Campaign/partials/CampaignCreating";
+import AdverWallet from "../pages/Advertiser/Dashboard/partials/Wallet";
+import Home from "../pages/Home";
+import CampaignList from "../pages/Publisher/Campaign/CampaignList";
 import CampaignDetail from "../pages/Publisher/Campaign/partials/CampaignDetail";
-import ReportLostOrder from "../pages/Publisher/ReportLostOrder/Report";
 import FraudTracking from "../pages/Publisher/FraudTracking/FraudTracking";
-import Dashboard from "../pages/Publisher/Dashboard/Dashboard";
-import Wallet from "../pages/Publisher/Dashboard/partials/Wallet";
-import CampaignApproval from "../pages/Admin/CampaignApproval/AdminCampaignApproval";
-import CampaignAdminList from "../pages/Admin/CampaignAdminList/CampaignAdminList";
-import TaxReporting from "../pages/Admin/TaxReporting/TaxReporting";
-import CompliancePolicy from "../pages/Admin/CompliancePolicy/CompliancePolicy";
-import TaxDashboard from "../pages/Admin/TaxDashboard/TaxDashboard";
-import TaxPayment from "../pages/Admin/TaxPayment/TaxPayment";
-import FraudDashboard from "../pages/Admin/FraudDashboard/FraudDashboard";
-import FraudReportsList from "../pages/Admin/FraudDashboard/partials/FraudReportsList"
-import FraudCasesList from "../pages/Admin/FraudDashboard/partials/FraudCasesList"
-import FraudCaseDetail from "../pages/Admin/FraudDashboard/partials/FraudCaseDetail";
-import FraudReportDetail from "../pages/Admin/FraudDashboard/partials/FraudReportDetail";
-import FraudAdjustmentForm from "../pages/Admin/FraudDashboard/partials/FraudAdjustmentForm";
-import FraudAdjustmentsList from "../pages/Admin/FraudDashboard/partials/FraudAdjustmentsList";
-import FraudDetectionSettings from "../pages/Admin/FraudDashboard/partials/FraudDetectionSettings";
+import PublisherHome from "../pages/Publisher/PublisherHome/PublisherHome";
+import ReportLostOrder from "../pages/Publisher/ReportLostOrder/Report";
 const PageNotFound = lazy(() => import("../layouts/PageNotFound"));
 const ServerError = lazy(() => import("../layouts/ServerError/ServerError"));
 const Maintenance = lazy(() => import("../layouts/Maintenance/Maintenance"));
@@ -80,6 +79,7 @@ export default function MainRoutes() {
         <Route path="/publisher" element={<PublisherLayout />}>
           {/* <Route path="dashboard" element={<Dashboard />} /> */}
           {/* <Route path="dashboard/wallet" element={<Wallet />} /> */}
+          <Route path="publisherhome" element={<PublisherHome />} />
           <Route path="campaignlist" element={<CampaignList />} />
           <Route path="report" element={<ReportLostOrder />} />
           <Route path="fraudtracking" element={<FraudTracking />}/>
