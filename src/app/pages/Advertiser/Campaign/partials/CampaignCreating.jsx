@@ -47,15 +47,14 @@ export default function CampaignCreating() {
   };
 
   return (
-    <div className="p-6 flex justify-center">
-      <Card className="shadow rounded-lg bg-white p-6 max-w-[1500px] w-full">
+    <div>
+      <div className="shadow-sm rounded-lg bg-white p-6 max-w-[1200px] w-full">
         
         {/* Nút Quay lại */}
         <div className="flex items-center mb-4">
           <Button onClick={() => window.history.back()} className="mr-4">
             ⬅ Quay lại
           </Button>
-          <span className="text-gray-500">Chiến dịch / Tạo mới</span>
         </div>
 
         <h2 className="text-2xl font-semibold mb-4">Tạo Chiến Dịch Mới</h2>
@@ -128,7 +127,7 @@ export default function CampaignCreating() {
             </Button>
           </div>
         </form>
-      </Card>
+      </div>
     </div>
   );
 }
