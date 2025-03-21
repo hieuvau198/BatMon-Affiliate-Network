@@ -28,9 +28,8 @@ export default function CampaignAdDetail() {
   if (!campaign) return <p className="text-center mt-6 text-red-600">Chiến dịch không tồn tại!</p>;
 
   return (
-    <div className="p-6 flex justify-center">
-      <Card className="shadow rounded-lg bg-white p-6 max-w-[1200px] w-full">
-         
+    <div>
+      <div className="shadow-sm rounded-xl bg-white p-6 max-w-[1200px] w-full">
         {/* Điều hướng */}
         <div className="flex justify-between items-center mb-4">
           <Button onClick={() => navigate(-1)} className="mr-4">
@@ -40,7 +39,7 @@ export default function CampaignAdDetail() {
 
         {/* Thông tin tổng quan */}
         <h2 className="text-2xl font-semibold mb-4">{campaign.name}</h2>
-        <Card className="bg-gray-50 mb-6">
+        <Card className="bg-white mb-6 shadow-md rounded-xl p-4">
           <p><strong>Mô tả:</strong> {campaign.description}</p>
           <p><strong>Ngân sách:</strong> {campaign.budget.toLocaleString()} VND</p>
           <p><strong>Hạn mức ngày:</strong> {campaign.dailyCap.toLocaleString()} VND</p>
@@ -50,7 +49,7 @@ export default function CampaignAdDetail() {
         </Card>
 
         {/* Hiệu suất thực tế */}
-        <Card className="bg-gray-50 mb-6">
+        <Card className="bg-white mb-6 shadow-md rounded-xl p-4">
           <h3 className="text-lg font-semibold">📊 Hiệu suất chiến dịch</h3>
           <Table
             columns={[
@@ -64,11 +63,13 @@ export default function CampaignAdDetail() {
               { metric: "Doanh Thu", value: "50,000,000 VND" }
             ]}
             pagination={false}
+            bordered={true}
+            className="campaign-table"
           />
         </Card>
 
         {/* Danh sách Publisher */}
-        <Card className="bg-gray-50 mb-6">
+        <Card className="bg-white mb-6 shadow-md rounded-xl p-4">
           <h3 className="text-lg font-semibold">👥 Publisher đang chạy chiến dịch</h3>
           <Table
             columns={[
@@ -83,11 +84,13 @@ export default function CampaignAdDetail() {
               { name: "MarketingHub", clicks: "2500", conversions: "200", revenue: "5,000,000 VND" }
             ]}
             pagination={false}
+            bordered={true}
+            className="campaign-table"
           />
         </Card>
 
         {/* Chính sách & Hạn chế */}
-        <Card className="bg-gray-50 mb-6">
+        <Card className="bg-white mb-6 shadow-md rounded-xl p-4">
           <h3 className="text-lg font-semibold">📜 Chính sách & Hạn chế</h3>
           <ul className="list-disc pl-6">
             <li>Không được sử dụng từ khóa thương hiệu trên quảng cáo.</li>
@@ -97,7 +100,7 @@ export default function CampaignAdDetail() {
         </Card>
 
         {/* Lịch sử thay đổi */}
-        <Card className="bg-gray-50 mb-6">
+        <Card className="bg-white mb-6 shadow-md rounded-xl p-4">
           <h3 className="text-lg font-semibold">🕒 Lịch sử thay đổi</h3>
           <Table
             columns={[
@@ -109,11 +112,13 @@ export default function CampaignAdDetail() {
               { date: "2025-03-03", change: "Thêm Publisher mới: MarketingHub" }
             ]}
             pagination={false}
+            bordered={true}
+            className="campaign-table"
           />
         </Card>
 
         {/* Thanh toán */}
-        <Card className="bg-gray-50 mb-6">
+        <Card className="bg-white mb-6 shadow-md rounded-xl p-4">
           <h3 className="text-lg font-semibold">💰 Thanh toán & Billing</h3>
           <Table
             columns={[
@@ -126,6 +131,8 @@ export default function CampaignAdDetail() {
               { date: "2025-02-10", amount: "20,000,000 VND", status: "Đã thanh toán" }
             ]}
             pagination={false}
+            bordered={true}
+            className="campaign-table"
           />
         </Card>
 
@@ -137,11 +144,11 @@ export default function CampaignAdDetail() {
           <Button type="default" onClick={() => navigate(`/advertiser/campaignList/campaigndetail/${campaignId}/CampaignPerformance`)}>
             📊 Xem hiệu suất
           </Button>
-          <Button type="default" onClick={() => navigate(`/advertiser/campaignList/${campaignId}/edit`)}>
+          {/* <Button type="default" onClick={() => navigate(`/advertiser/campaignList/${campaignId}/edit`)}>
             ✏️ Chỉnh sửa
-          </Button>
+          </Button> */}
         </div>
-      </Card>
+      </div>
     </div>
   );
 }
