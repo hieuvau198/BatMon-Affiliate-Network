@@ -1,53 +1,54 @@
 import React, { useState, useEffect } from "react";
 import { Table, Card, Tag, Tooltip, Spin, Empty, Input, Badge } from "antd";
-import { InfoCircleOutlined, SafetyOutlined , SearchOutlined, EyeOutlined } from "@ant-design/icons";
+import { InfoCircleOutlined, SafetyOutlined, SearchOutlined, EyeOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 const FraudRule = () => {
   const [rules, setRules] = useState([
     { 
       id: 1, 
-      ruleName: "Block High-Risk IPs", 
-      description: "Block IPs with fraudulent activity history or from suspicious locations.",
-      severity: "high",
-      status: "active",
+      ruleName: "Chặn IP Rủi Ro Cao", 
+      description: "Chặn các IP có lịch sử hoạt động gian lận hoặc từ các vị trí đáng ngờ.",
+      severity: "cao",
+      status: "hoạt động",
       lastUpdated: "2025-03-10T14:30:00",
-      category: "IP Filtering"
+      category: "Lọc IP"
     },
     { 
       id: 2, 
-      ruleName: "Multiple Accounts Detection", 
-      description: "Detect multiple accounts created from the same IP address or device fingerprint.",
-      severity: "medium",
-      status: "active",
+      ruleName: "Phát Hiện Nhiều Tài Khoản", 
+      description: "Phát hiện nhiều tài khoản được tạo từ cùng một địa chỉ IP hoặc dấu vân tay thiết bị.",
+      severity: "trung bình",
+      status: "hoạt động",
       lastUpdated: "2025-03-12T09:15:00",
-      category: "Account Security"
+      category: "Bảo Mật Tài Khoản"
     },
     { 
       id: 3, 
-      ruleName: "Click Spamming Prevention", 
-      description: "Prevent excessive clicks within a short time period from the same source.",
-      severity: "high",
-      status: "active",
+      ruleName: "Ngăn Chặn Nhấp Chuột Gian Lận", 
+      description: "Ngăn chặn số lượng nhấp chuột quá mức trong một khoảng thời gian ngắn từ cùng một nguồn.",
+      severity: "cao",
+      status: "hoạt động",
       lastUpdated: "2025-03-15T16:45:00",
-      category: "Click Fraud"
+      category: "Gian Lận Nhấp Chuột"
     },
     { 
       id: 4, 
-      ruleName: "Conversion Time Validation", 
-      description: "Flag conversions that occur too quickly after click as potentially fraudulent.",
-      severity: "medium",
-      status: "active", 
+      ruleName: "Xác Thực Thời Gian Chuyển Đổi", 
+      description: "Đánh dấu các chuyển đổi xảy ra quá nhanh sau nhấp chuột là có khả năng gian lận.",
+      severity: "trung bình",
+      status: "hoạt động", 
       lastUpdated: "2025-03-20T11:20:00",
-      category: "Conversion Validation"
+      category: "Xác Thực Chuyển Đổi"
     },
     { 
       id: 5, 
-      ruleName: "Device Fingerprinting", 
-      description: "Identify and flag suspicious devices based on browser and hardware characteristics.",
-      severity: "low",
-      status: "active",
+      ruleName: "Dấu Vân Tay Thiết Bị", 
+      description: "Xác định và đánh dấu các thiết bị đáng ngờ dựa trên đặc điểm trình duyệt và phần cứng.",
+      severity: "thấp",
+      status: "hoạt động",
       lastUpdated: "2025-03-22T08:30:00",
-      category: "Device Filtering"
+      category: "Lọc Thiết Bị"
     }
   ]);
   
@@ -55,8 +56,9 @@ const FraudRule = () => {
   const [searchText, setSearchText] = useState("");
   const [selectedRule, setSelectedRule] = useState(null);
   const [isDetailsVisible, setIsDetailsVisible] = useState(false);
-  
-  // Simulate loading
+  const navigate = useNavigate();
+
+  // Mô phỏng tải dữ liệu
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
@@ -65,7 +67,7 @@ const FraudRule = () => {
     return () => clearTimeout(timer);
   }, []);
   
-  // Filter rules based on search
+  // Lọc quy tắc dựa trên tìm kiếm
   const filteredRules = rules.filter(
     rule => 
       rule.ruleName.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -73,20 +75,20 @@ const FraudRule = () => {
       rule.category.toLowerCase().includes(searchText.toLowerCase())
   );
   
-  // Get color for severity tag
+  // Lấy màu cho thẻ mức độ nghiêm trọng
   const getSeverityColor = (severity) => {
     switch(severity) {
-      case 'high': return 'red';
-      case 'medium': return 'orange';
-      case 'low': return 'green';
+      case 'cao': return 'red';
+      case 'trung bình': return 'orange';
+      case 'thấp': return 'green';
       default: return 'blue';
     }
   };
   
-  // Format date
+  // Định dạng ngày tháng
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
+    return date.toLocaleDateString('vi-VN', { 
       year: 'numeric', 
       month: 'short', 
       day: 'numeric',
@@ -95,13 +97,12 @@ const FraudRule = () => {
     });
   };
   
-  // View rule details
+  // Xem chi tiết quy tắc
   const handleViewDetails = (rule) => {
-    setSelectedRule(rule);
-    setIsDetailsVisible(true);
+    navigate(`/advertiser/fraud-rule/${rule.id}`, { state: { rule } });
   };
   
-  // Close details view
+  // Đóng chế độ xem chi tiết
   const handleCloseDetails = () => {
     setIsDetailsVisible(false);
     setTimeout(() => setSelectedRule(null), 300);
@@ -109,13 +110,13 @@ const FraudRule = () => {
   
   const columns = [
     {
-      title: "No.",
+      title: "Số.",
       key: "no",
       width: 70,
       render: (text, record, index) => index + 1,
     },
     {
-      title: "Rule Name",
+      title: "Tên Quy Tắc",
       dataIndex: "ruleName",
       key: "ruleName",
       render: (text, record) => (
@@ -123,7 +124,7 @@ const FraudRule = () => {
       )
     },
     {
-      title: "Category",
+      title: "Danh Mục",
       dataIndex: "category",
       key: "category",
       render: (category) => (
@@ -131,7 +132,7 @@ const FraudRule = () => {
       )
     },
     {
-      title: "Severity",
+      title: "Mức Độ Nghiêm Trọng",
       dataIndex: "severity",
       key: "severity",
       width: 120,
@@ -142,30 +143,30 @@ const FraudRule = () => {
       )
     },
     {
-      title: "Status",
+      title: "Trạng Thái",
       dataIndex: "status",
       key: "status",
       width: 120,
       render: (status) => (
         <Badge 
-          status={status === "active" ? "success" : "default"} 
+          status={status === "hoạt động" ? "success" : "default"} 
           text={<span className="capitalize">{status}</span>} 
         />
       )
     },
     {
-      title: "Last Updated",
+      title: "Cập Nhật Lần Cuối",
       dataIndex: "lastUpdated",
       key: "lastUpdated",
       width: 200,
       render: (date) => formatDate(date)
     },
     {
-      title: "Actions",
+      title: "Hành Động",
       key: "actions",
       width: 100,
       render: (text, record) => (
-        <Tooltip title="View Details">
+        <Tooltip title="Xem Chi Tiết">
           <button 
             onClick={() => handleViewDetails(record)}
             className="text-blue-500 hover:text-blue-700 px-2 py-1 rounded-md hover:bg-blue-50 transition-all"
@@ -178,27 +179,27 @@ const FraudRule = () => {
   ];
 
   return (
-    <div className="p-4 max-w-full">
+    <div className="p-4 max-w-[1200px]">
       <div className="shadow-lg rounded-lg overflow-hidden p-0">
         <div className="bg-gradient-to-r from-blue-600 to-blue-800 p-6">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
-              <SafetyOutlined  className="text-white text-2xl mr-3" />
-              <h1 className="text-xl font-bold text-white m-0">Fraud Protection Rules</h1>
+              <SafetyOutlined className="text-white text-2xl mr-3" />
+              <h1 className="text-xl font-bold text-white m-0">Quy Tắc Bảo Vệ Chống Gian Lận</h1>
             </div>
-            <Tooltip title="These rules are configured by the network admin to protect against fraudulent activities.">
+            <Tooltip title="Các quy tắc này được cấu hình bởi quản trị viên mạng để bảo vệ chống lại các hoạt động gian lận.">
               <InfoCircleOutlined className="text-white text-lg cursor-pointer" />
             </Tooltip>
           </div>
           <p className="text-blue-100 mt-2 mb-0">
-            These rules determine how the system identifies and prevents fraudulent activities in your advertising campaigns.
+            Các quy tắc này xác định cách hệ thống nhận diện và ngăn chặn các hoạt động gian lận trong chiến dịch quảng cáo của bạn.
           </p>
         </div>
         
         <div className="p-6">
           <div className="mb-6">
             <Input
-              placeholder="Search rules by name, category or description"
+              placeholder="Tìm kiếm quy tắc theo tên, danh mục hoặc mô tả"
               prefix={<SearchOutlined className="text-gray-400" />}
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
@@ -209,7 +210,7 @@ const FraudRule = () => {
           
           {loading ? (
             <div className="flex justify-center items-center py-20">
-              <Spin size="large" tip="Loading fraud rules..." />
+              <Spin size="large" tip="Đang tải các quy tắc chống gian lận..." />
             </div>
           ) : filteredRules.length > 0 ? (
             <Table
@@ -218,7 +219,7 @@ const FraudRule = () => {
               pagination={{ 
                 pageSize: 10,
                 showSizeChanger: false,
-                showTotal: (total) => `Total ${total} rules`,
+                showTotal: (total) => `Tổng cộng ${total} quy tắc`,
                 className: "mb-0"
               }}
               bordered={false}
@@ -228,14 +229,14 @@ const FraudRule = () => {
             />
           ) : (
             <Empty 
-              description="No matching rules found" 
+              description="Không tìm thấy quy tắc phù hợp" 
               image={Empty.PRESENTED_IMAGE_SIMPLE}
             />
           )}
         </div>
       </div>
       
-      {/* Rule Details Drawer/Modal */}
+      {/* Drawer/Modal Chi Tiết Quy Tắc */}
       {selectedRule && (
         <div className={`fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center transition-opacity ${isDetailsVisible ? 'opacity-100' : 'opacity-0'}`} onClick={handleCloseDetails}>
           <div 
@@ -249,30 +250,30 @@ const FraudRule = () => {
             <div className="p-6">
               <div className="grid grid-cols-2 gap-6 mb-6">
                 <div>
-                  <p className="text-gray-500 text-sm mb-1">Category</p>
+                  <p className="text-gray-500 text-sm mb-1">Danh Mục</p>
                   <p className="font-medium">{selectedRule.category}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500 text-sm mb-1">Severity</p>
+                  <p className="text-gray-500 text-sm mb-1">Mức Độ Nghiêm Trọng</p>
                   <Tag color={getSeverityColor(selectedRule.severity)} className="capitalize">
                     {selectedRule.severity}
                   </Tag>
                 </div>
                 <div>
-                  <p className="text-gray-500 text-sm mb-1">Status</p>
+                  <p className="text-gray-500 text-sm mb-1">Trạng Thái</p>
                   <Badge 
-                    status={selectedRule.status === "active" ? "success" : "default"} 
+                    status={selectedRule.status === "hoạt động" ? "success" : "default"} 
                     text={<span className="capitalize">{selectedRule.status}</span>} 
                   />
                 </div>
                 <div>
-                  <p className="text-gray-500 text-sm mb-1">Last Updated</p>
+                  <p className="text-gray-500 text-sm mb-1">Cập Nhật Lần Cuối</p>
                   <p className="font-medium">{formatDate(selectedRule.lastUpdated)}</p>
                 </div>
               </div>
               
               <div className="mb-6">
-                <p className="text-gray-500 text-sm mb-1">Description</p>
+                <p className="text-gray-500 text-sm mb-1">Mô Tả</p>
                 <p className="text-gray-800">{selectedRule.description}</p>
               </div>
               
@@ -280,7 +281,7 @@ const FraudRule = () => {
                 <div className="flex items-start">
                   <InfoCircleOutlined className="text-blue-500 mt-1 mr-2" />
                   <p className="text-blue-800 text-sm m-0">
-                    This rule is managed by the network administrator. If you believe this rule is affecting your legitimate traffic, please contact support.
+                    Quy tắc này được quản lý bởi quản trị viên mạng. Nếu bạn cho rằng quy tắc này đang ảnh hưởng đến lưu lượng hợp pháp của bạn, vui lòng liên hệ với bộ phận hỗ trợ.
                   </p>
                 </div>
               </div>
@@ -291,7 +292,7 @@ const FraudRule = () => {
                 onClick={handleCloseDetails}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
               >
-                Close
+                Đóng
               </button>
             </div>
           </div>

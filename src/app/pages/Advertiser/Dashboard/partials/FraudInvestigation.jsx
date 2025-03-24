@@ -17,95 +17,95 @@ export default function FraudInvestigation() {
   const [investigations, setInvestigations] = useState([
     {
       id: "1",
-      caseName: "Click Spamming Investigation",
-      status: "Under Review",
-      severity: "High",
-      description: "Unusual high click rate detected from multiple IPs within a short time period. Pattern suggests automated tool usage.",
+      caseName: "Điều Tra Gian Lận Nhấp Chuột",
+      status: "Đang Xem Xét",
+      severity: "Cao",
+      description: "Phát hiện tỷ lệ nhấp chuột cao bất thường từ nhiều IP trong thời gian ngắn. Mẫu hình cho thấy sử dụng công cụ tự động.",
       reportedDate: "2025-03-10",
-      affectedCampaigns: ["Summer Promotion", "New User Signup"],
-      reportedBy: "System Monitoring",
+      affectedCampaigns: ["Khuyến Mãi Mùa Hè", "Đăng Ký Người Dùng Mới"],
+      reportedBy: "Hệ Thống Giám Sát",
       expectedResolution: "2025-03-28",
       activityLog: [
-        { date: "2025-03-10", action: "Case opened", user: "System" },
-        { date: "2025-03-12", action: "Initial analysis completed", user: "John (Fraud Team)" },
-        { date: "2025-03-15", action: "Additional data requested", user: "Sarah (Fraud Team)" },
-        { date: "2025-03-18", action: "Analysis in progress", user: "John (Fraud Team)" }
+        { date: "2025-03-10", action: "Mở vụ việc", user: "Hệ Thống" },
+        { date: "2025-03-12", action: "Hoàn thành phân tích ban đầu", user: "John (Đội Chống Gian Lận)" },
+        { date: "2025-03-15", action: "Yêu cầu thêm dữ liệu", user: "Sarah (Đội Chống Gian Lận)" },
+        { date: "2025-03-18", action: "Đang tiến hành phân tích", user: "John (Đội Chống Gian Lận)" }
       ]
     },
     {
       id: "2",
-      caseName: "Multiple Account Abuse",
-      status: "Resolved",
-      severity: "Medium",
-      description: "User suspected of using multiple accounts for fraud. IP analysis confirms same device creating multiple accounts to claim bonuses.",
+      caseName: "Lạm Dụng Nhiều Tài Khoản",
+      status: "Đã Giải Quyết",
+      severity: "Trung Bình",
+      description: "Nghi ngờ người dùng sử dụng nhiều tài khoản để gian lận. Phân tích IP xác nhận cùng một thiết bị tạo nhiều tài khoản để nhận thưởng.",
       reportedDate: "2025-02-25",
-      affectedCampaigns: ["Referral Program"],
-      reportedBy: "Manual Review",
+      affectedCampaigns: ["Chương Trình Giới Thiệu"],
+      reportedBy: "Kiểm Tra Thủ Công",
       expectedResolution: "2025-03-10",
       resolvedDate: "2025-03-08",
-      resolution: "Accounts terminated, fraudulent conversions reversed",
+      resolution: "Các tài khoản bị chấm dứt, các chuyển đổi gian lận đã bị đảo ngược",
       activityLog: [
-        { date: "2025-02-25", action: "Case opened", user: "Melissa (Compliance)" },
-        { date: "2025-02-27", action: "Investigation started", user: "John (Fraud Team)" },
-        { date: "2025-03-02", action: "Evidence collected", user: "John (Fraud Team)" },
-        { date: "2025-03-05", action: "Decision made to terminate accounts", user: "David (Manager)" },
-        { date: "2025-03-08", action: "Case resolved", user: "John (Fraud Team)" }
+        { date: "2025-02-25", action: "Mở vụ việc", user: "Melissa (Tuân Thủ)" },
+        { date: "2025-02-27", action: "Bắt đầu điều tra", user: "John (Đội Chống Gian Lận)" },
+        { date: "2025-03-02", action: "Thu thập bằng chứng", user: "John (Đội Chống Gian Lận)" },
+        { date: "2025-03-05", action: "Quyết định chấm dứt tài khoản", user: "David (Quản Lý)" },
+        { date: "2025-03-08", action: "Giải quyết vụ việc", user: "John (Đội Chống Gian Lận)" }
       ]
     },
     {
       id: "3",
-      caseName: "Conversion Attribution Manipulation",
-      status: "Under Review",
-      severity: "High",
-      description: "Potential manipulation of tracking parameters to claim attribution for conversions not driven by the affiliate.",
+      caseName: "Thao Túng Ghi Công Chuyển Đổi",
+      status: "Đang Xem Xét",
+      severity: "Cao",
+      description: "Nghi ngờ thao túng các tham số theo dõi để yêu cầu ghi công cho các chuyển đổi không do đơn vị liên kết mang lại.",
       reportedDate: "2025-03-15",
-      affectedCampaigns: ["Premium Product Launch", "Holiday Special"],
-      reportedBy: "Data Analysis Team",
+      affectedCampaigns: ["Ra Mắt Sản Phẩm Cao Cấp", "Ưu Đãi Đặc Biệt Ngày Lễ"],
+      reportedBy: "Đội Phân Tích Dữ Liệu",
       expectedResolution: "2025-04-05",
       activityLog: [
-        { date: "2025-03-15", action: "Case opened", user: "Emily (Analytics)" },
-        { date: "2025-03-17", action: "Initial evidence review", user: "Michael (Fraud Team)" },
-        { date: "2025-03-20", action: "Technical analysis started", user: "Michael (Fraud Team)" }
+        { date: "2025-03-15", action: "Mở vụ việc", user: "Emily (Phân Tích)" },
+        { date: "2025-03-17", action: "Xem xét bằng chứng ban đầu", user: "Michael (Đội Chống Gian Lận)" },
+        { date: "2025-03-20", action: "Bắt đầu phân tích kỹ thuật", user: "Michael (Đội Chống Gian Lận)" }
       ]
     },
     {
       id: "4",
-      caseName: "Cookie Stuffing Detection",
-      status: "Closed",
-      severity: "Medium",
-      description: "Affiliate suspected of placing multiple tracking cookies without user consent to claim commission on future purchases.",
+      caseName: "Phát Hiện Nhồi Cookie",
+      status: "Đã Đóng",
+      severity: "Trung Bình",
+      description: "Nghi ngờ đơn vị liên kết đặt nhiều cookie theo dõi mà không có sự đồng ý của người dùng để yêu cầu hoa hồng từ các giao dịch sau này.",
       reportedDate: "2025-01-18",
-      affectedCampaigns: ["Winter Sale"],
-      reportedBy: "Technical Monitoring",
+      affectedCampaigns: ["Giảm Giá Mùa Đông"],
+      reportedBy: "Giám Sát Kỹ Thuật",
       expectedResolution: "2025-02-10",
       resolvedDate: "2025-02-07",
-      resolution: "Investigation confirmed. Affiliate removed from program and payments withheld.",
+      resolution: "Điều tra xác nhận. Đơn vị liên kết bị xóa khỏi chương trình và giữ lại các khoản thanh toán.",
       activityLog: [
-        { date: "2025-01-18", action: "Case opened", user: "System" },
-        { date: "2025-01-20", action: "Technical evidence collected", user: "Alex (Technical Team)" },
-        { date: "2025-01-28", action: "Affiliate notified", user: "Sarah (Compliance)" },
-        { date: "2025-02-05", action: "Response reviewed", user: "Sarah (Compliance)" },
-        { date: "2025-02-07", action: "Case closed with action", user: "David (Manager)" }
+        { date: "2025-01-18", action: "Mở vụ việc", user: "Hệ Thống" },
+        { date: "2025-01-20", action: "Thu thập bằng chứng kỹ thuật", user: "Alex (Đội Kỹ Thuật)" },
+        { date: "2025-01-28", action: "Thông báo cho đơn vị liên kết", user: "Sarah (Tuân Thủ)" },
+        { date: "2025-02-05", action: "Xem xét phản hồi", user: "Sarah (Tuân Thủ)" },
+        { date: "2025-02-07", action: "Đóng vụ việc với biện pháp xử lý", user: "David (Quản Lý)" }
       ]
     },
     {
       id: "5",
-      caseName: "Incentivized Traffic Violation",
-      status: "Resolved",
-      severity: "Low",
-      description: "Affiliate potentially using incentivized traffic sources not allowed by campaign terms.",
+      caseName: "Vi Phạm Lưu Lượng Khuyến Khích",
+      status: "Đã Giải Quyết",
+      severity: "Thấp",
+      description: "Đơn vị liên kết có khả năng sử dụng nguồn lưu lượng khuyến khích không được phép theo điều khoản chiến dịch.",
       reportedDate: "2025-03-05",
-      affectedCampaigns: ["App Install Campaign"],
-      reportedBy: "Quality Control Team",
+      affectedCampaigns: ["Chiến Dịch Cài Đặt Ứng Dụng"],
+      reportedBy: "Đội Kiểm Soát Chất Lượng",
       expectedResolution: "2025-03-20",
       resolvedDate: "2025-03-18",
-      resolution: "Affiliate warned and provided additional training on allowed traffic sources.",
+      resolution: "Đơn vị liên kết được cảnh báo và cung cấp thêm đào tạo về nguồn lưu lượng được phép.",
       activityLog: [
-        { date: "2025-03-05", action: "Case opened", user: "Tina (QA Team)" },
-        { date: "2025-03-08", action: "Traffic source analysis", user: "Michael (Fraud Team)" },
-        { date: "2025-03-12", action: "Affiliate contacted for explanation", user: "Sarah (Compliance)" },
-        { date: "2025-03-15", action: "Response received and reviewed", user: "Sarah (Compliance)" },
-        { date: "2025-03-18", action: "Case resolved with warning", user: "Sarah (Compliance)" }
+        { date: "2025-03-05", action: "Mở vụ việc", user: "Tina (Đội QA)" },
+        { date: "2025-03-08", action: "Phân tích nguồn lưu lượng", user: "Michael (Đội Chống Gian Lận)" },
+        { date: "2025-03-12", action: "Liên hệ đơn vị liên kết để giải thích", user: "Sarah (Tuân Thủ)" },
+        { date: "2025-03-15", action: "Nhận và xem xét phản hồi", user: "Sarah (Tuân Thủ)" },
+        { date: "2025-03-18", action: "Giải quyết vụ việc với cảnh báo", user: "Sarah (Tuân Thủ)" }
       ]
     }
   ]);
@@ -115,7 +115,7 @@ export default function FraudInvestigation() {
   const [activeTab, setActiveTab] = useState("all");
   const navigate = useNavigate();
   
-  // Simulate loading
+  // Mô phỏng tải dữ liệu
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
@@ -124,84 +124,83 @@ export default function FraudInvestigation() {
     return () => clearTimeout(timer);
   }, []);
   
-  // Filter investigations based on search and active tab
+  // Lọc các vụ điều tra dựa trên tìm kiếm và tab hoạt động
   const filteredInvestigations = investigations.filter(
     caseItem => 
       (caseItem.caseName.toLowerCase().includes(searchText.toLowerCase()) ||
        caseItem.description.toLowerCase().includes(searchText.toLowerCase())) &&
       (activeTab === "all" || 
-       (activeTab === "active" && (caseItem.status === "Under Review")) ||
-       (activeTab === "resolved" && (caseItem.status === "Resolved" || caseItem.status === "Closed")))
+       (activeTab === "active" && (caseItem.status === "Đang Xem Xét")) ||
+       (activeTab === "resolved" && (caseItem.status === "Đã Giải Quyết" || caseItem.status === "Đã Đóng")))
   );
 
-  // Helper function for status and severity colors
+  // Hàm hỗ trợ màu sắc cho trạng thái và mức độ nghiêm trọng
   const getStatusColor = (status) => {
     switch(status) {
-      case 'Under Review': return 'blue';
-      case 'Resolved': return 'green';
-      case 'Closed': return 'gray';
+      case 'Đang Xem Xét': return 'blue';
+      case 'Đã Giải Quyết': return 'green';
+      case 'Đã Đóng': return 'gray';
       default: return 'default';
     }
   };
   
   const getSeverityColor = (severity) => {
     switch(severity) {
-      case 'High': return 'red';
-      case 'Medium': return 'orange';
-      case 'Low': return 'green';
+      case 'Cao': return 'red';
+      case 'Trung Bình': return 'orange';
+      case 'Thấp': return 'green';
       default: return 'blue';
     }
   };
   
-  // Format date
+  // Định dạng ngày tháng
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
+    return date.toLocaleDateString('vi-VN', { 
       year: 'numeric', 
       month: 'short', 
       day: 'numeric' 
     });
   };
   
-  // View case details
+  // Xem chi tiết vụ việc
   const handleViewDetails = (caseItem) => {
     navigate(`${caseItem.id}`, { state: { caseData: caseItem } });
   };
 
-  // Status icon
+  // Biểu tượng trạng thái
   const getStatusIcon = (status) => {
     switch(status) {
-      case 'Under Review': return <ClockCircleOutlined className="text-blue-500" />;
-      case 'Resolved': return <CheckCircleOutlined className="text-green-500" />;
-      case 'Closed': return <CheckCircleOutlined className="text-gray-500" />;
+      case 'Đang Xem Xét': return <ClockCircleOutlined className="text-blue-500" />;
+      case 'Đã Giải Quyết': return <CheckCircleOutlined className="text-green-500" />;
+      case 'Đã Đóng': return <CheckCircleOutlined className="text-gray-500" />;
       default: return <InfoCircleOutlined />;
     }
   };
   
-  
   const columns = [
     {
-      title: "ID",
+      title: "Số.",
       dataIndex: "id",
       key: "id",
       width: 70,
-      render: (id) => <span className="text-gray-500">#{id}</span>,
+      render: (id) => <span className="text-gray-500">{id}</span>,
     },
     {
-      title: "Case",
+      title: "Vụ Việc",
       dataIndex: "caseName",
       key: "caseName",
       render: (text, record) => (
         <div>
           <div className="font-medium">{text}</div>
           <div className="text-xs text-gray-500 mt-1">
-            Reported: {formatDate(record.reportedDate)}
+            Báo cáo: {formatDate(record.reportedDate)}
           </div>
         </div>
       )
     },
     {
-      title: "Severity",
+      title: "Mức Độ Nghiêm Trọng",
       dataIndex: "severity",
       key: "severity",
       width: 120,
@@ -212,7 +211,7 @@ export default function FraudInvestigation() {
       )
     },
     {
-      title: "Status",
+      title: "Trạng Thái",
       dataIndex: "status",
       key: "status",
       width: 150,
@@ -224,44 +223,44 @@ export default function FraudInvestigation() {
       )
     },
     {
-      title: "Affected Campaigns",
+      title: "Chiến Dịch Bị Ảnh Hưởng",
       dataIndex: "affectedCampaigns",
       key: "affectedCampaigns",
       render: (campaigns) => (
-        <div>
+        <div className="flex flex-col gap-1">
           {campaigns.map((campaign, index) => (
-            <Tag key={index} className="mr-1 mb-1">
-              {campaign}
-            </Tag>
+            <Tag key={index} className="w-fit">{campaign}</Tag>
           ))}
         </div>
       )
-    },
+    },    
     {
-      title: "Expected Resolution",
+      title: "Ngày Dự Kiến Giải Quyết",
       dataIndex: "expectedResolution",
       key: "expectedResolution",
       width: 150,
       render: (date, record) => (
         <span>
           {record.resolvedDate ? (
-            <span className="text-green-600">{formatDate(record.resolvedDate)}</span>
+            <span className="text-green-600">
+              {formatDate(record.resolvedDate)}
+            </span>
           ) : (
             formatDate(date)
           )}
         </span>
-      )
+      ),
     },
     {
       title: "",
       key: "actions",
       width: 70,
       render: (text, record) => (
-        <Tooltip title="View Details">
+        <Tooltip title="Xem Chi Tiết">
           <button 
             onClick={() => handleViewDetails(record)}
             className="text-blue-500 hover:text-blue-700 flex items-center justify-center w-8 h-8 rounded-full hover:bg-blue-50 transition-all"
-            aria-label="View case details"
+            aria-label="Xem chi tiết vụ việc"
           >
             <EyeOutlined />
           </button>
@@ -273,23 +272,23 @@ export default function FraudInvestigation() {
   return (
     <div className="p-4 max-w-[1120px]">
       <div className="shadow-lg rounded-lg overflow-hidden p-0">
-        {/* Header Gradient */}
+        {/* Gradient tiêu đề */}
         <div className="bg-gradient-to-r from-purple-600 to-indigo-800 p-6">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
               <AuditOutlined className="text-white text-2xl mr-3" />
-              <h1 className="text-xl font-bold text-white m-0">Fraud Investigation Cases</h1>
+              <h1 className="text-xl font-bold text-white m-0">Các Vụ Điều Tra Gian Lận</h1>
             </div>
-            <Tooltip title="These are investigations into potential fraudulent activities affecting your campaigns.">
+            <Tooltip title="Đây là các cuộc điều tra về các hoạt động gian lận tiềm ẩn ảnh hưởng đến chiến dịch của bạn.">
               <InfoCircleOutlined className="text-white text-lg cursor-pointer" />
             </Tooltip>
           </div>
           <p className="text-indigo-100 mt-2 mb-0">
-            View ongoing and past fraud investigations that may affect your advertising campaigns.
+            Xem các cuộc điều tra gian lận đang diễn ra và đã qua có thể ảnh hưởng đến chiến dịch quảng cáo của bạn.
           </p>  
         </div>
 
-        {/* Content */}
+        {/* Nội dung */}
         <div className="p-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 space-y-4 md:space-y-0">
             <Tabs 
@@ -297,12 +296,12 @@ export default function FraudInvestigation() {
               onChange={setActiveTab}
               className="fraud-tabs"
             >
-              <TabPane tab="All Cases" key="all" />
+              <TabPane tab="Tất Cả Vụ Việc" key="all" />
               <TabPane 
                 tab={
                   <span>
-                    Active Investigations <Badge 
-                      count={investigations.filter(c => c.status === "Under Review").length} 
+                    Điều Tra Đang Hoạt Động <Badge 
+                      count={investigations.filter(c => c.status === "Đang Xem Xét").length} 
                       style={{ backgroundColor: '#1890ff' }} 
                     />
                   </span>
@@ -312,8 +311,8 @@ export default function FraudInvestigation() {
               <TabPane 
                 tab={
                   <span>
-                    Resolved Cases <Badge 
-                      count={investigations.filter(c => c.status === "Resolved" || c.status === "Closed").length}
+                    Vụ Việc Đã Giải Quyết <Badge 
+                      count={investigations.filter(c => c.status === "Đã Giải Quyết" || c.status === "Đã Đóng").length}
                       style={{ backgroundColor: '#52c41a' }} 
                     />
                   </span>
@@ -324,14 +323,14 @@ export default function FraudInvestigation() {
 
             <div className="flex items-center w-full md:w-auto">
               <Input
-                placeholder="Search cases"
+                placeholder="Tìm kiếm vụ việc"
                 prefix={<SearchOutlined className="text-gray-400" />}
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
                 className="w-full md:w-64"
                 allowClear
               />
-              <Tooltip title="Filter Options">
+              <Tooltip title="Tùy Chọn Lọc">
                 <button className="ml-2 p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded">
                   <FilterOutlined />
                 </button>
@@ -341,7 +340,7 @@ export default function FraudInvestigation() {
 
           {loading ? (
             <div className="flex justify-center items-center py-20">
-              <Spin size="large" tip="Loading investigation cases..." />
+              <Spin size="large" tip="Đang tải các vụ điều tra..." />
             </div>
           ) : filteredInvestigations.length > 0 ? (
             <Table
@@ -350,16 +349,16 @@ export default function FraudInvestigation() {
               pagination={{ 
                 pageSize: 10,
                 showSizeChanger: false,
-                showTotal: (total) => `Total ${total} cases`,
+                showTotal: (total) => `Tổng cộng ${total} vụ việc`,
                 className: "mb-0"
               }}
-              bordered={false}
+              bordered={true}
               scroll={{ x: "max-content" }}
-              rowClassName="hover:bg-gray-50"
+              rowClassName="border border-gray-200 hover:bg-gray-50"
             />
           ) : (
             <Empty 
-              description="No matching investigation cases found" 
+              description="Không tìm thấy vụ điều tra nào phù hợp" 
               image={Empty.PRESENTED_IMAGE_SIMPLE}
             />
           )}
