@@ -30,7 +30,6 @@ import CampaignPolicy from "../pages/Advertiser/Campaign/partials/CampaignPolicy
 import AdverDashboard from "../pages/Advertiser/Dashboard/AdvertiserDashBoard";
 import AdverFraudInves from "../pages/Advertiser/Dashboard/partials/FraudInvestigation";
 import AdverFraudRule from "../pages/Advertiser/Dashboard/partials/FraudRule";
-import AdverOrderManagement from "../pages/Advertiser/Dashboard/partials/OrderManagement";
 import PublisherManagement from "../pages/Advertiser/Dashboard/partials/PubManagement";
 import PubMaDetail from "../pages/Advertiser/Dashboard/partials/pubpartials/PubMaDetail";
 import AdverWallet from "../pages/Advertiser/Dashboard/partials/Wallet";
@@ -96,7 +95,6 @@ export default function MainRoutes() {
           <Route path="campaignList/CampaignCreating" element={<CampaignAdverCreate />} />
           <Route path="wallet" element={<AdverWallet />} />
           <Route path="fraud-rule" element={<AdverFraudRule />} />
-          <Route path="order-management" element={<AdverOrderManagement />} />
           <Route path="publisher-management" element={<PublisherManagement />} />
           <Route path="publisher-management/publisherdetail/:publisherId" element={<PubMaDetail />} />
           <Route path="fraud-investigation" element={<AdverFraudInves />} />
