@@ -1,0 +1,41 @@
+[
+  {
+    "id": "P001",
+    "name": "Affiliate Hub",
+    "traffic": 5000,
+    "conversions": 320,
+    "revenue": "15.000.000đ",
+    "commission": "1.500.000đ",
+    "ctr": "6,4%",
+    "status": "Hoạt động",
+    "campaigns": ["Chiến dịch Mạng xã hội", "Flash Sale"],
+    "joinDate": "10/05/2023",
+    "industry": "Thương mại điện tử"
+  },
+  {
+    "id": "P002",
+    "name": "Marketing Pro",
+    "traffic": 4200,
+    "conversions": 250,
+    "revenue": "12.500.000đ",
+    "commission": "1.250.000đ",
+    "ctr": "5,9%",
+    "status": "Đang chờ",
+    "campaigns": ["Khuyến mãi Hè", "Ra mắt sản phẩm"],
+    "joinDate": "15/06/2023",
+    "industry": "Digital Marketing"
+  },
+  {
+    "id": "P003",
+    "name": "Media Network",
+    "traffic": 3100,
+    "conversions": 150,
+    "revenue": "8.750.000đ",
+    "commission": "875.000đ",
+    "ctr": "4,8%",
+    "status": "Không hoạt động",
+    "campaigns": ["Ưu đãi ngày lễ"],
+    "joinDate": "22/03/2023",
+    "industry": "Mạng xã hội"
+  }
+]

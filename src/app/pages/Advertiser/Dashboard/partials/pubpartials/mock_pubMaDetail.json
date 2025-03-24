@@ -1,0 +1,91 @@
+[
+  {
+    "id": "P001",
+    "name": "Affiliate Hub",
+    "traffic": 5000,
+    "conversions": 320,
+    "revenue": "15.000.000đ",
+    "commission": "1.500.000đ",
+    "ctr": 6.4,
+    "status": "Hoạt động",
+    "joinDate": "10/05/2023",
+    "totalOrders": 1200,
+    "industry": "Thương mại điện tử",
+    "paymentMethod": "Chuyển khoản ngân hàng",
+    "campaigns": [
+      {"id": "C001", "name": "Chiến dịch Mạng xã hội", "conversions": 180, "revenue": "8.500.000đ", "commission": "850.000đ"},
+      {"id": "C002", "name": "Flash Sale", "conversions": 140, "revenue": "6.500.000đ", "commission": "650.000đ"}
+    ],
+    "trafficSources": [
+      {"source": "Trực tiếp", "percentage": 40},
+      {"source": "Mạng xã hội", "percentage": 30},
+      {"source": "Blog", "percentage": 20},
+      {"source": "Khác", "percentage": 10}
+    ],
+    "monthlyData": [
+      {"month": "T1", "traffic": 4200, "conversions": 250, "revenue": "12.000.000đ"},
+      {"month": "T2", "traffic": 4500, "conversions": 280, "revenue": "13.500.000đ"},
+      {"month": "T3", "traffic": 5000, "conversions": 320, "revenue": "15.000.000đ"}
+    ],
+    "fraudRisk": "Thấp"
+  },
+  {
+    "id": "P002",
+    "name": "Marketing Pro",
+    "traffic": 4200,
+    "conversions": 250,
+    "revenue": "12.500.000đ",
+    "commission": "1.250.000đ",
+    "ctr": 5.9,
+    "status": "Đang chờ",
+    "joinDate": "15/06/2023",
+    "totalOrders": 950,
+    "industry": "Digital Marketing",
+    "paymentMethod": "PayPal",
+    "campaigns": [
+      {"id": "C003", "name": "Khuyến mãi Hè", "conversions": 150, "revenue": "7.500.000đ", "commission": "750.000đ"},
+      {"id": "C004", "name": "Ra mắt sản phẩm", "conversions": 100, "revenue": "5.000.000đ", "commission": "500.000đ"}
+    ],
+    "trafficSources": [
+      {"source": "Mạng xã hội", "percentage": 45},
+      {"source": "Email", "percentage": 35},
+      {"source": "Trực tiếp", "percentage": 15},
+      {"source": "Khác", "percentage": 5}
+    ],
+    "monthlyData": [
+      {"month": "T1", "traffic": 3800, "conversions": 210, "revenue": "10.000.000đ"},
+      {"month": "T2", "traffic": 4000, "conversions": 230, "revenue": "11.200.000đ"},
+      {"month": "T3", "traffic": 4200, "conversions": 250, "revenue": "12.500.000đ"}
+    ],
+    "fraudRisk": "Trung bình"
+  },
+  {
+    "id": "P003",
+    "name": "Media Network",
+    "traffic": 3100,
+    "conversions": 150,
+    "revenue": "8.750.000đ",
+    "commission": "875.000đ",
+    "ctr": 4.8,
+    "status": "Không hoạt động",
+    "joinDate": "22/03/2023",
+    "totalOrders": 720,
+    "industry": "Mạng xã hội",
+    "paymentMethod": "Tiền điện tử",
+    "campaigns": [
+      {"id": "C005", "name": "Ưu đãi ngày lễ", "conversions": 150, "revenue": "8.750.000đ", "commission": "875.000đ"}
+    ],
+    "trafficSources": [
+      {"source": "Mạng xã hội", "percentage": 60},
+      {"source": "Blog", "percentage": 20},
+      {"source": "Trực tiếp", "percentage": 15},
+      {"source": "Khác", "percentage": 5}
+    ],
+    "monthlyData": [
+      {"month": "T1", "traffic": 2800, "conversions": 120, "revenue": "7.200.000đ"},
+      {"month": "T2", "traffic": 3000, "conversions": 135, "revenue": "8.000.000đ"},
+      {"month": "T3", "traffic": 3100, "conversions": 150, "revenue": "8.750.000đ"}
+    ],
+    "fraudRisk": "Cao"
+  }
+]
