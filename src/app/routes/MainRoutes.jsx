@@ -33,13 +33,19 @@ import AdverFraudInvesCaseDetails from "../pages/Advertiser/Dashboard/partials/i
 import AdverFraudRule from "../pages/Advertiser/Dashboard/partials/FraudRule";
 import PublisherManagement from "../pages/Advertiser/Dashboard/partials/PubManagement";
 import PubMaDetail from "../pages/Advertiser/Dashboard/partials/pubpartials/PubMaDetail";
-import AdverWallet from "../pages/Advertiser/Dashboard/partials/Wallet";
+import AdverWallet from "../pages/Advertiser/Dashboard/partials/Walletpartials/Wallet";
 import Home from "../pages/Home";
 import CampaignList from "../pages/Publisher/Campaign/CampaignList";
 import CampaignDetail from "../pages/Publisher/Campaign/partials/CampaignDetail";
 import FraudTracking from "../pages/Publisher/FraudTracking/FraudTracking";
 import PublisherHome from "../pages/Publisher/PublisherHome/PublisherHome";
 import ReportLostOrder from "../pages/Publisher/ReportLostOrder/Report";
+import BalanceManagement from "../pages/Advertiser/Dashboard/partials/Walletpartials/BalanceManagement";
+import CampaignSpendTracking from "../pages/Advertiser/Dashboard/partials/Walletpartials/CampaignSpendTracking";
+import BankAccountManagement from "../pages/Advertiser/Dashboard/partials/Walletpartials/BankAccountManagement";
+import TransactionManagement from "../pages/Advertiser/Dashboard/partials/Walletpartials/TransactionManagement";
+import Withdrawalrequest from "../pages/Advertiser/Dashboard/partials/Walletpartials/Withdrawalrequest";
+import DepositRequest from "../pages/Advertiser/Dashboard/partials/Walletpartials/DepositRequest"
 const PageNotFound = lazy(() => import("../layouts/PageNotFound"));
 const ServerError = lazy(() => import("../layouts/ServerError/ServerError"));
 const Maintenance = lazy(() => import("../layouts/Maintenance/Maintenance"));
@@ -100,6 +106,13 @@ export default function MainRoutes() {
           <Route path="publisher-management/publisherdetail/:publisherId" element={<PubMaDetail />} />
           <Route path="fraud-investigation" element={<AdverFraudInves />} />
           <Route path="fraud-investigation/:fraudId" element={<AdverFraudInvesCaseDetails />} />
+          <Route path="BalanceManagement" element={<BalanceManagement />} />
+          <Route path="BankAccountManagement" element={<BankAccountManagement />} />
+          <Route path="CampaignSpendTracking" element={<CampaignSpendTracking />} />
+          <Route path="TransactionManagement" element={<TransactionManagement />} />
+          <Route path="Withdrawalrequest" element={<Withdrawalrequest />} />
+          <Route path="DepositRequest" element={<DepositRequest />} />
+
         </Route>
 
         <Route
