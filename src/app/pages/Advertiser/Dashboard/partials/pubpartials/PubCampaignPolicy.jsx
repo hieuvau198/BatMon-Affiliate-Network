@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { Table, Button, Modal, Typography, message } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import getCampaignPolicy from "../../../../modules/CampaignPolicy/getCampaignPolicy";
+import getCampaignPolicy from "../../../../../modules/CampaignPolicy/getCampaignPolicy";
 import { useNavigate } from "react-router-dom";
-
 const { Title } = Typography;
 
 export default function CampaignPolicy() {
@@ -11,6 +10,7 @@ export default function CampaignPolicy() {
   const [currentPenalty, setCurrentPenalty] = useState(null);
   const [policies, setPolicies] = useState([]);
   const navigate = useNavigate();
+  
   useEffect(() => {
     async function fetchPolicies() {
       try {

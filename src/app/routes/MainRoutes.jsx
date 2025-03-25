@@ -27,6 +27,7 @@ import CampaignAdverDetail from "../pages/Advertiser/Campaign/partials/CampaignA
 import CampaignAdverCreate from "../pages/Advertiser/Campaign/partials/CampaignCreating";
 import CampaignPerformance from "../pages/Advertiser/Campaign/partials/CampaignPerformance";
 import CampaignPolicy from "../pages/Advertiser/Campaign/partials/CampaignPolicy";
+import PubCampaignPolicy from "../pages/Advertiser/Dashboard/partials/pubpartials/PubCampaignPolicy";
 import AdverDashboard from "../pages/Advertiser/Dashboard/AdvertiserDashBoard";
 import AdverFraudInves from "../pages/Advertiser/Dashboard/partials/FraudInvestigation";
 import AdverFraudInvesCaseDetails from "../pages/Advertiser/Dashboard/partials/invespartials/InvesCaseDetails";
@@ -108,6 +109,7 @@ export default function MainRoutes() {
           <Route path="fraud-rule/:id" element={<FraudRuleDetails />} />
           <Route path="publisher-management" element={<PublisherManagement />} />
           <Route path="publisher-management/publisherdetail/:publisherId" element={<PubMaDetail />} />
+          <Route path="publisher-management/publisherdetail/:publisherId/PubCampaignPolicy" element={<PubCampaignPolicy />} />
           <Route path="fraud-investigation" element={<AdverFraudInves />} />
           <Route path="fraud-investigation/:fraudId" element={<AdverFraudInvesCaseDetails />} />
           <Route path="BalanceManagement" element={<BalanceManagement />} />
