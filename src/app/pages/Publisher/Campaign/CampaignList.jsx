@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Input, Select, Table, Tag, Spin } from "antd";
+import { Input, Select, Table, Tag, Spin, Modal, Button } from "antd";
 import { motion } from "framer-motion";
 import getCampaign from "../../../modules/Publisher/getCampaign";
+import getCampaignPublishers from "../../../modules/PublisherCampaign"
 
 const { Option } = Select;
 
@@ -12,16 +13,29 @@ export default function CampaignList() {
   const [filterStatus, setFilterStatus] = useState("all");
   const [statusOptions, setStatusOptions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCampaignId, setSelectedCampaignId] = useState(null);
+  const [publishers, setPublishers] = useState([]);
+  const [publishersLoading, setPublishersLoading] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
+        setLoading(true);
         const data = await getCampaign();
-        setCampaigns(data);
-        setStatusOptions([...new Set(data.map(campaign => campaign.status))]);
-        setLoading(false);
+        console.log("Campaigns data:", data); // Debug
+        if (Array.isArray(data)) {
+          setCampaigns(data);
+          setStatusOptions([...new Set(data.map(campaign => campaign.status))]);
+        } else {
+          setCampaigns([]);
+          setStatusOptions([]);
+        }
       } catch (error) {
         console.error("Error fetching campaigns:", error);
+        setCampaigns([]);
+        setStatusOptions([]);
+      } finally {
         setLoading(false);
       }
     };
@@ -29,14 +43,65 @@ export default function CampaignList() {
     fetchCampaigns();
   }, []);
 
-  const filteredCampaigns = campaigns.filter((campaign) => {
-    const matchesSearch = campaign.name
-      ?.toLowerCase()
-      .includes(searchText.toLowerCase());
-    const matchesStatus =
-      filterStatus === "all" || campaign.status === filterStatus;
-    return matchesSearch && matchesStatus;
-  });
+  const handleViewPublishers = async (campaignId) => {
+    console.log("Fetching publishers for campaignId:", campaignId); // Debug
+    setSelectedCampaignId(campaignId);
+    setPublishersLoading(true);
+    setIsModalVisible(true);
+
+    const data = await getCampaignPublishers(campaignId);
+    console.log("Publishers data:", data); // Debug
+    if (Array.isArray(data)) {
+      setPublishers(data);
+    } else {
+      setPublishers([]);
+    }
+    setPublishersLoading(false);
+  };
+
+  const filteredCampaigns = Array.isArray(campaigns)
+    ? campaigns.filter((campaign) => {
+        const matchesSearch = campaign.name
+          ?.toLowerCase()
+          .includes(searchText.toLowerCase());
+        const matchesStatus =
+          filterStatus === "all" || campaign.status === filterStatus;
+        return matchesSearch && matchesStatus;
+      })
+    : [];
+
+  const publisherColumns = [
+    {
+      title: "Tên Publisher",
+      dataIndex: "publisherName",
+      key: "publisherName",
+    },
+    {
+      title: "Tổng hoa hồng",
+      dataIndex: "totalAmount",
+      key: "totalAmount",
+      render: (amount, record) => `${amount?.toLocaleString()} ${record.currencyCode || "VND"}`,
+    },
+    {
+      title: "Hoa hồng đang chờ",
+      dataIndex: "pendingAmount",
+      key: "pendingAmount",
+      render: (amount, record) => `${amount?.toLocaleString()} ${record.currencyCode || "VND"}`,
+    },
+    {
+      title: "Trạng thái hoa hồng",
+      dataIndex: "commissionStatus",
+      key: "commissionStatus",
+      render: (status) => (
+        <Tag color={status === "Approved" ? "green" : "yellow"}>{status}</Tag>
+      ),
+    },
+    {
+      title: "Ngày tham gia",
+      dataIndex: "createdAt",
+      key: "createdAt",
+    },
+  ];
 
   const columns = [
     {
@@ -61,7 +126,7 @@ export default function CampaignList() {
       title: "Ngân sách",
       dataIndex: "budget",
       key: "budget",
-      render: (budget) => `${budget.toLocaleString()} VND`,
+      render: (budget, record) => `${budget?.toLocaleString()} ${record.currencyCode || "VND"}`,
     },
     {
       title: "Thời gian",
@@ -79,6 +144,18 @@ export default function CampaignList() {
       key: "status",
       render: (status) => (
         <Tag color={status === "Active" ? "green" : "yellow"}>{status}</Tag>
+      ),
+    },
+    {
+      title: "Hành động",
+      key: "action",
+      render: (_, record) => (
+        <Button
+          type="link"
+          onClick={() => handleViewPublishers(record.campaignId)}
+        >
+          Xem Publisher
+        </Button>
       ),
     },
   ];
@@ -118,13 +195,39 @@ export default function CampaignList() {
           <Spin size="large" />
         </div>
       ) : (
-        <Table
-          columns={columns}
-          dataSource={filteredCampaigns}
-          rowKey="campaignId"
-          pagination={{ pageSize: 5 }}
-          rowClassName="hover:bg-gray-50 transition-colors duration-200"
-        />
+        <>
+          <Table
+            columns={columns}
+            dataSource={filteredCampaigns}
+            rowKey="campaignId"
+            pagination={{ pageSize: 5 }}
+            rowClassName="hover:bg-gray-50 transition-colors duration-200"
+          />
+          <Modal
+            title="Danh sách Publisher đã tham gia"
+            visible={isModalVisible}
+            onCancel={() => setIsModalVisible(false)}
+            footer={null}
+            width={800}
+          >
+            {publishersLoading ? (
+              <div className="text-center">
+                <Spin size="large" />
+              </div>
+            ) : publishers.length === 0 ? (
+              <div className="text-center text-gray-500">
+                Không có publisher nào tham gia chiến dịch này.
+              </div>
+            ) : (
+              <Table
+                columns={publisherColumns}
+                dataSource={publishers}
+                rowKey="commissionId"
+                pagination={{ pageSize: 5 }}
+              />
+            )}
+          </Modal>
+        </>
       )}
     </motion.div>
   );

@@ -1,7 +1,10 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Card, Button, message, Table } from "antd";
+import { Card, Button, message, Space, Typography, Divider } from "antd";
+import { ArrowLeftOutlined, FileTextOutlined, BarChartOutlined } from "@ant-design/icons";
 import getCampaignDetail from "../../../../modules/Campaign/getCampaignDetail";
+
+const { Title, Text } = Typography;
 
 export default function CampaignAdDetail() {
   const { campaignId } = useParams();
@@ -24,129 +27,132 @@ export default function CampaignAdDetail() {
     fetchCampaign();
   }, [campaignId]);
 
-  if (loading) return <p className="text-center mt-6">Đang tải...</p>;
-  if (!campaign) return <p className="text-center mt-6 text-red-600">Chiến dịch không tồn tại!</p>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Text className="text-lg text-gray-500">Đang tải...</Text>
+      </div>
+    );
+  }
+
+  if (!campaign) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Text className="text-lg text-red-600">Chiến dịch không tồn tại!</Text>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <div className="shadow-sm rounded-xl bg-white p-6 max-w-[1200px] w-full">
-        {/* Điều hướng */}
-        <div className="flex justify-between items-center mb-4">
+    <div className="min-h-screen bg-white flex justify-center p-6">
+      <div className="max-w-[1200px] w-full">
+        {/* Container chính */}
+        <div
+          className="shadow-lg rounded-xl bg-white p-6"
+          bordered={false}
+        >
+          {/* Điều hướng */}
+          <div className="flex justify-between items-center mb-4">
           <Button onClick={() => navigate(-1)} className="mr-4">
             ⬅ Quay lại
           </Button>
         </div>
 
-        {/* Thông tin tổng quan */}
-        <h2 className="text-2xl font-semibold mb-4">{campaign.name}</h2>
-        <Card className="bg-white mb-6 shadow-md rounded-xl p-4">
-          <p><strong>Mô tả:</strong> {campaign.description}</p>
-          <p><strong>Ngân sách:</strong> {campaign.budget.toLocaleString()} VND</p>
-          <p><strong>Hạn mức ngày:</strong> {campaign.dailyCap.toLocaleString()} VND</p>
-          <p><strong>Hạn mức tháng:</strong> {campaign.monthlyCap.toLocaleString()} VND</p>
-          <p><strong>Thời gian:</strong> {campaign.startDate} - {campaign.endDate}</p>
-          <p><strong>Trạng thái:</strong> {campaign.status}</p>
-        </Card>
+          {/* Tiêu đề */}
+          <Title level={2} className="text-blue-800 mb-6">
+            {campaign.name}
+          </Title>
 
-        {/* Hiệu suất thực tế */}
-        <Card className="bg-white mb-6 shadow-md rounded-xl p-4">
-          <h3 className="text-lg font-semibold">📊 Hiệu suất chiến dịch</h3>
-          <Table
-            columns={[
-              { title: "Chỉ số", dataIndex: "metric", key: "metric" },
-              { title: "Giá trị", dataIndex: "value", key: "value" }
-            ]}
-            dataSource={[
-              { metric: "Tổng Clicks", value: "12,500" },
-              { metric: "Tổng Chuyển Đổi", value: "1,250" },
-              { metric: "Tỷ Lệ Chuyển Đổi", value: "10%" },
-              { metric: "Doanh Thu", value: "50,000,000 VND" }
-            ]}
-            pagination={false}
-            bordered={true}
-            className="campaign-table"
-          />
-        </Card>
+          {/* Thông tin tổng quan */}
+          <Card
+            title={<Text strong className="text-lg">Thông tin tổng quan</Text>}
+            className="mb-6 shadow-sm rounded-lg border-none bg-gray-50"
+          >
+            <Space direction="vertical" size="middle" className="w-full">
+              <div className="flex">
+                <Text strong className="w-32">Mô tả:</Text>
+                <Text>{campaign.description}</Text>
+              </div>
+              <div className="flex">
+                <Text strong className="w-32">Ngân sách:</Text>
+                <Text>
+                  {campaign.budget.toLocaleString()} {campaign.currencyCode || "VND"}
+                </Text>
+              </div>
+              <div className="flex">
+                <Text strong className="w-32">Hạn mức ngày:</Text>
+                <Text>
+                  {campaign.dailyCap.toLocaleString()} {campaign.currencyCode || "VND"}
+                </Text>
+              </div>
+              <div className="flex">
+                <Text strong className="w-32">Hạn mức tháng:</Text>
+                <Text>
+                  {campaign.monthlyCap.toLocaleString()} {campaign.currencyCode || "VND"}
+                </Text>
+              </div>
+              <div className="flex">
+                <Text strong className="w-32">Thời gian:</Text>
+                <Text>{`${campaign.startDate} - ${campaign.endDate}`}</Text>
+              </div>
+              <div className="flex">
+                <Text strong className="w-32">Trạng thái:</Text>
+                <Text
+                  className={
+                    campaign.status === "Active"
+                      ? "text-green-600"
+                      : "text-orange-600"
+                  }
+                >
+                  {campaign.status}
+                </Text>
+              </div>
+              <div className="flex">
+                <Text strong className="w-32">Quốc gia mục tiêu:</Text>
+                <Text>{campaign.targetingCountries}</Text>
+              </div>
+              <div className="flex">
+                <Text strong className="w-32">Thiết bị mục tiêu:</Text>
+                <Text>{campaign.targetingDevices}</Text>
+              </div>
+            </Space>
+          </Card>
 
-        {/* Danh sách Publisher */}
-        <Card className="bg-white mb-6 shadow-md rounded-xl p-4">
-          <h3 className="text-lg font-semibold">👥 Publisher đang chạy chiến dịch</h3>
-          <Table
-            columns={[
-              { title: "Publisher", dataIndex: "name", key: "name" },
-              { title: "Clicks", dataIndex: "clicks", key: "clicks" },
-              { title: "Conversions", dataIndex: "conversions", key: "conversions" },
-              { title: "Doanh thu", dataIndex: "revenue", key: "revenue" },
-            ]}
-            dataSource={[
-              { name: "Affiliate_001", clicks: "5000", conversions: "600", revenue: "10,000,000 VND" },
-              { name: "Publisher_VN", clicks: "4000", conversions: "450", revenue: "8,500,000 VND" },
-              { name: "MarketingHub", clicks: "2500", conversions: "200", revenue: "5,000,000 VND" }
-            ]}
-            pagination={false}
-            bordered={true}
-            className="campaign-table"
-          />
-        </Card>
+          {/* Chính sách & Hạn chế */}
+          <Card
+            title={<Text strong className="text-lg">📜 Chính sách & Hạn chế</Text>}
+            className="mb-6 shadow-sm rounded-lg border-none bg-gray-50"
+          >
+            <ul className="list-disc pl-6 text-gray-700">
+              <li>Không được sử dụng từ khóa thương hiệu trên quảng cáo.</li>
+              <li>Không chạy quảng cáo trên các trang web có nội dung vi phạm.</li>
+              <li>Cookie tracking có thời hạn 30 ngày.</li>
+            </ul>
+          </Card>
 
-        {/* Chính sách & Hạn chế */}
-        <Card className="bg-white mb-6 shadow-md rounded-xl p-4">
-          <h3 className="text-lg font-semibold">📜 Chính sách & Hạn chế</h3>
-          <ul className="list-disc pl-6">
-            <li>Không được sử dụng từ khóa thương hiệu trên quảng cáo.</li>
-            <li>Không chạy quảng cáo trên các trang web có nội dung vi phạm.</li>
-            <li>Cookie tracking có thời hạn 30 ngày.</li>
-          </ul>
-        </Card>
-
-        {/* Lịch sử thay đổi */}
-        <Card className="bg-white mb-6 shadow-md rounded-xl p-4">
-          <h3 className="text-lg font-semibold">🕒 Lịch sử thay đổi</h3>
-          <Table
-            columns={[
-              { title: "Thời gian", dataIndex: "date", key: "date" },
-              { title: "Thay đổi", dataIndex: "change", key: "change" }
-            ]}
-            dataSource={[
-              { date: "2025-03-01", change: "Tăng ngân sách từ 40,000,000 lên 50,000,000 VND" },
-              { date: "2025-03-03", change: "Thêm Publisher mới: MarketingHub" }
-            ]}
-            pagination={false}
-            bordered={true}
-            className="campaign-table"
-          />
-        </Card>
-
-        {/* Thanh toán */}
-        <Card className="bg-white mb-6 shadow-md rounded-xl p-4">
-          <h3 className="text-lg font-semibold">💰 Thanh toán & Billing</h3>
-          <Table
-            columns={[
-              { title: "Thời gian", dataIndex: "date", key: "date" },
-              { title: "Số tiền", dataIndex: "amount", key: "amount" },
-              { title: "Trạng thái", dataIndex: "status", key: "status" }
-            ]}
-            dataSource={[
-              { date: "2025-03-10", amount: "25,000,000 VND", status: "Đã thanh toán" },
-              { date: "2025-02-10", amount: "20,000,000 VND", status: "Đã thanh toán" }
-            ]}
-            pagination={false}
-            bordered={true}
-            className="campaign-table"
-          />
-        </Card>
-
-        {/* Nút điều hướng */}
-        <div className="flex justify-between mt-6">
-          <Button type="primary" onClick={() => navigate(`/advertiser/campaignList/campaigndetail/${campaignId}/CampaignPolicy`)}>
-            📜 Chính sách chiến dịch
-          </Button>
-          <Button type="default" onClick={() => navigate(`/advertiser/campaignList/campaigndetail/${campaignId}/CampaignPerformance`)}>
-            📊 Xem hiệu suất
-          </Button>
-          {/* <Button type="default" onClick={() => navigate(`/advertiser/campaignList/${campaignId}/edit`)}>
-            ✏️ Chỉnh sửa
-          </Button> */}
+          {/* Nút điều hướng */}
+          <div className="flex justify-end gap-4 mt-6">
+            <Button
+              type="primary"
+              icon={<FileTextOutlined />}
+              onClick={() =>
+                navigate(`/advertiser/campaignList/campaigndetail/${campaignId}/CampaignPolicy`)
+              }
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              Chính sách chiến dịch
+            </Button>
+            <Button
+              type="default"
+              icon={<BarChartOutlined />}
+              onClick={() =>
+                navigate(`/advertiser/campaignList/campaigndetail/${campaignId}/CampaignPerformance`)
+              }
+              className="border-blue-600 text-blue-600 hover:border-blue-700 hover:text-blue-700"
+            >
+              Xem hiệu suất
+            </Button>
+          </div>
         </div>
       </div>
     </div>

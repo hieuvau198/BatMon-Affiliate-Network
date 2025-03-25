@@ -1,98 +1,126 @@
-import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Card, Button, message } from "antd";
-import mockPolicy from "./mock_policy.json";
+import { Table, Button, Modal, Typography, message } from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import getCampaignPolicy from "../../../../modules/CampaignPolicy/getCampaignPolicy";
+
+const { Title } = Typography;
 
 export default function CampaignPolicy() {
-  const { campaignId } = useParams();
-  const navigate = useNavigate();
-  const [policy, setPolicy] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPenalty, setCurrentPenalty] = useState(null);
+  const [policies, setPolicies] = useState([]);
 
   useEffect(() => {
-    async function fetchPolicy() {
+    async function fetchPolicies() {
       try {
-        if (!mockPolicy || !Array.isArray(mockPolicy)) {
-          throw new Error("Dữ liệu chính sách không hợp lệ!");
-        }
-
-        const policyData = mockPolicy.find(p => p.campaignId && p.campaignId.toString() === campaignId);
-        
-        if (!policyData) {
-          throw new Error("Không tìm thấy chính sách chiến dịch!");
-        }
-
-        setPolicy(policyData);
+        const data = await getCampaignPolicy();
+        const transformed = data.map((policy, index) => ({
+          key: policy.policyId.toString(),
+          stt: index + 1,
+          policy: policy.policyName,
+          regulation: policy.description,
+          penaltyInfo: policy.penaltyInfo,
+          appliedTo: policy.appliedTo,
+        }));
+        setPolicies(transformed);
       } catch (error) {
-        message.error(error.message);
-      } finally {
-        setLoading(false);
+        console.error("Error fetching policies:", error);
+        message.error("Không thể lấy dữ liệu chính sách.");
       }
     }
-    fetchPolicy();
-  }, [campaignId]);
+    fetchPolicies();
+  }, []);
 
-  if (loading) return <p className="text-center mt-6">Đang tải...</p>;
-  if (!policy) return <p className="text-center mt-6 text-red-600">Chính sách chiến dịch không tồn tại!</p>;
+  const showPenaltyDetails = (penaltyInfo) => {
+    setCurrentPenalty(penaltyInfo);
+    setIsModalOpen(true);
+  };
+
+  const columns = [
+    {
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      width: 60,
+      render: (text) => <div className="text-center">{text}</div>,
+    },
+    {
+      title: "Chính sách",
+      dataIndex: "policy",
+      key: "policy",
+      width: 200,
+      render: (text) => <div className="font-medium text-blue-700">{text}</div>,
+    },
+    {
+      title: "Quy định",
+      dataIndex: "regulation",
+      key: "regulation",
+      render: (text) => <div dangerouslySetInnerHTML={{ __html: text }} />,
+    },
+    {
+      title: "Hình thức xử phạt",
+      dataIndex: "penaltyInfo",
+      key: "penaltyInfo",
+      width: 160,
+      render: (_, record) => (
+        <div className="text-center">
+          <Button
+            type="primary"
+            className="bg-blue-600 hover:bg-blue-700"
+            onClick={() => showPenaltyDetails(record.penaltyInfo)}
+          >
+            Xem chi tiết
+          </Button>
+        </div>
+      ),
+    },
+    {
+      title: "Áp dụng cho",
+      dataIndex: "appliedTo",
+      key: "appliedTo",
+      width: 160,
+      render: (text) => <div className="text-center italic text-gray-600">{text}</div>,
+    },
+  ];
 
   return (
-    <div className="p-6 flex justify-center">
-      <Card className="shadow rounded-lg bg-white p-6 max-w-[1500px] w-full">
-        
-        {/* Điều hướng */}
-        <div className="flex justify-between items-center mb-4">
-          <Button onClick={() => navigate(-1)} className="mr-4">
-            ⬅ Quay lại
-          </Button>
-          <span className="text-gray-500">Chiến dịch / Chính sách / {policy.policyTitle}</span>
-        </div>
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <Title level={2} className="!text-gray-800">📜 Chính sách & Quy định</Title>
+      </div>
 
-        {/* Nội dung chính sách */}
-        <h2 className="text-2xl font-semibold mb-4">{policy.policyTitle}</h2>
-        <p className="text-gray-600">{policy.description}</p>
+      <Table
+        columns={columns}
+        dataSource={policies}
+        pagination={{ pageSize: 10 }}
+        bordered
+        className="policy-table rounded-lg overflow-hidden"
+        rowClassName={(_, index) => (index % 2 === 0 ? "bg-gray-50" : "")}
+      />
 
-        {/* Danh sách quy định */}
-        <Card className="bg-gray-50 mt-6">
-          <h3 className="text-lg font-semibold mb-3">📜 Quy định</h3>
-          <ul className="list-disc pl-6">
-            {policy.rules.map((rule, index) => (
-              <li key={index} className="mb-2">{rule}</li>
-            ))}
-          </ul>
-        </Card>
+      <Modal
+        title={<span className="text-blue-600 font-semibold">Chi tiết hình thức xử phạt</span>}
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        footer={null}
+      >
+        <p className="whitespace-pre-line leading-relaxed text-gray-700">
+          {currentPenalty}
+        </p>
+      </Modal>
 
-        {/* Cấu trúc hoa hồng */}
-        <Card className="bg-gray-50 mt-6">
-          <h3 className="text-lg font-semibold mb-3">💰 Cấu trúc hoa hồng</h3>
-          <p><strong>Loại hoa hồng:</strong> {policy.commissionStructure.type}</p>
-          <p><strong>Mức hoa hồng chung:</strong> {policy.commissionStructure.rate}</p>
-          <h4 className="text-md font-semibold mt-3">Chi tiết theo danh mục:</h4>
-          <ul className="list-disc pl-6">
-            {policy.commissionStructure.details.map((item, index) => (
-              <li key={index}>
-                <strong>{item.category}</strong>: {item.rate}
-              </li>
-            ))}
-          </ul>
-        </Card>
-
-        {/* Hạn chế */}
-        <Card className="bg-gray-50 mt-6">
-          <h3 className="text-lg font-semibold mb-3">🚫 Hạn chế</h3>
-          <ul className="list-disc pl-6">
-            {policy.restrictions.map((restriction, index) => (
-              <li key={index}>{restriction}</li>
-            ))}
-          </ul>
-        </Card>
-
-        {/* Hình phạt */}
-        <Card className="bg-red-100 mt-6">
-          <h3 className="text-lg font-semibold mb-3">⚠️ Hình phạt</h3>
-          <p>{policy.penalty}</p>
-        </Card>
-
-      </Card>
+      <style jsx global>{`
+        .policy-table .ant-table-thead > tr > th {
+          background-color: #1d4ed8 !important;
+          color: white !important;
+          text-align: center;
+          font-weight: bold;
+        }
+        .policy-table .ant-table-tbody > tr > td {
+          vertical-align: top;
+          padding: 12px;
+        }
+      `}</style>
     </div>
   );
 }

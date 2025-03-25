@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import {  Table,  Button,  Space,  Typography,  Tag,  Modal,  message,  Input,  DatePicker,  Drawer,  Descriptions,  Divider,  Card,  Row,  Col,  Avatar,} from "antd"
-import {  SearchOutlined,  CalendarOutlined,  UserOutlined,  FileTextOutlined,  EyeOutlined,  UnorderedListOutlined,} from "@ant-design/icons"
+import { Table, Button, Space, Typography, Tag, Modal, message, Input, DatePicker, Drawer, Descriptions, Divider, Card, Row, Col, Avatar, } from "antd"
+import { SearchOutlined, CalendarOutlined, UserOutlined, FileTextOutlined, EyeOutlined, UnorderedListOutlined, } from "@ant-design/icons"
 import locale from "antd/es/date-picker/locale/vi_VN"
 import { Link } from "react-router-dom"
 
@@ -10,6 +10,8 @@ const { Title, Paragraph, Text } = Typography
 const { RangePicker } = DatePicker
 
 import mockCampaignData from "./mock_CampaignApproval.json"
+import activeCampaign from "../../../modules/Campaign/activeCampaign"
+import deactiveCampaign from "../../../modules/Campaign/deactiveCampaign"
 
 const CampaignApproval = () => {
   const [dataSource, setDataSource] = useState(mockCampaignData)
@@ -56,22 +58,30 @@ const CampaignApproval = () => {
     setModalVisible(true)
   }
 
-  const handleOk = () => {
-    const newData = dataSource.map((item) => {
-      if (item.campaignId === currentCampaign.campaignId) {
-        return {
-          ...item,
-          status: actionType === "approve" ? "approved" : "rejected",
+  const handleOk = async () => {
+    let result = null;
+
+    if (actionType === "approve") {
+      result = await activeCampaign(currentCampaign.campaignId);
+    } else if (actionType === "reject") {
+      result = await deactiveCampaign(currentCampaign.campaignId);
+    }
+
+    if (result) {
+      const newData = dataSource.map((item) => {
+        if (item.campaignId === currentCampaign.campaignId) {
+          return {
+            ...item,
+            status: actionType === "approve" ? "approved" : "rejected",
+          };
         }
-      }
-      return item
-    })
+        return item;
+      });
+      setDataSource(newData);
+    }
 
-    setDataSource(newData)
-    setModalVisible(false)
-
-    message.success(`Đã ${actionType === "approve" ? "duyệt" : "từ chối"} chiến dịch "${currentCampaign.name}"`)
-  }
+    setModalVisible(false);
+  };
 
   const handleCancel = () => {
     setModalVisible(false)
