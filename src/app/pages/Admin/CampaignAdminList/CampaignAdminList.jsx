@@ -6,13 +6,15 @@ import {  SearchOutlined,  ArrowLeftOutlined,  EyeOutlined,  FileTextOutlined,  
 import { Link } from "react-router-dom"
 import locale from "antd/es/date-picker/locale/vi_VN"
 import mock_campaignAdmin from "./mock_campaignAdmin" // Import mock data
+import getCampaignList from "../../../modules/Campaign/getCampaignList"
+import VndFormat from "../../../components/VndFormat"
 
 const { Title, Text, Paragraph } = Typography
 const { RangePicker } = DatePicker
 const { Option } = Select
 
 const CampaignList = () => {
-  const [dataSource] = useState(mock_campaignAdmin)
+  const [dataSource , setDataSource] = useState(mock_campaignAdmin)
   const [searchText, setSearchText] = useState("")
   const [dateRange, setDateRange] = useState(null)
   const [statusFilter, setStatusFilter] = useState(null)
@@ -22,7 +24,18 @@ const CampaignList = () => {
   const [detailDrawerVisible, setDetailDrawerVisible] = useState(false)
   const [campaignDetail, setCampaignDetail] = useState(null)
 
-  // Effect để lọc dữ liệu khi bất kỳ filter nào thay đổi
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const data = await getCampaignList()
+        setDataSource(data)
+      } catch (error) {
+        console.error("Error fetching campaign list:", error)
+      }
+    }
+    fetchData()
+  }, [])
+
   useEffect(() => {
     let filtered = [...dataSource]
 
@@ -254,10 +267,10 @@ const CampaignList = () => {
   <Descriptions.Item label="Quốc gia mục tiêu">{campaignDetail.targetingCountries}</Descriptions.Item>
   <Descriptions.Item label="Thiết bị mục tiêu">{campaignDetail.targetingDevices}</Descriptions.Item>
   <Descriptions.Item label="Giới hạn ngày">
-    {campaignDetail.dailyCap} {campaignDetail.currencyCode}
+    <VndFormat amount={campaignDetail.dailyCap} />
   </Descriptions.Item>
   <Descriptions.Item label="Giới hạn tháng">
-    {campaignDetail.monthlyCap} {campaignDetail.currencyCode}
+    <VndFormat amount={campaignDetail.monthlyCap} />
   </Descriptions.Item>
   <Descriptions.Item label="Tỷ lệ chuyển đổi">{campaignDetail.conversionRate}%</Descriptions.Item>
   <Descriptions.Item label="Cập nhật lần cuối">
