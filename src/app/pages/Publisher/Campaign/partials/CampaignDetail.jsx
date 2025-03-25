@@ -1,18 +1,18 @@
-
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Descriptions, Spin, message, Button, Tag } from "antd";
 import { LeftOutlined } from "@ant-design/icons";
 import { getCampaignById } from "../../../../modules/Publisher/getCampaignByID"; // Thay bằng đường dẫn thực tế
-import { joinCampaign } from "../../../../modules/Publisher/joinCampain";
+import createPromote from "../../../../modules/Promote/createPromote";
+
+
 export default function CampaignDetail() {
   const { campaignId } = useParams();
   const navigate = useNavigate();
   const [campaign, setCampaign] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [hasJoined, setHasJoined] = useState(false); // Trạng thái đã tham gia
-  const [joining, setJoining] = useState(false); // Trạng thái loading khi tham gia
+  const [hasPromoted, setHasPromoted] = useState(false); // Trạng thái đã tạo promote
+  const [promoting, setPromoting] = useState(false); // Trạng thái loading khi tạo promote
 
   // Giả định publisherId được lấy từ local storage hoặc context
   // Bạn cần thay thế logic này bằng cách lấy publisherId thực tế
@@ -33,9 +33,9 @@ export default function CampaignDetail() {
         }
         setCampaign(campaignData);
 
-        // Kiểm tra xem đã tham gia chiến dịch chưa (có thể dùng API GET /api/CampaignPublisherCommission/campaign/{campaignId})
-        // Ở đây tôi giả sử chưa có API kiểm tra, nên để mặc định là chưa tham gia
-        setHasJoined(false);
+        // Kiểm tra xem đã tạo promote cho chiến dịch này chưa
+        // Ở đây tôi giả sử chưa có API kiểm tra, nên để mặc định là chưa tạo
+        setHasPromoted(false);
       } catch (error) {
         console.error("Error fetching data:", error.message);
         message.error(error.message);
@@ -46,34 +46,27 @@ export default function CampaignDetail() {
     fetchData();
   }, [campaignId]);
 
-  const handleJoinCampaign = async () => {
+  const handleCreatePromote = async () => {
     if (!publisherId) {
-      message.error("Không thể tham gia chiến dịch: Thiếu thông tin nhà xuất bản.");
+      message.error("Không thể tạo promote: Thiếu thông tin nhà xuất bản.");
       return;
     }
 
-    setJoining(true);
-    const campaignData = {
-      campaignId: parseInt(campaignId), // Chuyển campaignId thành số
+    setPromoting(true);
+    const promoteData = {
       publisherId: parseInt(publisherId), // Chuyển publisherId thành số
-      totalAmount: 0,
-      pendingAmount: 0,
-      approvedAmount: 0,
-      rejectedAmount: 0,
-      paidAmount: 0,
-      lastConversionDate: new Date().toISOString(),
-      lastApprovalDate: new Date().toISOString(),
-      holdoutDays: 0,
-      commissionStatus: "Pending",
-      availableDate: new Date().toISOString(),
-      currencyCode: campaign?.currencyCode || "VND",
+      campaignId: parseInt(campaignId), // Chuyển campaignId thành số
+      campaignAdvertiserUrlId: 1, // Giả lập, bạn có thể lấy từ dữ liệu chiến dịch nếu có
+      baseTrackingUrl: "https://example.com/tracking", // Giả lập, có thể lấy từ dữ liệu chiến dịch hoặc form
+      isApproved: false, // Mặc định là false, có thể điều chỉnh dựa trên logic
+      status: "Pending", // Mặc định là Pending
     };
 
-    const result = await joinCampaign(campaignData);
+    const result = await createPromote(promoteData);
     if (result) {
-      setHasJoined(true); // Đánh dấu đã tham gia
+      setHasPromoted(true); // Đánh dấu đã tạo promote
     }
-    setJoining(false);
+    setPromoting(false);
   };
 
   if (loading) {
@@ -148,11 +141,11 @@ export default function CampaignDetail() {
         </Button>
         <Button
           type="primary"
-          onClick={handleJoinCampaign}
-          loading={joining}
-          disabled={joining || hasJoined} // Vô hiệu hóa nếu đang tham gia hoặc đã tham gia
+          onClick={handleCreatePromote}
+          loading={promoting}
+          disabled={promoting || hasPromoted} // Vô hiệu hóa nếu đang tạo hoặc đã tạo
         >
-          {hasJoined ? "Đã tham gia" : "Tham gia chiến dịch"}
+          {hasPromoted ? "Xin chờ phê duyệt" : "Tham Gia Chiến Dịch"}
         </Button>
       </div>
     </div>
