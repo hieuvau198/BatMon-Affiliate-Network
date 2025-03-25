@@ -16,12 +16,21 @@ export default function CampaignList() {
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
+        setLoading(true);
         const data = await getCampaign();
-        setCampaigns(data);
-        setStatusOptions([...new Set(data.map(campaign => campaign.status))]);
-        setLoading(false);
+        // Kiểm tra dữ liệu trả về
+        if (Array.isArray(data)) {
+          setCampaigns(data);
+          setStatusOptions([...new Set(data.map(campaign => campaign.status))]);
+        } else {
+          setCampaigns([]);
+          setStatusOptions([]);
+        }
       } catch (error) {
         console.error("Error fetching campaigns:", error);
+        setCampaigns([]);
+        setStatusOptions([]);
+      } finally {
         setLoading(false);
       }
     };
@@ -29,14 +38,17 @@ export default function CampaignList() {
     fetchCampaigns();
   }, []);
 
-  const filteredCampaigns = campaigns.filter((campaign) => {
-    const matchesSearch = campaign.name
-      ?.toLowerCase()
-      .includes(searchText.toLowerCase());
-    const matchesStatus =
-      filterStatus === "all" || campaign.status === filterStatus;
-    return matchesSearch && matchesStatus;
-  });
+  // Đảm bảo campaigns là mảng trước khi lọc
+  const filteredCampaigns = Array.isArray(campaigns)
+    ? campaigns.filter((campaign) => {
+        const matchesSearch = campaign.name
+          ?.toLowerCase()
+          .includes(searchText.toLowerCase());
+        const matchesStatus =
+          filterStatus === "all" || campaign.status === filterStatus;
+        return matchesSearch && matchesStatus;
+      })
+    : [];
 
   const columns = [
     {
@@ -61,7 +73,7 @@ export default function CampaignList() {
       title: "Ngân sách",
       dataIndex: "budget",
       key: "budget",
-      render: (budget) => `${budget.toLocaleString()} VND`,
+      render: (budget, record) => `${budget?.toLocaleString()} ${record.currencyCode || "VND"}`,
     },
     {
       title: "Thời gian",

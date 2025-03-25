@@ -2,13 +2,14 @@
 
 import {
   BellOutlined,
-  // GlobalOutlined,
   SearchOutlined,
   UserOutlined,
+  WalletOutlined // Thêm WalletOutlined
 } from "@ant-design/icons"
 import { Avatar, Badge, Dropdown, Input, Menu, Tooltip } from "antd"
 import { motion } from "framer-motion"
 import logout from "../../../components/Logout"
+import { Link } from 'react-router-dom' // Thêm import này nếu dùng React Router
 
 const PublisherHeader = () => {
   const profileMenu = (
@@ -64,7 +65,7 @@ const PublisherHeader = () => {
           />
         </motion.div>
 
-        {/* Right Section: Notification and Profile */}
+        {/* Right Section: Notification, Wallet and Profile */}
         <div className="flex items-center space-x-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.5 }}
@@ -77,6 +78,20 @@ const PublisherHeader = () => {
               </Tooltip>
             </Badge>
           </motion.div>
+
+          {/* Thêm Wallet Icon */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.7, duration: 0.5 }}
+          >
+            <Link to="/publisher/publisherhome/wallet">
+              <Tooltip title="Your Wallet">
+                <WalletOutlined className="text-xl text-white cursor-pointer hover:text-[#A855F7]" />
+              </Tooltip>
+            </Link>
+          </motion.div>
+
           <motion.div
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
