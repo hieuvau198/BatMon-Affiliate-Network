@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
-import {   Table,   Button,   Modal,   Input,   Select,   Card,   Form,  DatePicker,   Typography,   Space,   Tag} from "antd";
+import {   Table,   Button,   Select,   Card,   DatePicker,   Typography,   Tag} from "antd";
 import {  ArrowUpOutlined,  ArrowDownOutlined, DollarOutlined,  CheckCircleOutlined,  ClockCircleOutlined,  CloseCircleOutlined} from '@ant-design/icons';
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
 
-export default function TransactionManagement({ transactions, setTransactions, formatCurrency }) {
+export default function TransactionManagement({ transactions, formatCurrency }) {
   const [dateRange, setDateRange] = useState(null);
   const [statusFilter, setStatusFilter] = useState("All");
   const [typeFilter, setTypeFilter] = useState("All");
   const [filteredTransactions, setFilteredTransactions] = useState(transactions);
-  const [editModal, setEditModal] = useState(false);
-  const [selectedTransaction, setSelectedTransaction] = useState(null);
+
   useEffect(() => {
     let filtered = [...transactions];
     if (dateRange) {
@@ -29,21 +28,7 @@ export default function TransactionManagement({ transactions, setTransactions, f
     }
     setFilteredTransactions(filtered);
   }, [transactions, dateRange, statusFilter, typeFilter]);
-  const openEditModal = (transaction) => {  setSelectedTransaction({ ...transaction });  setEditModal(true);  };
-  const handleEditChange = (e) => {  setSelectedTransaction({ ...selectedTransaction, [e.target.name]: e.target.value });};
-  const handleEditSubmit = () => {
-    setTransactions(
-      transactions.map((transaction) =>
-        transaction.id === selectedTransaction.id ? selectedTransaction : transaction
-      )
-    );
-    setEditModal(false);
-  };
-  const handleDelete = (id) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa giao dịch này?")) {
-      setTransactions(transactions.filter((transaction) => transaction.id !== id));
-    }
-  };
+
   const transactionColumns = [
     {
       title: "No.",
@@ -121,20 +106,6 @@ export default function TransactionManagement({ transactions, setTransactions, f
       dataIndex: "date",
       key: "date",
     },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (text, record) => (
-        <Space>
-          <Button type="link" size="small" onClick={() => openEditModal(record)}>
-            Edit
-          </Button>
-          <Button type="link" danger size="small" onClick={() => handleDelete(record.id)}>
-            Delete
-          </Button>
-        </Space>
-      ),
-    },
   ];
 
   return (
@@ -201,72 +172,6 @@ export default function TransactionManagement({ transactions, setTransactions, f
         pagination={{ pageSize: 10 }}
         scroll={{ x: 'max-content' }}
       />
-
-      {/* Transaction Edit Modal */}
-      <Modal
-        title="Edit Transaction"
-        visible={editModal}
-        onOk={handleEditSubmit}
-        onCancel={() => setEditModal(false)}
-      >
-        <Form layout="vertical">
-          <Form.Item label="Transaction ID">
-            <Input 
-              name="transactionId" 
-              value={selectedTransaction?.transactionId} 
-              onChange={handleEditChange} 
-            />
-          </Form.Item>
-          <Form.Item label="Type">
-            <Select 
-              name="type" 
-              value={selectedTransaction?.type} 
-              onChange={(value) => setSelectedTransaction({...selectedTransaction, type: value})}
-            >
-              <Select.Option value="Deposit">Deposit</Select.Option>
-              <Select.Option value="Withdrawal">Withdrawal</Select.Option>
-              <Select.Option value="Campaign">Campaign</Select.Option>
-            </Select>
-          </Form.Item>
-          <Form.Item label="Amount">
-            <Input 
-              name="amount" 
-              value={selectedTransaction?.amount} 
-              onChange={handleEditChange} 
-              addonAfter="đ"
-            />
-          </Form.Item>
-          <Form.Item label="Status">
-            <Select 
-              name="status" 
-              value={selectedTransaction?.status} 
-              onChange={(value) => setSelectedTransaction({...selectedTransaction, status: value})}
-            >
-              <Select.Option value="Pending">Pending</Select.Option>
-              <Select.Option value="Completed">Completed</Select.Option>
-              <Select.Option value="Failed">Failed</Select.Option>
-            </Select>
-          </Form.Item>
-          <Form.Item label="Date">
-            <DatePicker 
-              name="date" 
-              value={selectedTransaction?.date ? new Date(selectedTransaction.date) : null} 
-              onChange={(date) => setSelectedTransaction({
-                ...selectedTransaction, 
-                date: date ? date.toISOString().slice(0, 10) : null
-              })}
-              style={{ width: '100%' }}
-            />
-          </Form.Item>
-          <Form.Item label="Description">
-            <Input.TextArea 
-              name="description" 
-              value={selectedTransaction?.description} 
-              onChange={handleEditChange} 
-            />
-          </Form.Item>
-        </Form>
-      </Modal>
     </div>
   );
 }

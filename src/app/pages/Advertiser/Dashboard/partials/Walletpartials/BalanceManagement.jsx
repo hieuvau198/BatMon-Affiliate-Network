@@ -1,43 +1,74 @@
 import React, { useState } from "react";
-import {   Card,   Statistic,   Button,   Typography,   Tooltip,   Modal,   Form,   Input,   Radio,   Upload,   notification,   Space,   Select} from "antd";
-import {   WalletOutlined,   DollarOutlined,   ArrowUpOutlined,   ArrowDownOutlined,  ClockCircleOutlined,  InfoCircleOutlined,  UploadOutlined} from '@ant-design/icons';
+import {     Card,   Statistic,   Button,   Typography,   Tooltip,   Modal,   Form,   Input,   Radio,  Upload,   notification,   Space,   Select} from "antd";
+import {    WalletOutlined, DollarOutlined,   ArrowUpOutlined,   ArrowDownOutlined,   ClockCircleOutlined,   InfoCircleOutlined,   UploadOutlined} from '@ant-design/icons';
 const { Title, Text } = Typography;
-export default function BalanceManagement({   advertiserBalance,   setAdvertiserBalance,   transactions,  setTransactions,   setStatusFilter,   setWithdrawalModal }) {
+export default function BalanceManagement({   
+  advertiserBalance, 
+  setAdvertiserBalance, 
+  transactions, 
+  setTransactions, 
+  setStatusFilter, 
+  setWithdrawalModal 
+}) {
   const [depositModal, setDepositModal] = useState(false);
   const [depositFormData, setDepositFormData] = useState({
     amount: "",
-    paymentMethod: "bankTransfer",
+    paymentMethod: "BankTransfer", // Consistent with paymentMethods array
     bankAccount: "default",
     referenceNumber: "",
     proofFile: null
   });
+
+  const paymentMethods = [
+    { value: "BankTransfer", label: "Chuyển khoản ngân hàng" },
+    { value: "CreditCard", label: "Thẻ tín dụng" },
+    { value: "DebitCard", label: "Thẻ ghi nợ" },
+    { value: "EWallet", label: "Ví điện tử" },
+    { value: "OnlineBanking", label: "Ngân hàng trực tuyến" }
+  ];
 
   const bankAccounts = [
     { id: "default", name: "Techcombank - 19120123456789 - CÔNG TY ABC" },
     { id: "bank2", name: "Vietcombank - 19213456789 - CÔNG TY ABC" },
     { id: "bank3", name: "BIDV - 19023156789 - CÔNG TY ABC" }
   ];
-  const formatCurrency = (value) => {  return `${value.toLocaleString()}đ`;};
-  const handleDepositFormChange = (fieldName, value) => {  setDepositFormData({  ...depositFormData,  [fieldName]: value});  };
+
+  const formatCurrency = (value) => {  
+    return `${value.toLocaleString()}đ`;
+  };
+
+  const handleDepositFormChange = (fieldName, value) => {  
+    setDepositFormData({  
+      ...depositFormData,  
+      [fieldName]: value
+    });  
+  };
 
   const handleDepositSubmit = () => {
-    if (!depositFormData.amount || isNaN(parseFloat(depositFormData.amount.replace(/,/g, "")))) {
-      notification.error({
-        message: "Lỗi",
-        description: "Vui lòng nhập số tiền hợp lệ",
-      });
-      return;
-    }
-    if (depositFormData.paymentMethod === "bankTransfer" && !depositFormData.referenceNumber) {
-      notification.error({
-        message: "Lỗi",
-        description: "Vui lòng nhập mã tham chiếu giao dịch ngân hàng",
-      });
-      return;
-    }
-    const amount = parseFloat(depositFormData.amount.replace(/,/g, ""));
+    const amountString = depositFormData.amount.replace(/,/g, "");
+    const amount = parseFloat(amountString);
 
-    // Create new transaction
+    if (!amountString || isNaN(amount) || amount <= 0) {
+      notification.error({
+        message: "Lỗi",
+        description: "Vui lòng nhập số tiền hợp lệ (lớn hơn 0)",
+      });
+      return;
+    }
+    if (!depositFormData.paymentMethod) {
+      notification.error({
+        message: "Lỗi",
+        description: "Vui lòng chọn phương thức thanh toán",
+      });
+      return;
+    }
+    if (depositFormData.paymentMethod === "BankTransfer" && !depositFormData.bankAccount) {
+      notification.error({
+        message: "Lỗi",
+        description: "Vui lòng chọn tài khoản ngân hàng",
+      });
+      return;
+    }
     const newTransaction = {
       id: `T${(transactions.length + 1).toString().padStart(3, "0")}`,
       transactionId: `TXN-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}`,
@@ -45,17 +76,20 @@ export default function BalanceManagement({   advertiserBalance,   setAdvertiser
       amount: amount,
       status: "Pending",
       date: new Date().toISOString().slice(0, 10),
-      description: `${depositFormData.paymentMethod === "bankTransfer" ? "Bank transfer deposit" : "Deposit via " + depositFormData.paymentMethod}`
+      description: `Deposit via ${depositFormData.paymentMethod}`
     };
     
     setTransactions([...transactions, newTransaction]);
-    setAdvertiserBalance({  ...advertiserBalance,  pendingBalance: advertiserBalance.pendingBalance + amount,  lastUpdated: new Date().toISOString().slice(0, 10)
+    setAdvertiserBalance({  
+      ...advertiserBalance,  
+      pendingBalance: advertiserBalance.pendingBalance + amount,  
+      lastUpdated: new Date().toISOString().slice(0, 10)
     });
 
     setDepositModal(false);
     setDepositFormData({
       amount: "",
-      paymentMethod: "bankTransfer",
+      paymentMethod: "BankTransfer",
       bankAccount: "default",
       referenceNumber: "",
       proofFile: null
@@ -69,7 +103,6 @@ export default function BalanceManagement({   advertiserBalance,   setAdvertiser
 
   return (
     <>
-      {/* Financial summary section */}
       <div className="mb-8">
         <Title level={4} className="mb-4">Tổng quan tài chính</Title>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -83,7 +116,7 @@ export default function BalanceManagement({   advertiserBalance,   setAdvertiser
                   </Tooltip>
                 </span>
               }
-              value={advertiserBalance.availableBalance}
+              value={advertiserBalance.availableBalance || 0}
               prefix={<WalletOutlined />}
               suffix="đ"
               valueStyle={{ color: '#3f8600' }}
@@ -112,7 +145,7 @@ export default function BalanceManagement({   advertiserBalance,   setAdvertiser
                   </Tooltip>
                 </span>
               }
-              value={advertiserBalance.pendingBalance}
+              value={advertiserBalance.pendingBalance || 0}
               prefix={<ClockCircleOutlined />}
               suffix="đ"
               valueStyle={{ color: '#faad14' }}
@@ -136,7 +169,7 @@ export default function BalanceManagement({   advertiserBalance,   setAdvertiser
             <div className="grid grid-cols-3 gap-2">
               <Statistic
                 title="Tổng nạp"
-                value={advertiserBalance.lifetimeDeposits}
+                value={advertiserBalance.lifetimeDeposits || 0}
                 prefix={<ArrowDownOutlined />}
                 suffix="đ"
                 valueStyle={{ color: '#3f8600', fontSize: '14px' }}
@@ -144,7 +177,7 @@ export default function BalanceManagement({   advertiserBalance,   setAdvertiser
               />
               <Statistic
                 title="Tổng rút"
-                value={advertiserBalance.lifetimeWithdrawals}
+                value={advertiserBalance.lifetimeWithdrawals || 0}
                 prefix={<ArrowUpOutlined />}
                 suffix="đ"
                 valueStyle={{ color: '#cf1322', fontSize: '14px' }}
@@ -152,7 +185,7 @@ export default function BalanceManagement({   advertiserBalance,   setAdvertiser
               />
               <Statistic
                 title="Tổng chi tiêu"
-                value={advertiserBalance.lifetimeSpend}
+                value={advertiserBalance.lifetimeSpend || 0}
                 prefix={<DollarOutlined />}
                 suffix="đ"
                 valueStyle={{ color: '#1890ff', fontSize: '14px' }}
@@ -160,13 +193,12 @@ export default function BalanceManagement({   advertiserBalance,   setAdvertiser
               />
             </div>
             <Text type="secondary" className="block mt-2">
-              Cập nhật lần cuối: {advertiserBalance.lastUpdated} | Đơn vị tiền: {advertiserBalance.currencyCode}
+              Cập nhật lần cuối: {advertiserBalance.lastUpdated || 'N/A'} | Đơn vị tiền: {advertiserBalance.currencyCode || 'VND'}
             </Text>
           </Card>
         </div>
       </div>
 
-      {/* Deposit Modal */}
       <Modal
         title="Nạp tiền"
         visible={depositModal}
@@ -178,25 +210,31 @@ export default function BalanceManagement({   advertiserBalance,   setAdvertiser
           <Form.Item label="Số tiền nạp (đồng)" required>
             <Input
               value={depositFormData.amount}
-              onChange={(e) => handleDepositFormChange('amount', e.target.value)}
+              onChange={(e) => {
+                const formattedValue = e.target.value
+                  .replace(/[^0-9,]/g, '')  // Remove non-numeric characters except comma
+                  .replace(/(,.*),/g, '$1');  // Remove multiple commas
+                handleDepositFormChange('amount', formattedValue);
+              }}
               addonAfter="đ"
               placeholder="Nhập số tiền cần nạp"
             />
           </Form.Item>
           <Form.Item label="Phương thức thanh toán" required>
-            <Radio.Group
+            <Select
               value={depositFormData.paymentMethod}
-              onChange={(e) => handleDepositFormChange('paymentMethod', e.target.value)}
+              onChange={(value) => handleDepositFormChange('paymentMethod', value)}
+              placeholder="Chọn phương thức thanh toán"
             >
-              <Space direction="vertical">
-                <Radio value="bankTransfer">Chuyển khoản ngân hàng</Radio>
-                <Radio value="creditCard">Thẻ tín dụng/ghi nợ</Radio>
-                <Radio value="eWallet">Ví điện tử</Radio>
-              </Space>
-            </Radio.Group>
+              {paymentMethods.map(method => (
+                <Select.Option key={method.value} value={method.value}>
+                  {method.label}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
           
-          {depositFormData.paymentMethod === 'bankTransfer' && (
+          {depositFormData.paymentMethod === 'BankTransfer' && (
             <>
               <Form.Item label="Chọn tài khoản ngân hàng để chuyển khoản" required>
                 <Select
@@ -209,21 +247,6 @@ export default function BalanceManagement({   advertiserBalance,   setAdvertiser
                     </Select.Option>
                   ))}
                 </Select>
-                <div className="mt-2 p-3 bg-gray-50 rounded-md">
-                  <Title level={5}>Hướng dẫn nạp tiền qua chuyển khoản</Title>
-                  <ol className="list-decimal pl-5">
-                    <li>Chuyển khoản đến tài khoản ngân hàng được chọn</li>
-                    <li>Nội dung chuyển khoản: AD{advertiserBalance.advertiserId}</li>
-                    <li>Hoàn thành biểu mẫu này sau khi đã chuyển khoản</li>
-                  </ol>
-                </div>
-              </Form.Item>
-              <Form.Item label="Mã tham chiếu giao dịch" required>
-                <Input
-                  value={depositFormData.referenceNumber}
-                  onChange={(e) => handleDepositFormChange('referenceNumber', e.target.value)}
-                  placeholder="Nhập mã tham chiếu/số tham chiếu từ ngân hàng của bạn"
-                />
               </Form.Item>
               <Form.Item label="Bằng chứng thanh toán">
                 <Upload

@@ -213,11 +213,6 @@ const WithdrawalRequest = ({   withdrawalRequests,   setWithdrawalRequests,   ad
                 </Select.Option>
               ))}
             </Select>
-            <div className="mt-2">
-              <Button type="link" onClick={() => setBankAccountModal(true)}>
-                + Thêm tài khoản mới
-              </Button>
-            </div>
           </Form.Item>
         </Form>
       </Modal>
