@@ -111,7 +111,7 @@ export default function MainRoutes() {
           <Route path="publisher-management/publisherdetail/:publisherId" element={<PubMaDetail />} />
           <Route path="publisher-management/publisherdetail/:publisherId/PubCampaignPolicy" element={<PubCampaignPolicy />} />
           <Route path="fraud-investigation" element={<AdverFraudInves />} />
-          <Route path="fraud-investigation/:fraudId" element={<AdverFraudInvesCaseDetails />} />
+          <Route path="fraud-investigation/:caseId" element={<AdverFraudInvesCaseDetails />} />
           <Route path="BalanceManagement" element={<BalanceManagement />} />
           <Route path="BankAccountManagement" element={<BankAccountManagement />} />
           <Route path="CampaignSpendTracking" element={<CampaignSpendTracking />} />
