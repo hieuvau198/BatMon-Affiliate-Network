@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Tag, Spin, Select, DatePicker } from 'antd';
+import { Table, Tag, Spin, Select } from 'antd';
 import { motion } from 'framer-motion';
 import getFraudCase from '../../../../modules/FraudCase/getFraudCase';
 
@@ -10,7 +10,6 @@ const FraudCase = () => {
   const [loading, setLoading] = useState(true);
   const [filterFraudType, setFilterFraudType] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
-  const [filterDate, setFilterDate] = useState(null);
 
   useEffect(() => {
     const fetchFraudCases = async () => {
@@ -30,9 +29,7 @@ const FraudCase = () => {
   const filteredFraudCases = fraudCases.filter((fraudCase) => {
     const matchesFraudType = filterFraudType === "all" || fraudCase.fraudTypeName === filterFraudType;
     const matchesStatus = filterStatus === "all" || fraudCase.status === filterStatus;
-    const matchesDate =
-      !filterDate || new Date(fraudCase.detectionDate).toLocaleDateString() === new Date(filterDate).toLocaleDateString();
-    return matchesFraudType && matchesStatus && matchesDate;
+    return matchesFraudType && matchesStatus;
   });
 
   const columns = [
@@ -97,14 +94,6 @@ const FraudCase = () => {
           <Option value="Under Review">Đang xem xét</Option>
           <Option value="Resolved">Đã giải quyết</Option>
         </Select>
-
-        <DatePicker
-          value={filterDate ? new Date(filterDate) : null}
-          onChange={(date, dateString) => setFilterDate(dateString)}
-          className="md:w-40"
-          format="yyyy-MM-dd"
-          placeholder="Chọn ngày"
-        />
       </div>
 
       {loading ? (
