@@ -41,11 +41,24 @@ export default function CampaignAdDetail() {
         <h2 className="text-2xl font-semibold mb-4">{campaign.name}</h2>
         <Card className="bg-white mb-6 shadow-md rounded-xl p-4">
           <p><strong>Mô tả:</strong> {campaign.description}</p>
-          <p><strong>Ngân sách:</strong> {campaign.budget.toLocaleString()} VND</p>
-          <p><strong>Hạn mức ngày:</strong> {campaign.dailyCap.toLocaleString()} VND</p>
-          <p><strong>Hạn mức tháng:</strong> {campaign.monthlyCap.toLocaleString()} VND</p>
-          <p><strong>Thời gian:</strong> {campaign.startDate} - {campaign.endDate}</p>
+          <p>
+            <strong>Ngân sách:</strong>{" "}
+            {campaign.budget.toLocaleString()} {campaign.currencyCode || "VND"}
+          </p>
+          <p>
+            <strong>Hạn mức ngày:</strong>{" "}
+            {campaign.dailyCap.toLocaleString()} {campaign.currencyCode || "VND"}
+          </p>
+          <p>
+            <strong>Hạn mức tháng:</strong>{" "}
+            {campaign.monthlyCap.toLocaleString()} {campaign.currencyCode || "VND"}
+          </p>
+          <p>
+            <strong>Thời gian:</strong> {campaign.startDate} - {campaign.endDate}
+          </p>
           <p><strong>Trạng thái:</strong> {campaign.status}</p>
+          <p><strong>Quốc gia mục tiêu:</strong> {campaign.targetingCountries}</p>
+          <p><strong>Thiết bị mục tiêu:</strong> {campaign.targetingDevices}</p>
         </Card>
 
         {/* Hiệu suất thực tế */}
@@ -54,13 +67,13 @@ export default function CampaignAdDetail() {
           <Table
             columns={[
               { title: "Chỉ số", dataIndex: "metric", key: "metric" },
-              { title: "Giá trị", dataIndex: "value", key: "value" }
+              { title: "Giá trị", dataIndex: "value", key: "value" },
             ]}
             dataSource={[
               { metric: "Tổng Clicks", value: "12,500" },
               { metric: "Tổng Chuyển Đổi", value: "1,250" },
-              { metric: "Tỷ Lệ Chuyển Đổi", value: "10%" },
-              { metric: "Doanh Thu", value: "50,000,000 VND" }
+              { metric: "Tỷ Lệ Chuyển Đổi", value: `${campaign.conversionRate}%` },
+              { metric: "Doanh Thu", value: "50,000,000 VND" },
             ]}
             pagination={false}
             bordered={true}
@@ -81,7 +94,7 @@ export default function CampaignAdDetail() {
             dataSource={[
               { name: "Affiliate_001", clicks: "5000", conversions: "600", revenue: "10,000,000 VND" },
               { name: "Publisher_VN", clicks: "4000", conversions: "450", revenue: "8,500,000 VND" },
-              { name: "MarketingHub", clicks: "2500", conversions: "200", revenue: "5,000,000 VND" }
+              { name: "MarketingHub", clicks: "2500", conversions: "200", revenue: "5,000,000 VND" },
             ]}
             pagination={false}
             bordered={true}
@@ -105,11 +118,11 @@ export default function CampaignAdDetail() {
           <Table
             columns={[
               { title: "Thời gian", dataIndex: "date", key: "date" },
-              { title: "Thay đổi", dataIndex: "change", key: "change" }
+              { title: "Thay đổi", dataIndex: "change", key: "change" },
             ]}
             dataSource={[
-              { date: "2025-03-01", change: "Tăng ngân sách từ 40,000,000 lên 50,000,000 VND" },
-              { date: "2025-03-03", change: "Thêm Publisher mới: MarketingHub" }
+              { date: campaign.createdDate, change: "Chiến dịch được tạo" },
+              { date: campaign.lastUpdated, change: "Cập nhật thông tin chiến dịch" },
             ]}
             pagination={false}
             bordered={true}
@@ -124,11 +137,11 @@ export default function CampaignAdDetail() {
             columns={[
               { title: "Thời gian", dataIndex: "date", key: "date" },
               { title: "Số tiền", dataIndex: "amount", key: "amount" },
-              { title: "Trạng thái", dataIndex: "status", key: "status" }
+              { title: "Trạng thái", dataIndex: "status", key: "status" },
             ]}
             dataSource={[
               { date: "2025-03-10", amount: "25,000,000 VND", status: "Đã thanh toán" },
-              { date: "2025-02-10", amount: "20,000,000 VND", status: "Đã thanh toán" }
+              { date: "2025-02-10", amount: "20,000,000 VND", status: "Đã thanh toán" },
             ]}
             pagination={false}
             bordered={true}
@@ -138,15 +151,18 @@ export default function CampaignAdDetail() {
 
         {/* Nút điều hướng */}
         <div className="flex justify-between mt-6">
-          <Button type="primary" onClick={() => navigate(`/advertiser/campaignList/campaigndetail/${campaignId}/CampaignPolicy`)}>
+          <Button
+            type="primary"
+            onClick={() => navigate(`/advertiser/campaignList/campaigndetail/${campaignId}/CampaignPolicy`)}
+          >
             📜 Chính sách chiến dịch
           </Button>
-          <Button type="default" onClick={() => navigate(`/advertiser/campaignList/campaigndetail/${campaignId}/CampaignPerformance`)}>
+          <Button
+            type="default"
+            onClick={() => navigate(`/advertiser/campaignList/campaigndetail/${campaignId}/CampaignPerformance`)}
+          >
             📊 Xem hiệu suất
           </Button>
-          {/* <Button type="default" onClick={() => navigate(`/advertiser/campaignList/${campaignId}/edit`)}>
-            ✏️ Chỉnh sửa
-          </Button> */}
         </div>
       </div>
     </div>
