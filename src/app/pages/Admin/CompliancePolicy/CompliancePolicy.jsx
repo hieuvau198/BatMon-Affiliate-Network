@@ -5,6 +5,7 @@ import { Link } from "react-router-dom"
 import getCampaignPolicy from "../../../modules/CampaignPolicy/getCampaignPolicy"
 import editCampaignPolicy from "../../../modules/CampaignPolicy/editCampaignPolicy"
 import addCampaignPolicy from "../../../modules/CampaignPolicy/addCampaignPolicy"
+import deleteCampaignPolicy from "../../../modules/CampaignPolicy/deleteCampaignPolicy"
 import EditCampaignPolicy from "./partials/EditCampaignPolicy"
 
 const { Title, Text } = Typography
@@ -16,7 +17,6 @@ export default function CompliancePolicy() {
   const [editingPolicy, setEditingPolicy] = useState(null)
   const [policies, setPolicies] = useState([])
 
-  // Fetch policies from API on mount
   useEffect(() => {
     async function fetchPolicies() {
       try {
@@ -141,14 +141,20 @@ export default function CompliancePolicy() {
     }
   }
 
-  const handleDeletePolicy = (key) => {
-    const newPolicies = policies.filter((item) => item.key !== key)
-    const renumberedPolicies = newPolicies.map((item, index) => ({
-      ...item,
-      stt: (index + 1).toString(),
-    }))
-    setPolicies(renumberedPolicies)
-    message.success("Chính sách đã được xóa thành công!")
+  // Updated delete function that calls the API
+  const handleDeletePolicy = async (key) => {
+    try {
+      await deleteCampaignPolicy(Number(key))
+      const newPolicies = policies.filter((item) => item.key !== key)
+      const renumberedPolicies = newPolicies.map((item, index) => ({
+        ...item,
+        stt: (index + 1).toString(),
+      }))
+      setPolicies(renumberedPolicies)
+      message.success("Chính sách đã được xóa thành công!")
+    } catch (error) {
+      console.error("Error deleting policy:", error)
+    }
   }
 
   const columns = [

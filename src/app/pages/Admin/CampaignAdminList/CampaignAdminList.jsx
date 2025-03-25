@@ -1,20 +1,20 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Table,  Typography,  Tag,  Card,  Input,  Button,  DatePicker,  Select,  Row,  Col,  Drawer,  Descriptions,  Divider,  Avatar,} from "antd"
-import {  SearchOutlined,  ArrowLeftOutlined,  EyeOutlined,  FileTextOutlined,  UserOutlined,  CalendarOutlined,} from "@ant-design/icons"
-import { Link } from "react-router-dom"
+import { ArrowLeftOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons"
+import { Button, Card, Col, DatePicker, Drawer, Input, Row, Select, Table, Tag, Typography } from "antd"
 import locale from "antd/es/date-picker/locale/vi_VN"
-import mock_campaignAdmin from "./mock_campaignAdmin" // Import mock data
+import { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
 import getCampaignList from "../../../modules/Campaign/getCampaignList"
-import VndFormat from "../../../components/VndFormat"
+import mock_campaignAdmin from "./mock_campaignAdmin"
+import CampaignDetails from "./partials/CampaignDetails"
 
 const { Title, Text, Paragraph } = Typography
 const { RangePicker } = DatePicker
 const { Option } = Select
 
 const CampaignList = () => {
-  const [dataSource , setDataSource] = useState(mock_campaignAdmin)
+  const [dataSource, setDataSource] = useState(mock_campaignAdmin)
   const [searchText, setSearchText] = useState("")
   const [dateRange, setDateRange] = useState(null)
   const [statusFilter, setStatusFilter] = useState(null)
@@ -91,53 +91,53 @@ const CampaignList = () => {
     return <Tag color={color}>{text}</Tag>
   }
 
-    const columns = [
-      {
-        title: "STT",
-        dataIndex: "campaignId",
-        key: "campaignId",
-        width: 70,
+  const columns = [
+    {
+      title: "STT",
+      dataIndex: "campaignId",
+      key: "campaignId",
+      width: 70,
+    },
+    {
+      title: "Tên Chiến Dịch",
+      dataIndex: "name",
+      key: "name",
+      render: (text, record) => (
+        <a className="font-medium text-blue-600 hover:text-blue-800" onClick={() => showCampaignDetail(record)}>
+          {text}
+        </a>
+      ),
+    },
+    {
+      title: "Advertiser",
+      dataIndex: "advertiserName",
+      key: "advertiserName",
+    },
+    {
+      title: "Ngày Tạo",
+      dataIndex: "createdDate",
+      key: "createdDate",
+      render: (date) => {
+        const formattedDate = new Date(date).toLocaleDateString("vi-VN", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+        return formattedDate
       },
-      {
-        title: "Tên Chiến Dịch",
-        dataIndex: "name",
-        key: "name",
-        render: (text, record) => (
-          <a className="font-medium text-blue-600 hover:text-blue-800" onClick={() => showCampaignDetail(record)}>
-            {text}
-          </a>
-        ),
-      },
-      {
-        title: "Advertiser",
-        dataIndex: "advertiserName",
-        key: "advertiserName",
-      },
-      {
-        title: "Ngày Tạo",
-        dataIndex: "createdDate",
-        key: "createdDate",
-        render: (date) => {
-          const formattedDate = new Date(date).toLocaleDateString("vi-VN", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })
-          return formattedDate
-        },
-      },
-      {
-        title: "Mô Tả",
-        dataIndex: "description",
-        key: "description",
-        ellipsis: true,
-        width: 150,
-        render: (_, record) => (
-          <Button type="default" icon={<EyeOutlined />} onClick={() => showCampaignDetail(record)}>
-            Chi tiết
-          </Button>
-        ),
-      },
+    },
+    {
+      title: "Mô Tả",
+      dataIndex: "description",
+      key: "description",
+      ellipsis: true,
+      width: 150,
+      render: (_, record) => (
+        <Button type="default" icon={<EyeOutlined />} onClick={() => showCampaignDetail(record)}>
+          Chi tiết
+        </Button>
+      ),
+    },
     {
       title: "Trạng Thái",
       dataIndex: "status",
@@ -219,7 +219,6 @@ const CampaignList = () => {
         className="shadow-md rounded-md"
       />
 
-      {/* Drawer xem chi tiết chiến dịch */}
       <Drawer
         title="Chi tiết chiến dịch"
         placement="right"
@@ -228,73 +227,14 @@ const CampaignList = () => {
         open={detailDrawerVisible}
       >
         {campaignDetail && (
-          <div className="space-y-6">
-            <div className="flex items-center space-x-4">
-              <Avatar size={64} icon={<FileTextOutlined />} className="bg-blue-500" />
-              <div>
-                <Title level={4} className="m-0">
-                  {campaignDetail.name}
-                </Title>
-                {getStatusTag(campaignDetail.status)}
-              </div>
-            </div>
-
-            <Divider />
-
-<Descriptions bordered column={1} size="small">
-  <Descriptions.Item label="Advertiser">
-    <div className="flex items-center">
-      <UserOutlined className="mr-2" /> {campaignDetail.advertiserName}
+          <CampaignDetails
+            campaignDetail={campaignDetail}
+            getStatusTag={getStatusTag}
+          />
+        )}
+      </Drawer>
     </div>
-  </Descriptions.Item>
-  <Descriptions.Item label="Ngày tạo">
-    <div className="flex items-center">
-      <CalendarOutlined className="mr-2" />
-      {new Date(campaignDetail.createdDate).toLocaleDateString("vi-VN", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })}
-    </div>
-  </Descriptions.Item>
-  <Descriptions.Item label="Ngân sách">
-    {campaignDetail.budget} {campaignDetail.currencyCode}
-  </Descriptions.Item>
-  <Descriptions.Item label="Thời gian thực hiện">
-    {new Date(campaignDetail.startDate).toLocaleDateString("vi-VN")} -{" "}
-    {new Date(campaignDetail.endDate).toLocaleDateString("vi-VN")}
-  </Descriptions.Item>
-  <Descriptions.Item label="Quốc gia mục tiêu">{campaignDetail.targetingCountries}</Descriptions.Item>
-  <Descriptions.Item label="Thiết bị mục tiêu">{campaignDetail.targetingDevices}</Descriptions.Item>
-  <Descriptions.Item label="Giới hạn ngày">
-    <VndFormat amount={campaignDetail.dailyCap} />
-  </Descriptions.Item>
-  <Descriptions.Item label="Giới hạn tháng">
-    <VndFormat amount={campaignDetail.monthlyCap} />
-  </Descriptions.Item>
-  <Descriptions.Item label="Tỷ lệ chuyển đổi">{campaignDetail.conversionRate}%</Descriptions.Item>
-  <Descriptions.Item label="Cập nhật lần cuối">
-    {new Date(campaignDetail.lastUpdated).toLocaleDateString("vi-VN", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })}
-  </Descriptions.Item>
-  <Descriptions.Item label="Chiến dịch riêng tư">
-    {campaignDetail.isPrivate ? "Có" : "Không"}
-  </Descriptions.Item>
-</Descriptions>
-
-<Divider orientation="left">Thông tin chi tiết</Divider>
-
-<Card title="Mô tả" size="small" className="bg-gray-50">
-  <Paragraph>{campaignDetail.description}</Paragraph>
-</Card>
-</div>
-)}
-</Drawer>
-</div>
-)
+  )
 }
 
 export default CampaignList
