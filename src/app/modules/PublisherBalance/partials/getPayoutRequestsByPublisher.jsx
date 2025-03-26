@@ -21,7 +21,7 @@ export default async function getPayoutRequestsByPublisher(publisherId) {
     }
 
     const data = await response.json();
-    message.success("Payout requests fetched successfully!");
+    // message.success("Payout requests fetched successfully!");
     return data;
   } catch (error) {
     message.error(
