@@ -1,129 +1,241 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Card, Progress } from "antd";
+import { Card, Progress, Tabs, Table, Button, Statistic, message, Tag, Tooltip } from "antd";
+import { ArrowLeftOutlined, LineChartOutlined, InfoCircleOutlined, FileTextOutlined, BarChartOutlined } from '@ant-design/icons';
+import getAllPublisherId from "../../../../../modules/Publisher/getAllPublisherId";
+import { useNavigate } from "react-router-dom";
 
-export default function PubMaDetail() {
+export default function PublisherDetail() {
   const { publisherId } = useParams();
   const [publisher, setPublisher] = useState(null);
+  const [activeTabKey, setActiveTabKey] = useState("overview");
+  const [loading, setLoading] = useState(true);
+  const { TabPane } = Tabs;
+  const navigate = useNavigate();
 
-  const publishers = [
-    {
-      id: "P001",
-      name: "Affiliate Hub",
-      clicks: 5000,
-      conversions: 320,
-      revenue: "15,000,000đ",
-      status: "Active",
-      joinDate: "2023-05-10",
-      totalOrders: 1200,
-      ctr: 6.4,
-      industry: "E-commerce",
-      paymentMethod: "Bank Transfer",
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const data = await getAllPublisherId(publisherId);
+      if (!data) {
+        message.error("Không tìm thấy nhà phát hành!");
+      } else {
+        setPublisher(data);
+      }
+      setLoading(false);
+    };
+    fetchData();
+  }, [publisherId]);
+
+  if (loading) {
+    return <div className="text-center mt-10 text-gray-600">Đang tải dữ liệu...</div>;
+  }
+
+  if (!publisher) {
+    return <p className="text-center mt-6 text-red-600">Nhà phát hành không tồn tại!</p>;
+  }
+
+  const monthlyDataColumns = [
+    { title: "Tháng", dataIndex: "month", key: "month" },
+    { 
+      title: "Lưu lượng", 
+      dataIndex: "traffic", 
+      key: "traffic", 
+      render: (traffic) => <div className="text-right">{traffic?.toLocaleString() || 0}</div>,
     },
-    {
-      id: "P002",
-      name: "Marketing Pro",
-      clicks: 4200,
-      conversions: 250,
-      revenue: "12,500,000đ",
-      status: "Pending",
-      joinDate: "2023-06-15",
-      totalOrders: 950,
-      ctr: 5.9,
-      industry: "Digital Marketing",
-      paymentMethod: "PayPal",
+    { 
+      title: "Chuyển đổi", 
+      dataIndex: "conversions", 
+      key: "conversions", 
+      render: (conversions) => <div className="text-right">{conversions?.toLocaleString() || 0}</div>,
     },
-    {
-      id: "P003",
-      name: "Media Network",
-      clicks: 3100,
-      conversions: 150,
-      revenue: "8,750,000đ",
-      status: "Inactive",
-      joinDate: "2023-03-22",
-      totalOrders: 720,
-      ctr: 4.8,
-      industry: "Social Media",
-      paymentMethod: "Crypto",
+    { 
+      title: "Doanh thu", 
+      dataIndex: "revenue", 
+      key: "revenue", 
+      render: (revenue) => <div className="text-right font-medium">{revenue || "0đ"}</div>,
+    },
+    { 
+      title: "CR%", 
+      key: "cr", 
+      render: (_, record) => (
+        <div className="text-right">
+          {record.traffic ? ((record.conversions / record.traffic) * 100).toFixed(2) : "0.00"}%
+        </div>
+      ),
     },
   ];
 
-  useEffect(() => {
-    const foundPublisher = publishers.find((p) => p.id === publisherId);
-    setPublisher(foundPublisher);
-  }, [publisherId]);
-
-  if (!publisher) {
-    return <p className="text-center mt-6 text-red-600">Publisher không tồn tại!</p>;
-  }
+  const getFraudRiskTag = (risk) => {
+    const colors = {
+      "Thấp": "green",
+      "Trung bình": "orange",
+      "Cao": "red"
+    };
+    return (
+      <Tag color={colors[risk] || "gray"} className="font-medium">
+        {risk || "Không xác định"}
+      </Tag>
+    );
+  };
 
   return (
-    <div className="p-6 flex justify-center">
-      <Card className="shadow rounded-lg bg-white p-6 max-w-[1500px] w-full">
-        {/* Breadcrumb + Back Button */}
-        <div className="flex items-center mb-4">
-          <button
-            onClick={() => window.history.back()}
-            className="px-4 py-2 bg-gray-300 text-black rounded-lg mr-4"
+    <div className="p-6 bg-white min-h-screen">
+      <div className="shadow-xl rounded-xl bg-white overflow-hidden">
+        {/* Header */}
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Button
+                icon={<ArrowLeftOutlined />}
+                onClick={() => window.history.back()}
+                className="text-blue-600 border-blue-600 hover:bg-blue-50 transition-colors"
+              >
+                Quay lại
+              </Button>
+              <div>
+                <span className="text-gray-500 text-sm">Chi tiết nhà phát hành</span>
+                <h1 className="text-2xl font-bold text-gray-800">{publisher.username}</h1>
+              </div>
+            </div>
+            <Tooltip title="Cập nhật lần cuối: vừa xong">
+              <InfoCircleOutlined className="text-gray-400 hover:text-gray-600" />
+            </Tooltip>
+          </div>
+        </div>
+
+        {/* Stats Overview */}
+        <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-gray-50">
+          {[
+            { title: "Lưu lượng", value: publisher.traffic?.toLocaleString() || 0, color: "blue" },
+            { title: "Chuyển đổi", value: publisher.conversions?.toLocaleString() || 0, color: "green" },
+            { title: "Doanh thu", value: publisher.revenue || "0đ", color: "purple" },
+            { title: "Hoa hồng", value: publisher.commission || "0đ", color: "orange" },
+          ].map((stat, index) => (
+            <Card 
+              key={index}
+              className={`border-l-4 border-${stat.color}-500 bg-white shadow-sm hover:shadow-md transition-shadow`}
+            >
+              <Statistic
+                title={<span className="text-gray-600 text-sm">{stat.title}</span>}
+                value={stat.value}
+                valueStyle={{ color: `var(--${stat.color}-600)`, fontSize: "1.5rem" }}
+              />
+            </Card>
+          ))}
+        </div>
+
+        {/* Tabs Content */}
+        <Tabs 
+          activeKey={activeTabKey} 
+          onChange={setActiveTabKey} 
+          className="px-6"
+          tabBarStyle={{ marginBottom: 0 }}
+        >
+          <TabPane 
+            tab={<span><LineChartOutlined /> Tổng quan</span>} 
+            key="overview"
           >
-            ⬅ Quay lại
-          </button>
-          <span className="text-gray-500">Publisher / Chi tiết / {publisher.name}</span>
-        </div>
+            <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Publisher Info */}
+              <Card className="bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center justify-between">
+                  Thông tin nhà phát hành
+                  {getFraudRiskTag(publisher.fraudRisk)}
+                </h3>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Email:</span>
+                    <span className="font-medium text-blue-600">{publisher.email || "N/A"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Công ty:</span>
+                    <span className="font-medium">{publisher.companyName || "N/A"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Người liên hệ:</span>
+                    <span className="font-medium">{publisher.contactName || "N/A"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Điện thoại:</span>
+                    <span className="font-medium">{publisher.phoneNumber || "N/A"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Địa chỉ:</span>
+                    <span className="font-medium">{publisher.address || "N/A"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Ngày đăng ký:</span>
+                    <span className="font-medium">{publisher.registrationDate || "N/A"}</span>
+                  </div>
+                </div>
+              </Card>
 
-        {/* Title */}
-        <h2 className="text-2xl font-semibold mb-4">{publisher.name}</h2>
+              {/* Performance Metrics */}
+              <Card className="bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Hiệu suất</h3>
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span>Tỷ lệ chuyển đổi</span>
+                      <span className="font-medium text-blue-600">
+                        {publisher.traffic ? ((publisher.conversions / publisher.traffic) * 100).toFixed(2) : "0.00"}%
+                      </span>
+                    </div>
+                    <Progress 
+                      percent={publisher.traffic ? (publisher.conversions / publisher.traffic) * 100 : 0} 
+                      strokeColor="#1890ff"
+                      showInfo={false}
+                    />
+                  </div>
+                </div>
+              </Card>
+            </div>
 
-        {/* Grid Layout */}
-        <div className="grid grid-cols-2 gap-6">
-          {/* Thông tin cơ bản */}
-          <Card className="bg-gray-50">
-            <h3 className="text-lg font-semibold mb-3">Thông tin tổng quan</h3>
-            <p><strong>Ngày tham gia:</strong> {publisher.joinDate}</p>
-            <p><strong>Ngành hàng:</strong> {publisher.industry}</p>
-            <p><strong>Phương thức thanh toán:</strong> {publisher.paymentMethod}</p>
-            <p><strong>Status:</strong> 
-              <span className={`px-2 py-1 ml-2 rounded ${
-                publisher.status === "Active" ? "bg-green-200 text-green-800" :
-                publisher.status === "Pending" ? "bg-yellow-200 text-yellow-800" :
-                "bg-red-200 text-red-800"
-              }`}>
-                {publisher.status}
-              </span>
-            </p>
-          </Card>
+            {/* Monthly Performance */}
+            {publisher.monthlyData && (
+              <div className="p-6">
+                <Card className="bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Hiệu suất hàng tháng</h3>
+                  <Table
+                    dataSource={publisher.monthlyData}
+                    columns={monthlyDataColumns}
+                    pagination={{ pageSize: 6 }}
+                    size="small"
+                    rowKey="month"
+                    bordered
+                    className="rounded-lg overflow-hidden"
+                  />
+                </Card>
+              </div>
+            )}
+          </TabPane>    
+        </Tabs>
+      </div>
 
-          {/* Hiệu suất Publisher */}
-          <Card className="bg-gray-50">
-            <h3 className="text-lg font-semibold mb-3">Hiệu suất</h3>
-            <p><strong>Tổng Clicks:</strong> {publisher.clicks.toLocaleString()}</p>
-            <p><strong>Tổng Chuyển Đổi:</strong> {publisher.conversions.toLocaleString()}</p>
-            <p><strong>Doanh Thu:</strong> {publisher.revenue}</p>
-            <p><strong>Tổng Đơn Hàng:</strong> {publisher.totalOrders.toLocaleString()}</p>
-            <p><strong>Tỷ lệ CTR:</strong> {publisher.ctr}%</p>
-            <Progress percent={publisher.ctr} status="active" />
-          </Card>
-        </div>
-
-        {/* Chi tiết báo cáo */}
-        <div className="grid grid-cols-2 gap-6 mt-6">
-          <Card className="bg-gray-50">
-            <h3 className="text-lg font-semibold mb-3">Biểu đồ tỷ lệ chuyển đổi</h3>
-            <Progress type="circle" percent={(publisher.conversions / publisher.clicks) * 100} />
-            <p className="mt-4 text-center">
-              Tỷ lệ chuyển đổi: {((publisher.conversions / publisher.clicks) * 100).toFixed(2)}%
-            </p>
-          </Card>
-
-          <Card className="bg-gray-50">
-            <h3 className="text-lg font-semibold mb-3">Tăng trưởng doanh thu</h3>
-            <Progress percent={(publisher.revenue.replace(/\D/g, '') / 20000000) * 100} />
-            <p className="mt-4 text-center">
-              Mục tiêu đạt: {((publisher.revenue.replace(/\D/g, '') / 20000000) * 100).toFixed(2)}%
-            </p>
-          </Card>
-        </div>
-      </Card>
+      {/* Nút điều hướng */}
+      <div className="flex justify-end gap-4 mt-6">
+        <Button
+          type="primary"
+          icon={<FileTextOutlined />}
+          onClick={() =>
+          navigate(`/advertiser/publisher-management/publisherdetail/${publisherId}/PubCampaignPolicy`)
+         }
+        className="bg-blue-600 hover:bg-blue-700"
+        >
+        Chính sách chiến dịch
+        </Button>
+        <Button
+          type="default"
+          icon={<BarChartOutlined />}
+          onClick={() =>
+          navigate(`/advertiser/campaignList`)
+         }
+         className="border-blue-600 text-blue-600 hover:border-blue-700 hover:text-blue-700"
+        >
+        Chiến Dịch
+       </Button>
+      </div>
     </div>
   );
 }

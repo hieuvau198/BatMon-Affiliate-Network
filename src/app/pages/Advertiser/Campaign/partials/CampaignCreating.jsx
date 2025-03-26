@@ -6,7 +6,7 @@ import createCampaign from "../../../../modules/Campaign/createCampaign";
 export default function CampaignCreating() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    advertiserId: 0, // Mặc định là 0 nếu không có giá trị
+    advertiserId: 1,
     name: "",
     description: "",
     budget: 0,

@@ -46,11 +46,6 @@ const AdvertiserSidebar = ({ collapsed, toggleSidebar }) => {
       link: "/advertiser/fraud-investigation" 
     },
     { 
-      label: "Quản lý đơn hàng", 
-      icon: <ShoppingCartOutlined />, 
-      link: "/advertiser/order-management" 
-    },
-    { 
       label: "Báo cáo", 
       icon: <FileTextOutlined />, 
       link: "/advertiser/reports" 

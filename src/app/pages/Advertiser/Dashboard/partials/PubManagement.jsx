@@ -1,201 +1,174 @@
-import { Table, Button, Modal, Input, Select } from "antd";
-import { useState } from "react";
-import PubMaDetail from "./pubpartials/PubMaDetail";
+import { Table, Button, Input, Select, Card, Tabs, Tooltip, Badge, message } from "antd";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { SearchOutlined } from '@ant-design/icons';
+import getAllPublisher from "../../../../modules/Publisher/getAllPublisher";
 
 export default function PublisherManagement() {
-  const [publishers, setPublishers] = useState([
-    {
-      id: "P001",
-      name: "Affiliate Hub",
-      clicks: 5000,
-      conversions: 320,
-      revenue: "15,000,000đ",
-      status: "Active",
-    },
-    {
-      id: "P002",
-      name: "Marketing Pro",
-      clicks: 4200,
-      conversions: 250,
-      revenue: "12,500,000đ",
-      status: "Pending",
-    },
-    {
-      id: "P003",
-      name: "Media Network",
-      clicks: 3100,
-      conversions: 150,
-      revenue: "8,750,000đ",
-      status: "Inactive",
-    },
-  ]);
+  const [publishers, setPublishers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("Tất cả");
+  const [activeTabKey, setActiveTabKey] = useState("all");
+  const { TabPane } = Tabs;
 
-  const [editModal, setEditModal] = useState(false);
-  const [selectedPublisher, setSelectedPublisher] = useState(null);
-
-  const openEditModal = (publisher) => {
-    setSelectedPublisher({ ...publisher });
-    setEditModal(true);
-  };
-
-  const handleEditChange = (e) => {
-    setSelectedPublisher({ ...selectedPublisher, [e.target.name]: e.target.value });
-  };
-
-  const handleEditSubmit = () => {
-    setPublishers(
-      publishers.map((publisher) =>
-        publisher.id === selectedPublisher.id ? selectedPublisher : publisher
-      )
-    );
-    setEditModal(false);
-  };
-
-  const handleDelete = (id) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa Publisher này?")) {
-      setPublishers(publishers.filter((publisher) => publisher.id !== id));
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const data = await getAllPublisher();
+        setPublishers(data);
+      } catch (error) {
+        message.error("Không thể tải danh sách nhà phát hành.");
+      }
     }
+    fetchData();
+  }, []);
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
   };
+
+  const handleStatusChange = (value) => {
+    setStatusFilter(value);
+  };
+
+  const handleTabChange = (key) => {
+    setActiveTabKey(key);
+  };
+
+  const filteredPublishers = publishers.filter(
+    (publisher) => {
+      return (
+        (searchTerm === "" ||
+          publisher.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          publisher.companyName?.toLowerCase().includes(searchTerm.toLowerCase())) &&
+        (statusFilter === "Tất cả" || (publisher.isActive ? "Hoạt động" : "Không hoạt động") === statusFilter)
+      );
+    }
+  );
+
+  const totalPublishers = publishers.length;
+  const activePublishers = publishers.filter(p => p.isActive).length;
 
   const columns = [
     {
-      title: "No.",
+      title: "STT",
       key: "no",
-      width: 70,
+      width: 60,
       render: (text, record, index) => index + 1,
     },
     {
-      title: "Publisher Name",
-      dataIndex: "name",
-      key: "name",
+      title: "Tên đăng nhập",
+      dataIndex: "username",
+      key: "username",
+      render: (text, record) => (
+        <div>
+          <div className="font-medium text-blue-700">{text}</div>
+          <div className="text-xs text-gray-500">ID: {record.publisherId}</div>
+        </div>
+      ),
     },
     {
-      title: "Total Clicks",
-      dataIndex: "clicks",
-      key: "clicks",
+      title: "Công ty",
+      dataIndex: "companyName",
+      key: "companyName",
     },
     {
-      title: "Conversions",
-      dataIndex: "conversions",
-      key: "conversions",
+      title: "Người liên hệ",
+      dataIndex: "contactName",
+      key: "contactName",
     },
     {
-      title: "Revenue",
-      dataIndex: "revenue",
-      key: "revenue",
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (status) => (
+      title: "Điện thoại",
+      dataIndex: "phoneNumber",
+      key: "phoneNumber",
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "isActive",
+      key: "isActive",
+      render: (isActive) => (
         <span
-          className={`px-2 py-1 rounded ${
-            status === "Active"
-              ? "bg-green-200 text-green-800"
-              : status === "Pending"
-              ? "bg-yellow-200 text-yellow-800"
-              : "bg-red-200 text-red-800"
+          className={`px-2 py-1 rounded text-xs font-medium ${
+            isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
           }`}
         >
-          {status}
+          {isActive ? "Hoạt động" : "Không hoạt động"}
         </span>
       ),
     },
     {
-        title: "Actions",
-        key: "actions",
-        render: (text, record) => (
-          <div className="space-x-2">
-            {/* Truyền ID động vào đường dẫn */}
-            <Link to={`/advertiser/publisher-management/publisherdetail/${record.id}`}>
-              <Button type="primary">Chi tiết</Button>
-            </Link>
-          </div>
-        ),
-      },
+      title: "Thao tác",
+      key: "actions",
+      render: (text, record) => (
+        <div className="space-x-2">    
+          <Link to={`/advertiser/publisher-management/publisherdetail/${record.publisherId}`}>
+            <Button size="small">Xem chi tiết</Button>
+          </Link>
+        </div>
+      ),
+    },
   ];
 
   return (
-    <div className="p-6 max-w-[1500px]">
-      <div className="p-6 bg-white rounded-md shadow-md min-h-[640px]">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Publisher Management</h2>
-          <Button type="primary" onClick={() => openEditModal(null)}>
-            + Add Publisher
-          </Button>
-        </div>
-        <Table
-          columns={columns}
-          dataSource={publishers.map((publisher) => ({ ...publisher, key: publisher.id }))}
-          pagination={{ pageSize: 10 }}
-          bordered
-          scroll={{ x: "max-content", y: 400 }}
-        />
+    <div className="p-6 max-w-[1100px]">
+      <h1 className="text-2xl font-bold mb-6">Quản lý nhà phát hành</h1>
+
+      {/* Dashboard Stats */}
+      <div className="grid grid-cols-3 gap-4 mb-6">
+        <Card className="bg-white shadow-sm">
+          <div className="text-gray-500 text-sm">Tổng số nhà phát hành</div>
+          <div className="text-2xl font-bold mt-1">{totalPublishers}</div>
+          <div className="text-xs text-green-500 mt-1">
+            <Badge status="success" /> {activePublishers} Đang hoạt động
+          </div>
+        </Card>
       </div>
 
-      {/* Modal chỉnh sửa */}
-      <Modal
-        title={selectedPublisher?.id ? "Edit Publisher" : "Add New Publisher"}
-        open={editModal}
-        onCancel={() => setEditModal(false)}
-        onOk={handleEditSubmit}
-      >
-        <div className="space-y-4">
-          <div>
-            <label className="block font-semibold">Publisher Name</label>
-            <Input
-              name="name"
-              value={selectedPublisher?.name}
-              onChange={handleEditChange}
-            />
-          </div>
-
-          <div>
-            <label className="block font-semibold">Total Clicks</label>
-            <Input
-              name="clicks"
-              type="number"
-              value={selectedPublisher?.clicks}
-              onChange={handleEditChange}
-            />
-          </div>
-
-          <div>
-            <label className="block font-semibold">Conversions</label>
-            <Input
-              name="conversions"
-              type="number"
-              value={selectedPublisher?.conversions}
-              onChange={handleEditChange}
-            />
-          </div>
-
-          <div>
-            <label className="block font-semibold">Revenue</label>
-            <Input
-              name="revenue"
-              value={selectedPublisher?.revenue}
-              onChange={handleEditChange}
-            />
-          </div>
-
-          <div>
-            <label className="block font-semibold">Status</label>
-            <Select
-              name="status"
-              value={selectedPublisher?.status}
-              onChange={(value) => setSelectedPublisher({ ...selectedPublisher, status: value })}
-              className="w-full"
-            >
-              <Select.Option value="Active">Active</Select.Option>
-              <Select.Option value="Pending">Pending</Select.Option>
-              <Select.Option value="Inactive">Inactive</Select.Option>
-            </Select>
-          </div>
-        </div>
-      </Modal>
+      <div className="bg-white rounded-md shadow-md min-h-[640px]">
+        <Tabs 
+          activeKey={activeTabKey} 
+          onChange={handleTabChange}
+          className="px-6 pt-4"
+        >
+          <TabPane tab="Tất cả nhà phát hành" key="all">
+            <div className="p-6 pt-2">
+              {/* Filters */}
+              <div className="flex justify-between items-center mb-4">
+                <div className="flex space-x-4">
+                  <Input
+                    placeholder="Tìm kiếm..."
+                    prefix={<SearchOutlined />}
+                    onChange={handleSearch}
+                    style={{ width: 250 }}
+                  />
+                  <Select
+                    defaultValue="Tất cả"
+                    style={{ width: 180 }}
+                    onChange={handleStatusChange}
+                  >
+                    <Select.Option value="Tất cả">Tất cả trạng thái</Select.Option>
+                    <Select.Option value="Hoạt động">Hoạt động</Select.Option>
+                    <Select.Option value="Không hoạt động">Không hoạt động</Select.Option>
+                  </Select>
+                </div>       
+              </div>              
+              {/* Publishers Table */}
+              <Table
+                columns={columns}
+                dataSource={filteredPublishers.map((publisher) => ({ ...publisher, key: publisher.publisherId }))}
+                pagination={{ pageSize: 10 }}
+                bordered
+                scroll={{ x: "max-content" }}
+              />
+            </div>
+          </TabPane>     
+        </Tabs>
+      </div>
     </div>
   );
 }

@@ -2,7 +2,12 @@ import { useState, useEffect } from "react"
 import { Table, Button, Modal, Typography, Popconfirm, message } from "antd"
 import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined, ArrowLeftOutlined } from "@ant-design/icons"
 import { Link } from "react-router-dom"
-import mockPolicies from "./mock_CompliancePolicy"
+import getCampaignPolicy from "../../../modules/CampaignPolicy/getCampaignPolicy"
+import editCampaignPolicy from "../../../modules/CampaignPolicy/editCampaignPolicy"
+import addCampaignPolicy from "../../../modules/CampaignPolicy/addCampaignPolicy"
+import deleteCampaignPolicy from "../../../modules/CampaignPolicy/deleteCampaignPolicy"
+import EditCampaignPolicy from "./partials/EditCampaignPolicy"
+
 const { Title, Text } = Typography
 
 export default function CompliancePolicy() {
@@ -11,7 +16,28 @@ export default function CompliancePolicy() {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
   const [editingPolicy, setEditingPolicy] = useState(null)
   const [policies, setPolicies] = useState([])
-  useEffect(() => { setPolicies(mockPolicies) }, [])
+
+  useEffect(() => {
+    async function fetchPolicies() {
+      try {
+        const data = await getCampaignPolicy()
+        const transformed = data.map((policy, index) => ({
+          key: policy.policyId.toString(),
+          stt: (index + 1).toString(),
+          policy: policy.policyName,
+          regulation: policy.description,
+          penaltyInfo: policy.penaltyInfo,
+          appliedTo: policy.appliedTo,
+        }))
+        setPolicies(transformed)
+      } catch (error) {
+        console.error("Error fetching policies:", error)
+        message.error("Không thể lấy dữ liệu chính sách.")
+      }
+    }
+    fetchPolicies()
+  }, [])
+
   const showPenaltyDetails = (penaltyInfo) => {
     setCurrentPenalty(penaltyInfo)
     setIsModalOpen(true)
@@ -21,14 +47,17 @@ export default function CompliancePolicy() {
     setIsModalOpen(false)
   }
 
+  // Open the update modal with prefilled data for editing
+  // If record is null, then we're adding a new policy.
   const showUpdateModal = (record = null) => {
     if (record) {
       setEditingPolicy({
         ...record,
-        penaltyTitle: record.penaltyInfo.title,
-        penaltyContent: record.penaltyInfo.content,
+        penaltyTitle: record.penaltyInfo,
+        isNew: false,
       })
     } else {
+      // New policy: set default values and mark as new.
       setEditingPolicy({
         key: String(policies.length + 1),
         stt: String(policies.length + 1),
@@ -36,7 +65,7 @@ export default function CompliancePolicy() {
         regulation: "",
         appliedTo: "Tất cả campaign",
         penaltyTitle: "",
-        penaltyContent: "",
+        isNew: true,
       })
     }
     setIsUpdateModalOpen(true)
@@ -46,49 +75,86 @@ export default function CompliancePolicy() {
     setIsUpdateModalOpen(false)
   }
 
-  const handleFormChange = (e) => {
-    const { name, value } = e.target
-    setEditingPolicy((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
-  }
-
-  const handleUpdatePolicy = () => {
-    const updatedPolicy = {
-      ...editingPolicy,
-      penaltyInfo: {
-        title: editingPolicy.penaltyTitle,
-        content: editingPolicy.penaltyContent,
-      },
-    }
-
-    delete updatedPolicy.penaltyTitle
-    delete updatedPolicy.penaltyContent
-
-    const newPolicies = [...policies]
-    const index = newPolicies.findIndex((item) => item.key === updatedPolicy.key)
-
-    if (index > -1) {
-      newPolicies[index] = updatedPolicy
+  // This function is called when the EditCampaignPolicy modal calls onSave.
+  const handleUpdatePolicy = async (updatedData) => {
+    if (updatedData.isNew) {
+      // Create a new policy via addCampaignPolicy API
+      const payload = {
+        policyName: updatedData.policy,
+        description: updatedData.regulation,
+        penaltyInfo: updatedData.penaltyTitle,
+        appliedTo: updatedData.appliedTo,
+      }
+      try {
+        const result = await addCampaignPolicy(payload)
+        if (result) {
+          const newPolicy = {
+            key: result.policyId.toString(),
+            policy: result.policyName,
+            regulation: result.description,
+            penaltyInfo: result.penaltyInfo,
+            appliedTo: result.appliedTo,
+          }
+          const newPolicies = [...policies, newPolicy]
+          const renumberedPolicies = newPolicies.map((item, idx) => ({
+            ...item,
+            stt: (idx + 1).toString(),
+          }))
+          setPolicies(renumberedPolicies)
+          setIsUpdateModalOpen(false)
+        }
+      } catch (error) {
+        console.error("Error adding policy:", error)
+      }
     } else {
-      newPolicies.push(updatedPolicy)
+      // Update an existing policy via editCampaignPolicy API
+      const campaignPolicyData = {
+        policyId: Number(updatedData.key),
+        policyName: updatedData.policy,
+        description: updatedData.regulation,
+        penaltyInfo: updatedData.penaltyTitle,
+        appliedTo: updatedData.appliedTo,
+      }
+      try {
+        const result = await editCampaignPolicy({ campaignPolicyData })
+        const newPolicies = [...policies]
+        const index = newPolicies.findIndex((item) => item.key === updatedData.key)
+        const updatedPolicy = {
+          key: result.policyId.toString(),
+          policy: result.policyName,
+          regulation: result.description,
+          penaltyInfo: result.penaltyInfo,
+          appliedTo: result.appliedTo,
+        }
+        if (index > -1) {
+          newPolicies[index] = { ...newPolicies[index], ...updatedPolicy }
+        }
+        const renumberedPolicies = newPolicies.map((item, idx) => ({
+          ...item,
+          stt: (idx + 1).toString(),
+        }))
+        setPolicies(renumberedPolicies)
+        setIsUpdateModalOpen(false)
+      } catch (error) {
+        console.error("Error updating policy:", error)
+      }
     }
-
-    setPolicies(newPolicies)
-    message.success("Chính sách đã được cập nhật thành công!")
-    setIsUpdateModalOpen(false)
   }
 
-  const handleDeletePolicy = (key) => {
-    const newPolicies = policies.filter((item) => item.key !== key)
-    // Renumber the STT
-    const renumberedPolicies = newPolicies.map((item, index) => ({
-      ...item,
-      stt: String(index + 1),
-    }))
-    setPolicies(renumberedPolicies)
-    message.success("Chính sách đã được xóa thành công!")
+  // Updated delete function that calls the API
+  const handleDeletePolicy = async (key) => {
+    try {
+      await deleteCampaignPolicy(Number(key))
+      const newPolicies = policies.filter((item) => item.key !== key)
+      const renumberedPolicies = newPolicies.map((item, index) => ({
+        ...item,
+        stt: (index + 1).toString(),
+      }))
+      setPolicies(renumberedPolicies)
+      message.success("Chính sách đã được xóa thành công!")
+    } catch (error) {
+      console.error("Error deleting policy:", error)
+    }
   }
 
   const columns = [
@@ -114,8 +180,8 @@ export default function CompliancePolicy() {
     },
     {
       title: "Hình thức xử phạt",
-      dataIndex: "penalty",
-      key: "penalty",
+      dataIndex: "penaltyInfo",
+      key: "penaltyInfo",
       width: 150,
       render: (_, record) => (
         <div className="text-center">
@@ -188,7 +254,7 @@ export default function CompliancePolicy() {
       />
 
       <Modal
-        title={currentPenalty?.title || "Chi tiết hình thức xử phạt"}
+        title="Chi tiết hình thức xử phạt"
         open={isModalOpen}
         onCancel={handleModalClose}
         footer={[
@@ -197,80 +263,15 @@ export default function CompliancePolicy() {
           </Button>,
         ]}
       >
-        <div className="py-4">{currentPenalty?.content || "Không có thông tin chi tiết."}</div>
+        <div className="py-4">{currentPenalty || "Không có thông tin chi tiết."}</div>
       </Modal>
 
-      <Modal
-        title={editingPolicy && editingPolicy.key ? "Cập nhật chính sách" : "Thêm chính sách mới"}
-        open={isUpdateModalOpen}
+      <EditCampaignPolicy
+        visible={isUpdateModalOpen}
+        initialData={editingPolicy}
         onCancel={handleUpdateModalClose}
-        footer={[
-          <Button key="cancel" onClick={handleUpdateModalClose}>
-            Hủy
-          </Button>,
-          <Button key="submit" type="primary" className="bg-blue-600" onClick={handleUpdatePolicy}>
-            Lưu
-          </Button>,
-        ]}
-        width={800}
-      >
-        <div className="py-4">
-          <form className="space-y-4">
-            <div>
-              <label className="block mb-1">STT:</label>
-              <input
-                type="text"
-                name="stt"
-                value={editingPolicy?.stt || ""}
-                onChange={handleFormChange}
-                className="w-full p-2 border border-gray-300 rounded"
-                disabled
-              />
-            </div>
-            <div>
-              <label className="block mb-1">Chính sách:</label>
-              <input
-                type="text"
-                name="policy"
-                value={editingPolicy?.policy || ""}
-                onChange={handleFormChange}
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-            <div>
-              <label className="block mb-1">Quy định:</label>
-              <textarea
-                name="regulation"
-                value={editingPolicy?.regulation || ""}
-                onChange={handleFormChange}
-                className="w-full p-2 border border-gray-300 rounded h-32"
-              />
-            </div>
-            <div>
-              <label className="block mb-1">Hình thức xử phạt:</label>
-              <input
-                type="text"
-                name="penaltyTitle"
-                value={editingPolicy?.penaltyTitle || ""}
-                onChange={handleFormChange}
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-            <div>
-              <label className="block mb-1">Áp dụng cho:</label>
-              <select
-                name="appliedTo"
-                value={editingPolicy?.appliedTo || "Tất cả campaign"}
-                onChange={handleFormChange}
-                className="w-full p-2 border border-gray-300 rounded"
-              >
-                <option value="Tất cả campaign">Tất cả campaign</option>
-                <option value="Tùy theo campaign">Tùy theo campaign</option>
-              </select>
-            </div>
-          </form>
-        </div>
-      </Modal>
+        onSave={handleUpdatePolicy}
+      />
 
       <style jsx global>{`
         .policy-table .ant-table-thead > tr > th {
@@ -291,4 +292,3 @@ export default function CompliancePolicy() {
     </div>
   )
 }
-
