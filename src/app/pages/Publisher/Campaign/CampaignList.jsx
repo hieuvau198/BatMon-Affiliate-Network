@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Input, Select, Table, Tag, Spin, Modal, Button } from "antd";
 import { motion } from "framer-motion";
 import getCampaign from "../../../modules/Publisher/getCampaign";
-import getCampaignPublishers from "../../../modules/PublisherCampaign"
+import getCampaignPromotes from "../../../modules/Promote/getCampaignPromotes"; // Adjust path as needed
 
 const { Option } = Select;
 
@@ -14,8 +14,8 @@ export default function CampaignList() {
   const [statusOptions, setStatusOptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCampaignId, setSelectedCampaignId] = useState(null);
-  const [publishers, setPublishers] = useState([]);
-  const [publishersLoading, setPublishersLoading] = useState(false);
+  const [promotes, setPromotes] = useState([]);
+  const [promotesLoading, setPromotesLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
@@ -43,20 +43,20 @@ export default function CampaignList() {
     fetchCampaigns();
   }, []);
 
-  const handleViewPublishers = async (campaignId) => {
-    console.log("Fetching publishers for campaignId:", campaignId); // Debug
+  const handleViewPromotes = async (campaignId) => {
+    console.log("Fetching promotes for campaignId:", campaignId); // Debug
     setSelectedCampaignId(campaignId);
-    setPublishersLoading(true);
+    setPromotesLoading(true);
     setIsModalVisible(true);
 
-    const data = await getCampaignPublishers(campaignId);
-    console.log("Publishers data:", data); // Debug
+    const data = await getCampaignPromotes(campaignId);
+    console.log("Promotes data:", data); // Debug
     if (Array.isArray(data)) {
-      setPublishers(data);
+      setPromotes(data);
     } else {
-      setPublishers([]);
+      setPromotes([]);
     }
-    setPublishersLoading(false);
+    setPromotesLoading(false);
   };
 
   const filteredCampaigns = Array.isArray(campaigns)
@@ -70,36 +70,61 @@ export default function CampaignList() {
       })
     : [];
 
-  const publisherColumns = [
+  const promoteColumns = [
     {
       title: "Tên Publisher",
       dataIndex: "publisherName",
       key: "publisherName",
-    },
-    {
-      title: "Tổng hoa hồng",
-      dataIndex: "totalAmount",
-      key: "totalAmount",
-      render: (amount, record) => `${amount?.toLocaleString()} ${record.currencyCode || "VND"}`,
-    },
-    {
-      title: "Hoa hồng đang chờ",
-      dataIndex: "pendingAmount",
-      key: "pendingAmount",
-      render: (amount, record) => `${amount?.toLocaleString()} ${record.currencyCode || "VND"}`,
-    },
-    {
-      title: "Trạng thái hoa hồng",
-      dataIndex: "commissionStatus",
-      key: "commissionStatus",
-      render: (status) => (
-        <Tag color={status === "Approved" ? "green" : "yellow"}>{status}</Tag>
-      ),
+      render: (name) => name || "N/A",
+      width: 150, // Fixed width to prevent overflow
     },
     {
       title: "Ngày tham gia",
-      dataIndex: "createdAt",
-      key: "createdAt",
+      dataIndex: "joinDate",
+      key: "joinDate",
+      width: 120,
+    },
+    {
+      title: "Trạng thái phê duyệt",
+      dataIndex: "isApproved",
+      key: "isApproved",
+      render: (isApproved) => (
+        <Tag color={isApproved ? "green" : "yellow"}>
+          {isApproved ? "Approved" : "Pending"}
+        </Tag>
+      ),
+      width: 150,
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => (
+        <Tag color={status === "Active" ? "green" : "yellow"}>{status}</Tag>
+      ),
+      width: 120,
+    },
+    {
+      title: "Tracking URL",
+      dataIndex: "baseTrackingUrl",
+      key: "baseTrackingUrl",
+      render: (url) => (
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-500 hover:underline block"
+          style={{
+            whiteSpace: "nowrap", // Prevent text wrapping
+            overflow: "hidden", // Hide overflow
+            textOverflow: "ellipsis", // Show ellipsis for long text
+            maxWidth: "300px", // Limit the width of the URL
+          }}
+        >
+          {url}
+        </a>
+      ),
+      width: 300, // Fixed width for the URL column
     },
   ];
 
@@ -116,17 +141,20 @@ export default function CampaignList() {
           {text}
         </Link>
       ),
+      width: 200,
     },
     {
       title: "Mô tả",
       dataIndex: "description",
       key: "description",
+      width: 250,
     },
     {
       title: "Ngân sách",
       dataIndex: "budget",
       key: "budget",
       render: (budget, record) => `${budget?.toLocaleString()} ${record.currencyCode || "VND"}`,
+      width: 150,
     },
     {
       title: "Thời gian",
@@ -137,6 +165,7 @@ export default function CampaignList() {
           <div>Kết thúc: {record.endDate}</div>
         </div>
       ),
+      width: 200,
     },
     {
       title: "Trạng thái",
@@ -145,6 +174,7 @@ export default function CampaignList() {
       render: (status) => (
         <Tag color={status === "Active" ? "green" : "yellow"}>{status}</Tag>
       ),
+      width: 120,
     },
     {
       title: "Hành động",
@@ -152,11 +182,12 @@ export default function CampaignList() {
       render: (_, record) => (
         <Button
           type="link"
-          onClick={() => handleViewPublishers(record.campaignId)}
+          onClick={() => handleViewPromotes(record.campaignId)}
         >
           Xem Publisher
         </Button>
       ),
+      width: 120,
     },
   ];
 
@@ -202,28 +233,33 @@ export default function CampaignList() {
             rowKey="campaignId"
             pagination={{ pageSize: 5 }}
             rowClassName="hover:bg-gray-50 transition-colors duration-200"
+            scroll={{ x: "max-content" }} // Add horizontal scroll for the main table
           />
           <Modal
             title="Danh sách Publisher đã tham gia"
-            visible={isModalVisible}
+            open={isModalVisible} // Change from visible to open (Ant Design v5)
             onCancel={() => setIsModalVisible(false)}
             footer={null}
-            width={800}
+            width={1000} // Increase modal width to accommodate content
+            style={{ top: 20 }} // Adjust modal position
+            bodyStyle={{ padding: "16px", maxHeight: "60vh", overflowY: "auto" }} // Add vertical scroll for modal content
           >
-            {publishersLoading ? (
+            {promotesLoading ? (
               <div className="text-center">
                 <Spin size="large" />
               </div>
-            ) : publishers.length === 0 ? (
+            ) : promotes.length === 0 ? (
               <div className="text-center text-gray-500">
                 Không có publisher nào tham gia chiến dịch này.
               </div>
             ) : (
               <Table
-                columns={publisherColumns}
-                dataSource={publishers}
-                rowKey="commissionId"
+                columns={promoteColumns}
+                dataSource={promotes}
+                rowKey="promoteId"
                 pagination={{ pageSize: 5 }}
+                scroll={{ x: "max-content" }} // Add horizontal scroll for the modal table
+                style={{ overflowX: "auto" }} // Ensure table can scroll horizontally
               />
             )}
           </Modal>

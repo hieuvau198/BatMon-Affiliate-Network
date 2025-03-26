@@ -3,10 +3,10 @@ import Cookies from "js-cookie";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-export default async function getPayoutRequestsByPublisher(publisherId) {
+export async function getCampaignAdvertiserUrl(campaignId) {
   try {
     const response = await fetch(
-      `${API_BASE_URL}/api/PayoutRequest/publisher/${publisherId}`,
+      `${API_BASE_URL}/api/CampaignAdvertiserUrl/campaign/${campaignId}`,
       {
         method: "GET",
         headers: {
@@ -17,15 +17,15 @@ export default async function getPayoutRequestsByPublisher(publisherId) {
     );
 
     if (!response.ok) {
-      throw new Error("Failed to fetch payout requests. Please try again.");
+      throw new Error("Failed to fetch CampaignAdvertiserUrl. Please try again.");
     }
 
     const data = await response.json();
-    // message.success("Payout requests fetched successfully!");
+    message.success("CampaignAdvertiserUrl fetched successfully!");
     return data;
   } catch (error) {
     message.error(
-      error.message || "Failed to fetch payout requests. Please try again."
+      error.message || "Failed to fetch CampaignAdvertiserUrl. Please try again."
     );
     return null;
   }

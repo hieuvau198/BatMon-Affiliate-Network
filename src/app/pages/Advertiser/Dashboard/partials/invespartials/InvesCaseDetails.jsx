@@ -1,6 +1,6 @@
-import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Tag, Timeline, Avatar } from "antd";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Tag, Timeline, Avatar, Spin, message } from "antd";
 import { 
   InfoCircleOutlined,
   CalendarOutlined,
@@ -9,128 +9,129 @@ import {
   CheckCircleOutlined,
   ExclamationCircleOutlined
 } from "@ant-design/icons";
+import getFraudCaseDetail from "../../../../../modules/FraudCase/getFraudCaseId";
 
 export default function InvesCaseDetails() {
-  const location = useLocation();
+  const { caseId } = useParams();
+  const [caseData, setCaseData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { caseData } = location.state || {};
 
-  if (!caseData) {
-    return <div>Không có dữ liệu vụ việc</div>;
-  }
-
-  const getStatusColor = (status) => {
-    switch(status) {
-      case 'Đang Xem Xét': return 'blue';
-      case 'Đã Giải Quyết': return 'green';
-      case 'Đã Đóng': return 'gray';
-      default: return 'default';
-    }
-  };
-
-  const getSeverityColor = (severity) => {
-    switch(severity) {
-      case 'Cao': return 'red';
-      case 'Trung Bình': return 'orange';
-      case 'Thấp': return 'green';
-      default: return 'blue';
-    }
-  };
+  useEffect(() => {
+    const fetchCaseDetail = async () => {
+      setLoading(true);
+      try {
+        const data = await getFraudCaseDetail(caseId);
+        console.log("API Response:", data); // Debug dữ liệu trả về
+        if (data) {
+          setCaseData(data);
+        } else {
+          message.error("Không tìm thấy dữ liệu vụ việc từ API");
+          setCaseData(null);
+        }
+      } catch (error) {
+        console.error("Error fetching fraud case detail:", error); // Debug lỗi
+        message.error("Lỗi khi tải chi tiết vụ gian lận: " + error.message);
+        setCaseData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCaseDetail();
+  }, [caseId]);
 
   const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
     const date = new Date(dateString);
-    return date.toLocaleDateString('vi-VN', { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
+    return date.toLocaleDateString("vi-VN", { 
+      year: "numeric", 
+      month: "short", 
+      day: "numeric" 
     });
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Under Review": return "blue";
+      case "Confirmed Fraud": return "red";
+      default: return "gray";
+    }
   };
 
   const handleClose = () => {
     navigate("/advertiser/fraud-investigation");
   };
 
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <Spin size="large" tip="Đang tải chi tiết vụ việc..." />
+      </div>
+    );
+  }
+
+  if (!caseData) {
+    return <div className="text-center p-6 text-red-600">Không có dữ liệu vụ việc</div>;
+  }
+
   return (
-    <div className="w-full h-screen flex items-center justify-center bg-white p-4">
-      <div className="bg-white rounded-lg w-full max-w-6xl h-[100vh] overflow-y-auto shadow-xl flex flex-col">
-        <div className={`bg-gradient-to-r p-4 ${
-          caseData.severity === "Cao" ? "from-red-600 to-red-800" : 
-          caseData.severity === "Trung Bình" ? "from-orange-500 to-orange-700" : 
-          "from-green-600 to-green-800"
-        }`}>
-          <div className="flex justify-between">
-            <h2 className="text-white font-bold text-lg m-0">Vụ Việc #{caseData.id}: {caseData.caseName}</h2>
+    <div className="w-full min-h-screen flex items-center justify-center bg-white p-4">
+      <div className="bg-white rounded-lg w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-xl flex flex-col">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-white font-bold text-lg m-0">
+              Vụ Việc #{caseData.caseId}: {caseData.fraudTypeName || "Không xác định"}
+            </h2>
             <Tag color={getStatusColor(caseData.status)}>
-              {caseData.status}
+              {caseData.status === "Under Review" ? "Đang Xem Xét" : caseData.status === "Confirmed Fraud" ? "Xác Nhận Gian Lận" : "Không xác định"}
             </Tag>
           </div>
         </div>
 
+        {/* Content */}
         <div className="p-6 flex-1">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            {/* Case Info */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">Thông Tin Vụ Việc</h3>
-              <div className="space-y-3">
+              <h3 className="text-lg font-semibold mb-4 text-gray-800">Thông Tin Vụ Việc</h3>
+              <div className="space-y-3 text-sm">
                 <div>
-                  <p className="text-gray-500 text-sm mb-1">Mức Độ Nghiêm Trọng</p>
-                  <Tag color={getSeverityColor(caseData.severity)} className="capitalize">
-                    {caseData.severity}
-                  </Tag>
-                </div>
-                <div>
-                  <p className="text-gray-500 text-sm mb-1">Ngày Báo Cáo</p>
+                  <p className="text-gray-500 mb-1">Ngày Phát Hiện</p>
                   <div className="flex items-center">
                     <CalendarOutlined className="mr-2 text-gray-400" />
-                    <span>{formatDate(caseData.reportedDate)}</span>
+                    <span>{formatDate(caseData.detectionDate)}</span>
                   </div>
                 </div>
                 <div>
-                  <p className="text-gray-500 text-sm mb-1">Người Báo Cáo</p>
+                  <p className="text-gray-500 mb-1">Mã Giao Dịch</p>
                   <div className="flex items-center">
-                    <UserOutlined className="mr-2 text-gray-400" />
-                    <span>{caseData.reportedBy}</span>
+                    <FileTextOutlined className="mr-2 text-gray-400" />
+                    <span>{caseData.conversionTransactionId || "N/A"}</span>
                   </div>
                 </div>
-                <div>
-                  <p className="text-gray-500 text-sm mb-1">Ngày Dự Kiến Giải Quyết</p>
-                  <div className="flex items-center">
-                    <CalendarOutlined className="mr-2 text-gray-400" />
-                    <span>{formatDate(caseData.expectedResolution)}</span>
-                  </div>
-                </div>
-                {caseData.resolvedDate && (
+                {caseData.resolutionDate && (
                   <div>
-                    <p className="text-gray-500 text-sm mb-1">Ngày Giải Quyết</p>
+                    <p className="text-gray-500 mb-1">Ngày Giải Quyết</p>
                     <div className="flex items-center">
                       <CheckCircleOutlined className="mr-2 text-green-500" />
-                      <span className="text-green-600">{formatDate(caseData.resolvedDate)}</span>
+                      <span className="text-green-600">{formatDate(caseData.resolutionDate)}</span>
                     </div>
                   </div>
                 )}
               </div>
             </div>
 
+            {/* Evidence and Resolution */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">Chiến Dịch Bị Ảnh Hưởng</h3>
-              <div className="space-y-2">
-                {caseData.affectedCampaigns.map((campaign, index) => (
-                  <div key={index} className="p-3 bg-gray-50 rounded border border-gray-200">
-                    <div className="flex items-center">
-                      <FileTextOutlined className="mr-2 text-indigo-500" />
-                      <span>{campaign}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-              <h3 className="text-lg font-semibold mt-6 mb-4">Mô Tả</h3>
+              <h3 className="text-lg font-semibold mb-4 text-gray-800">Bằng Chứng</h3>
               <div className="p-4 bg-gray-50 rounded border border-gray-200">
-                <p className="text-gray-800 m-0">{caseData.description}</p>
+                <p className="text-gray-800 m-0">{caseData.evidence || "Không có bằng chứng chi tiết"}</p>
               </div>
-              
+
               {caseData.resolution && (
                 <>
-                  <h3 className="text-lg font-semibold mt-6 mb-4">Kết Quả Giải Quyết</h3>
+                  <h3 className="text-lg font-semibold mt-6 mb-4 text-gray-800">Kết Quả Giải Quyết</h3>
                   <div className="p-4 bg-green-50 rounded border border-green-200">
                     <p className="text-green-800 m-0">{caseData.resolution}</p>
                   </div>
@@ -139,27 +140,37 @@ export default function InvesCaseDetails() {
             </div>
           </div>
 
+          {/* Activity Log */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Dòng Thời Gian Hoạt Động</h3>
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">Dòng Thời Gian Hoạt Động</h3>
             <div className="border rounded-lg p-4 bg-gray-50">
               <Timeline>
-                {caseData.activityLog.map((activity, index) => (
-                  <Timeline.Item 
-                    key={index} 
-                    dot={index === 0 ? <ExclamationCircleOutlined className="text-red-500" /> : undefined}
-                  >
+                <Timeline.Item dot={<ExclamationCircleOutlined className="text-red-500" />}>
+                  <div>
+                    <p className="font-medium m-0">Phát hiện gian lận</p>
+                    <div className="flex items-center text-sm text-gray-500 mt-1">
+                      <CalendarOutlined className="mr-1" /> 
+                      <span>{formatDate(caseData.detectionDate)}</span>
+                      <span className="mx-2">•</span>
+                      <Avatar size="small" icon={<UserOutlined />} className="mr-1" /> 
+                      <span>User #{caseData.detectedBy || "N/A"}</span>
+                    </div>
+                  </div>
+                </Timeline.Item>
+                {caseData.resolutionDate && (
+                  <Timeline.Item>
                     <div>
-                      <p className="font-medium m-0">{activity.action}</p>
+                      <p className="font-medium m-0">Giải quyết vụ việc</p>
                       <div className="flex items-center text-sm text-gray-500 mt-1">
                         <CalendarOutlined className="mr-1" /> 
-                        <span>{formatDate(activity.date)}</span>
+                        <span>{formatDate(caseData.resolutionDate)}</span>
                         <span className="mx-2">•</span>
                         <Avatar size="small" icon={<UserOutlined />} className="mr-1" /> 
-                        <span>{activity.user}</span>
+                        <span>User #{caseData.resolvedBy || "N/A"}</span>
                       </div>
                     </div>
                   </Timeline.Item>
-                ))}
+                )}
               </Timeline>
             </div>
           </div>
@@ -168,12 +179,13 @@ export default function InvesCaseDetails() {
             <div className="flex items-start">
               <InfoCircleOutlined className="text-blue-500 mt-1 mr-2" />
               <p className="text-blue-800 text-sm m-0">
-                Cuộc điều tra này được quản lý bởi đội ngũ phòng chống gian lận của chúng tôi. Nếu bạn có câu hỏi về vụ việc này hoặc muốn cung cấp thêm thông tin, vui lòng liên hệ với bộ phận hỗ trợ.
+                Vụ việc này đang được đội ngũ phòng chống gian lận xử lý. Liên hệ hỗ trợ nếu cần thêm thông tin.
               </p>
             </div>
           </div>
         </div>
 
+        {/* Footer */}
         <div className="bg-gray-50 p-4 flex justify-end">
           <button 
             onClick={handleClose}
