@@ -1,29 +1,42 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Thêm useNavigate từ react-router-dom
-import { Card, Spin, Statistic, Table, Tag, Form, InputNumber, Select, Button, message, Row, Col, Input, Tabs, Divider } from "antd";
+import { useNavigate } from "react-router-dom";
+import { Card, Spin, Statistic, Table, Tag, Form, InputNumber, Select, Button, message, Row, Col, Input, Tabs, Divider, Modal, Popconfirm } from "antd";
 import { motion } from "framer-motion";
-import { ArrowDownOutlined, ArrowUpOutlined, WalletOutlined, HistoryOutlined, MoneyCollectOutlined, TransactionOutlined, LeftOutlined } from '@ant-design/icons'; // Thêm LeftOutlined cho nút Back
+import { ArrowDownOutlined, ArrowUpOutlined, WalletOutlined, HistoryOutlined, MoneyCollectOutlined, TransactionOutlined, LeftOutlined, GlobalOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import getPublisherBalance from "../../../../modules/PublisherBalance";
 import getPayoutRequestsByPublisher from "../../../../modules/PublisherBalance/partials/getPayoutRequestsByPublisher";
 import { createPayoutRequest } from "../../../../modules/PublisherBalance/partials/createPayoutRequest";
 import { createDepositRequest } from "../../../../modules/PublisherBalance/partials/createDepositRequest";
-
+import getAllTrafficSource from "../../../../modules/TrafficSource/getAllTrafficSource";
+import createTrafficSource from "../../../../modules/TrafficSource/createTrafficSource";
+import updateTrafficSource from "../../../../modules/TrafficSource/updateTrafficSource";
+import deleteTrafficSource from "../../../../modules/TrafficSource/deleteTrafficSource"; // Import API DELETE
 const { Option } = Select;
 const { TabPane } = Tabs;
 
 export default function WalletDashboard({ publisherId = 1 }) {
-  const navigate = useNavigate(); // Khởi tạo useNavigate để điều hướng
+  const navigate = useNavigate();
   const [walletData, setWalletData] = useState(null);
   const [payoutRequests, setPayoutRequests] = useState([]);
+  const [trafficSources, setTrafficSources] = useState([]);
   const [loading, setLoading] = useState(true);
   const [payoutLoading, setPayoutLoading] = useState(true);
+  const [trafficLoading, setTrafficLoading] = useState(true);
   const [payoutSubmitting, setPayoutSubmitting] = useState(false);
   const [depositSubmitting, setDepositSubmitting] = useState(false);
+  const [trafficSubmitting, setTrafficSubmitting] = useState(false);
+  const [editTrafficSubmitting, setEditTrafficSubmitting] = useState(false);
+  const [deleteTrafficSubmitting, setDeleteTrafficSubmitting] = useState(false); // State cho xóa
   const [payoutSearch, setPayoutSearch] = useState("");
+  const [trafficSearch, setTrafficSearch] = useState("");
   const [activeTab, setActiveTab] = useState("overview");
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [selectedTrafficSource, setSelectedTrafficSource] = useState(null);
 
   const [payoutForm] = Form.useForm();
   const [depositForm] = Form.useForm();
+  const [trafficForm] = Form.useForm();
+  const [editTrafficForm] = Form.useForm();
 
   useEffect(() => {
     const fetchWalletData = async () => {
@@ -54,8 +67,23 @@ export default function WalletDashboard({ publisherId = 1 }) {
       }
     };
 
+    const fetchTrafficSources = async () => {
+      try {
+        setTrafficLoading(true);
+        const data = await getAllTrafficSource();
+        if (data) {
+          setTrafficSources(data);
+        }
+        setTrafficLoading(false);
+      } catch (error) {
+        console.error("Error fetching traffic sources:", error);
+        setTrafficLoading(false);
+      }
+    };
+
     fetchWalletData();
     fetchPayoutRequests();
+    fetchTrafficSources();
   }, [publisherId]);
 
   const formatCurrency = (amount) => {
@@ -148,6 +176,99 @@ export default function WalletDashboard({ publisherId = 1 }) {
     }
   };
 
+  const handleCreateTrafficSource = async (values) => {
+    setTrafficSubmitting(true);
+    try {
+      const trafficData = {
+        publisherId: parseInt(publisherId),
+        name: values.name,
+        type: values.type,
+        url: values.url,
+        addedDate: new Date().toISOString().split("T")[0],
+        isActive: values.isActive === "true",
+        publisher: null,
+      };
+
+      const result = await createTrafficSource(trafficData);
+      if (result) {
+        const updatedTrafficSources = await getAllTrafficSource();
+        setTrafficSources(updatedTrafficSources);
+        trafficForm.resetFields();
+        message.success("Nguồn lưu lượng đã được tạo thành công!");
+      }
+    } catch (error) {
+      console.error("Error submitting traffic source:", error);
+      message.error("Có lỗi xảy ra khi tạo nguồn lưu lượng!");
+    } finally {
+      setTrafficSubmitting(false);
+    }
+  };
+
+  const handleEditTrafficSource = async (values) => {
+    if (!selectedTrafficSource) return;
+
+    setEditTrafficSubmitting(true);
+    try {
+      const trafficData = {
+        publisherId: parseInt(publisherId),
+        name: values.name,
+        type: values.type,
+        url: values.url,
+        addedDate: selectedTrafficSource.addedDate,
+        isActive: values.isActive === "true",
+        publisher: null,
+      };
+
+      const result = await updateTrafficSource(selectedTrafficSource.sourceId, trafficData);
+      if (result) {
+        const updatedTrafficSources = await getAllTrafficSource();
+        setTrafficSources(updatedTrafficSources);
+        setIsEditModalVisible(false);
+        editTrafficForm.resetFields();
+        message.success("Nguồn lưu lượng đã được cập nhật thành công!");
+      }
+    } catch (error) {
+      console.error("Error updating traffic source:", error);
+      message.error("Có lỗi xảy ra khi cập nhật nguồn lưu lượng!");
+    } finally {
+      setEditTrafficSubmitting(false);
+    }
+  };
+
+  const handleDeleteTrafficSource = async (sourceId) => {
+    setDeleteTrafficSubmitting(true);
+    try {
+      const result = await deleteTrafficSource(sourceId);
+      if (result) {
+        const updatedTrafficSources = await getAllTrafficSource();
+        setTrafficSources(updatedTrafficSources);
+        message.success("Nguồn lưu lượng đã được xóa thành công!");
+      }
+    } catch (error) {
+      console.error("Error deleting traffic source:", error);
+      message.error("Có lỗi xảy ra khi xóa nguồn lưu lượng!");
+    } finally {
+      setDeleteTrafficSubmitting(false);
+    }
+  };
+
+  const showEditModal = (trafficSource) => {
+    setSelectedTrafficSource(trafficSource);
+    editTrafficForm.setFieldsValue({
+      name: trafficSource.name,
+      type: trafficSource.type,
+      url: trafficSource.url,
+      isActive: trafficSource.isActive.toString(),
+    });
+    setIsEditModalVisible(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditModalVisible(false);
+    editTrafficForm.resetFields();
+    setSelectedTrafficSource(null);
+  };
+
   const payoutColumns = [
     {
       title: "Mã yêu cầu",
@@ -184,13 +305,108 @@ export default function WalletDashboard({ publisherId = 1 }) {
       dataIndex: "status",
       key: "status",
       render: (status) => {
-        let color = 'default';
-        if (status === "Pending") color = 'orange';
-        if (status === "Completed") color = 'green';
-        if (status === "Failed") color = 'red';
+        let color = "default";
+        if (status === "Pending") color = "orange";
+        if (status === "Completed") color = "green";
+        if (status === "Failed") color = "red";
         return <Tag color={color}>{status}</Tag>;
       },
       width: 120,
+    },
+  ];
+
+  const trafficColumns = [
+    {
+      title: "Mã nguồn",
+      dataIndex: "sourceId",
+      key: "sourceId",
+      width: 80,
+    },
+    {
+      title: "Tên nguồn",
+      dataIndex: "name",
+      key: "name",
+      width: 150,
+      ellipsis: true,
+    },
+    {
+      title: "Loại",
+      dataIndex: "type",
+      key: "type",
+      width: 120,
+      ellipsis: true,
+    },
+    {
+      title: "URL",
+      dataIndex: "url",
+      key: "url",
+      width: 200,
+      ellipsis: true,
+      render: (url) => (
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-500 hover:underline"
+          style={{
+            display: "inline-block",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            maxWidth: "100%",
+          }}
+        >
+          {url}
+        </a>
+      ),
+    },
+    {
+      title: "Ngày thêm",
+      dataIndex: "addedDate",
+      key: "addedDate",
+      width: 100,
+      render: (date) => new Date(date).toLocaleDateString("vi-VN"),
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "isActive",
+      key: "isActive",
+      width: 100,
+      render: (isActive) => (
+        <Tag color={isActive ? "green" : "red"}>{isActive ? "Hoạt động" : "Không hoạt động"}</Tag>
+      ),
+    },
+    {
+      title: "Hành động",
+      key: "action",
+      width: 150,
+      render: (_, record) => (
+        <div className="flex space-x-2">
+          <Button
+            type="link"
+            icon={<EditOutlined />}
+            onClick={() => showEditModal(record)}
+          >
+            Chỉnh sửa
+          </Button>
+          <Popconfirm
+            title="Bạn có chắc chắn muốn xóa nguồn lưu lượng này?"
+            onConfirm={() => handleDeleteTrafficSource(record.sourceId)}
+            okText="Có"
+            cancelText="Không"
+            disabled={deleteTrafficSubmitting}
+          >
+            <Button
+              type="link"
+              icon={<DeleteOutlined />}
+              danger
+              loading={deleteTrafficSubmitting}
+            >
+              Xóa
+            </Button>
+          </Popconfirm>
+        </div>
+      ),
     },
   ];
 
@@ -199,9 +415,13 @@ export default function WalletDashboard({ publisherId = 1 }) {
     request.publisherName?.toLowerCase().includes(payoutSearch.toLowerCase())
   );
 
-  // Hàm xử lý quay lại trang trước
+  const filteredTrafficSources = trafficSources.filter((source) =>
+    source.sourceId.toString().includes(trafficSearch) ||
+    source.name.toLowerCase().includes(trafficSearch.toLowerCase())
+  );
+
   const handleBack = () => {
-    navigate(-1); // Quay lại trang trước đó trong lịch sử trình duyệt
+    navigate(-1);
   };
 
   return (
@@ -226,7 +446,6 @@ export default function WalletDashboard({ publisherId = 1 }) {
           </h1>
         </div>
 
-        {/* Wallet Summary Card */}
         {loading ? (
           <div className="text-center py-8">
             <Spin size="large" />
@@ -243,13 +462,12 @@ export default function WalletDashboard({ publisherId = 1 }) {
                   Cập nhật: {new Date(walletData.lastUpdated).toLocaleDateString("vi-VN")}
                 </div>
               </div>
-              
               <div className="flex space-x-4">
                 <Statistic
                   title={<span className="text-gray-600">Số dư đang chờ</span>}
                   value={walletData.pendingBalance}
                   prefix={<ArrowDownOutlined />}
-                  valueStyle={{ color: '#f59e0b' }}
+                  valueStyle={{ color: "#f59e0b" }}
                   formatter={(value) => formatCurrency(value)}
                   className="bg-white p-3 rounded-lg shadow-xs"
                 />
@@ -257,7 +475,7 @@ export default function WalletDashboard({ publisherId = 1 }) {
                   title={<span className="text-gray-600">Tổng thu nhập</span>}
                   value={walletData.lifetimeEarnings}
                   prefix={<ArrowUpOutlined />}
-                  valueStyle={{ color: '#10b981' }}
+                  valueStyle={{ color: "#10b981" }}
                   formatter={(value) => formatCurrency(value)}
                   className="bg-white p-3 rounded-lg shadow-xs"
                 />
@@ -272,12 +490,7 @@ export default function WalletDashboard({ publisherId = 1 }) {
           </Card>
         )}
 
-        {/* Main Content Tabs */}
-        <Tabs 
-          activeKey={activeTab} 
-          onChange={setActiveTab}
-          className="wallet-tabs"
-        >
+        <Tabs activeKey={activeTab} onChange={setActiveTab} className="wallet-tabs">
           <TabPane
             tab={
               <span className="flex items-center">
@@ -288,9 +501,8 @@ export default function WalletDashboard({ publisherId = 1 }) {
             key="overview"
           >
             <Row gutter={[24, 24]} className="mt-4">
-              {/* Deposit Card */}
               <Col xs={24} md={12}>
-                <Card 
+                <Card
                   title={
                     <div className="flex items-center">
                       <MoneyCollectOutlined className="text-green-500 mr-2" />
@@ -322,7 +534,6 @@ export default function WalletDashboard({ publisherId = 1 }) {
                         parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
                       />
                     </Form.Item>
-
                     <Row gutter={12}>
                       <Col span={12}>
                         <Form.Item
@@ -350,7 +561,6 @@ export default function WalletDashboard({ publisherId = 1 }) {
                         </Form.Item>
                       </Col>
                     </Row>
-
                     <Form.Item className="mt-6">
                       <Button
                         type="primary"
@@ -366,10 +576,8 @@ export default function WalletDashboard({ publisherId = 1 }) {
                   </Form>
                 </Card>
               </Col>
-
-              {/* Withdrawal Card */}
               <Col xs={24} md={12}>
-                <Card 
+                <Card
                   title={
                     <div className="flex items-center">
                       <TransactionOutlined className="text-blue-500 mr-2" />
@@ -400,7 +608,6 @@ export default function WalletDashboard({ publisherId = 1 }) {
                         parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
                       />
                     </Form.Item>
-
                     <Form.Item
                       label="Loại tiền tệ"
                       name="currencyCode"
@@ -411,7 +618,6 @@ export default function WalletDashboard({ publisherId = 1 }) {
                         <Option value="USD">USD</Option>
                       </Select>
                     </Form.Item>
-
                     {walletData && (
                       <div className="mb-4 p-3 bg-gray-50 rounded-lg">
                         <div className="flex justify-between text-sm">
@@ -420,7 +626,6 @@ export default function WalletDashboard({ publisherId = 1 }) {
                         </div>
                       </div>
                     )}
-
                     <Form.Item className="mt-2">
                       <Button
                         type="primary"
@@ -443,7 +648,7 @@ export default function WalletDashboard({ publisherId = 1 }) {
             tab={
               <span className="flex items-center">
                 <HistoryOutlined className="mr-1" />
-                Lịch sử giao dịch
+                Trạng Thái Rút Tiền
               </span>
             }
             key="history"
@@ -459,7 +664,6 @@ export default function WalletDashboard({ publisherId = 1 }) {
                   prefix={<i className="fas fa-search text-gray-400" />}
                 />
               </div>
-              
               {payoutLoading ? (
                 <div className="text-center py-8">
                   <Spin size="large" />
@@ -470,24 +674,202 @@ export default function WalletDashboard({ publisherId = 1 }) {
                   dataSource={filteredPayoutRequests}
                   rowKey="requestId"
                   pagination={{ pageSize: 5 }}
-                  scroll={{ x: 'max-content' }}
+                  scroll={{ x: "max-content" }}
                   className="wallet-transactions-table"
                 />
               ) : (
                 <div className="text-center py-8 text-gray-500">
-                  <img 
-                    src="/empty-state.svg" 
-                    alt="No transactions" 
-                    className="h-40 mx-auto mb-4"
-                  />
+                  <img src="/empty-state.svg" alt="No transactions" className="h-40 mx-auto mb-4" />
                   <p>Chưa có giao dịch nào được thực hiện</p>
                 </div>
               )}
             </Card>
           </TabPane>
+
+          <TabPane
+            tab={
+              <span className="flex items-center">
+                <GlobalOutlined className="mr-1" />
+                Nguồn lưu lượng
+              </span>
+            }
+            key="traffic"
+          >
+            <div className="mt-4">
+              {/* Form tạo Traffic Source */}
+              <Card
+                title={
+                  <div className="flex items-center">
+                    <PlusOutlined className="text-green-500 mr-2" />
+                    <span>Thêm nguồn lưu lượng</span>
+                  </div>
+                }
+                className="shadow-sm mb-6"
+              >
+                <Form
+                  form={trafficForm}
+                  layout="vertical"
+                  onFinish={handleCreateTrafficSource}
+                  initialValues={{
+                    isActive: "true",
+                  }}
+                >
+                  <Row gutter={16}>
+                    <Col xs={24} md={12}>
+                      <Form.Item
+                        label="Tên nguồn"
+                        name="name"
+                        rules={[{ required: true, message: "Vui lòng nhập tên nguồn!" }]}
+                      >
+                        <Input size="large" placeholder="Nhập tên nguồn lưu lượng" />
+                      </Form.Item>
+                    </Col>
+                    <Col xs={24} md={12}>
+                      <Form.Item
+                        label="Loại"
+                        name="type"
+                        rules={[{ required: true, message: "Vui lòng nhập loại nguồn!" }]}
+                      >
+                        <Input size="large" placeholder="Nhập loại nguồn (VD: Social Media)" />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                  <Row gutter={16}>
+                    <Col xs={24} md={12}>
+                      <Form.Item
+                        label="URL"
+                        name="url"
+                        rules={[
+                          { required: true, message: "Vui lòng nhập URL!" },
+                          { type: "url", message: "Vui lòng nhập URL hợp lệ!" },
+                        ]}
+                      >
+                        <Input size="large" placeholder="Nhập URL nguồn lưu lượng" />
+                      </Form.Item>
+                    </Col>
+                    <Col xs={24} md={12}>
+                      <Form.Item
+                        label="Trạng thái"
+                        name="isActive"
+                        rules={[{ required: true, message: "Vui lòng chọn trạng thái!" }]}
+                      >
+                        <Select size="large">
+                          <Option value="true">Hoạt động</Option>
+                          <Option value="false">Không hoạt động</Option>
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                  <Form.Item>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      loading={trafficSubmitting}
+                      block
+                      size="large"
+                      icon={<PlusOutlined />}
+                    >
+                      Thêm nguồn lưu lượng
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </Card>
+
+              {/* Danh sách Traffic Sources */}
+              <Card className="shadow-sm">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-medium">Danh sách nguồn lưu lượng</h3>
+                  <Input
+                    placeholder="Tìm kiếm theo mã hoặc tên..."
+                    value={trafficSearch}
+                    onChange={(e) => setTrafficSearch(e.target.value)}
+                    className="w-64"
+                    prefix={<i className="fas fa-search text-gray-400" />}
+                  />
+                </div>
+                {trafficLoading ? (
+                  <div className="text-center py-8">
+                    <Spin size="large" />
+                  </div>
+                ) : filteredTrafficSources.length > 0 ? (
+                  <Table
+                    columns={trafficColumns}
+                    dataSource={filteredTrafficSources}
+                    rowKey="sourceId"
+                    pagination={{ pageSize: 5 }}
+                    className="wallet-transactions-table"
+                  />
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <img src="/empty-state.svg" alt="No traffic sources" className="h-40 mx-auto mb-4" />
+                    <p>Chưa có nguồn lưu lượng nào được thêm</p>
+                  </div>
+                )}
+              </Card>
+            </div>
+          </TabPane>
         </Tabs>
 
-        {/* Quick Stats */}
+        {/* Modal chỉnh sửa Traffic Source */}
+        <Modal
+          title="Chỉnh sửa nguồn lưu lượng"
+          visible={isEditModalVisible}
+          onCancel={handleCancelEdit}
+          footer={null}
+        >
+          <Form
+            form={editTrafficForm}
+            layout="vertical"
+            onFinish={handleEditTrafficSource}
+          >
+            <Form.Item
+              label="Tên nguồn"
+              name="name"
+              rules={[{ required: true, message: "Vui lòng nhập tên nguồn!" }]}
+            >
+              <Input size="large" placeholder="Nhập tên nguồn lưu lượng" />
+            </Form.Item>
+            <Form.Item
+              label="Loại"
+              name="type"
+              rules={[{ required: true, message: "Vui lòng nhập loại nguồn!" }]}
+            >
+              <Input size="large" placeholder="Nhập loại nguồn (VD: Social Media)" />
+            </Form.Item>
+            <Form.Item
+              label="URL"
+              name="url"
+              rules={[
+                { required: true, message: "Vui lòng nhập URL!" },
+                { type: "url", message: "Vui lòng nhập URL hợp lệ!" },
+              ]}
+            >
+              <Input size="large" placeholder="Nhập URL nguồn lưu lượng" />
+            </Form.Item>
+            <Form.Item
+              label="Trạng thái"
+              name="isActive"
+              rules={[{ required: true, message: "Vui lòng chọn trạng thái!" }]}
+            >
+              <Select size="large">
+                <Option value="true">Hoạt động</Option>
+                <Option value="false">Không hoạt động</Option>
+              </Select>
+            </Form.Item>
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={editTrafficSubmitting}
+                block
+                size="large"
+              >
+                Cập nhật
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
+
         {walletData && (
           <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card className="text-center border-0 shadow-sm bg-white">
@@ -506,7 +888,6 @@ export default function WalletDashboard({ publisherId = 1 }) {
         )}
       </div>
 
-      {/* Add some custom styles */}
       <style jsx global>{`
         .wallet-tabs .ant-tabs-nav::before {
           border-bottom: none !important;
@@ -522,6 +903,9 @@ export default function WalletDashboard({ publisherId = 1 }) {
         .wallet-transactions-table .ant-table-thead > tr > th {
           background: #f8fafc !important;
           font-weight: 600 !important;
+        }
+        .wallet-transactions-table .ant-table {
+          overflow-x: hidden !important;
         }
       `}</style>
     </motion.div>
