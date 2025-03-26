@@ -2,39 +2,54 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Descriptions, Spin, message, Button, Tag } from "antd";
 import { LeftOutlined } from "@ant-design/icons";
-import { getCampaignById } from "../../../../modules/Publisher/getCampaignByID"; // Thay bằng đường dẫn thực tế
-import createPromote from "../../../../modules/Promote/createPromote";
-
+import { getCampaignById } from "../../../../modules/Publisher/getCampaignByID";
+import  createPromote  from "../../../../modules/Promote/createPromote";
+import { getCampaignAdvertiserUrl } from "../../../../modules/PublisherCampaign/partials/getCampaignAdvertiserUrl";
+import  getAdvertiserUrl  from "../../../../modules/AdvertiserUrl/getAdverUrlByAdverId"; // Adjust path as needed
 
 export default function CampaignDetail() {
   const { campaignId } = useParams();
   const navigate = useNavigate();
   const [campaign, setCampaign] = useState(null);
+  const [campaignAdvertiserUrl, setCampaignAdvertiserUrl] = useState(null);
+  const [advertiserUrl, setAdvertiserUrl] = useState(null); // New state for AdvertiserUrl
   const [loading, setLoading] = useState(true);
-  const [hasPromoted, setHasPromoted] = useState(false); // Trạng thái đã tạo promote
-  const [promoting, setPromoting] = useState(false); // Trạng thái loading khi tạo promote
+  const [hasPromoted, setHasPromoted] = useState(false);
+  const [promoting, setPromoting] = useState(false);
 
-  // Giả định publisherId được lấy từ local storage hoặc context
-  // Bạn cần thay thế logic này bằng cách lấy publisherId thực tế
-  const publisherId = localStorage.getItem("publisherId") || "1"; // Ví dụ: Giả định publisherId là 1
+  const publisherId = localStorage.getItem("publisherId") || "1";
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
 
-        // Lấy thông tin chiến dịch từ API GET /api/Campaign/{id}
         if (!campaignId) {
           throw new Error("Missing campaignId");
         }
+
+        // Fetch campaign details
         const campaignData = await getCampaignById(campaignId);
         if (!campaignData) {
           throw new Error("Campaign not found");
         }
         setCampaign(campaignData);
 
-        // Kiểm tra xem đã tạo promote cho chiến dịch này chưa
-        // Ở đây tôi giả sử chưa có API kiểm tra, nên để mặc định là chưa tạo
+        // Fetch CampaignAdvertiserUrl data
+        const advertiserUrlData = await getCampaignAdvertiserUrl(campaignId);
+        if (!advertiserUrlData || advertiserUrlData.length === 0) {
+          throw new Error("No CampaignAdvertiserUrl found for this campaign");
+        }
+        setCampaignAdvertiserUrl(advertiserUrlData[0]);
+
+        // Fetch AdvertiserUrl data using advertiserUrlId
+        const advertiserUrlId = advertiserUrlData[0].advertiserUrlId;
+        const advertiserUrlDetails = await getAdvertiserUrl(advertiserUrlId);
+        if (!advertiserUrlDetails) {
+          throw new Error("No AdvertiserUrl found for this advertiserUrlId");
+        }
+        setAdvertiserUrl(advertiserUrlDetails);
+
         setHasPromoted(false);
       } catch (error) {
         console.error("Error fetching data:", error.message);
@@ -52,21 +67,43 @@ export default function CampaignDetail() {
       return;
     }
 
-    setPromoting(true);
-    const promoteData = {
-      publisherId: parseInt(publisherId), // Chuyển publisherId thành số
-      campaignId: parseInt(campaignId), // Chuyển campaignId thành số
-      campaignAdvertiserUrlId: 1, // Giả lập, bạn có thể lấy từ dữ liệu chiến dịch nếu có
-      baseTrackingUrl: "https://example.com/tracking", // Giả lập, có thể lấy từ dữ liệu chiến dịch hoặc form
-      isApproved: false, // Mặc định là false, có thể điều chỉnh dựa trên logic
-      status: "Pending", // Mặc định là Pending
-    };
-
-    const result = await createPromote(promoteData);
-    if (result) {
-      setHasPromoted(true); // Đánh dấu đã tạo promote
+    if (!campaignAdvertiserUrl) {
+      message.error("Không thể tạo promote: Thiếu thông tin CampaignAdvertiserUrl.");
+      return;
     }
-    setPromoting(false);
+
+    setPromoting(true);
+    try {
+      const trackingBaseUrl = process.env.REACT_APP_API_BASE_URL;
+      const trackingParams = new URLSearchParams({
+        campaignId: campaignId,
+        publisherId: publisherId,
+        campaignAdvertiserUrlId: campaignAdvertiserUrl.campaignUrlId,
+        redirectUrl: advertiserUrl?.url || campaignAdvertiserUrl.landingPage, // Use AdvertiserUrl's URL if available, otherwise fall back to landingPage
+      }).toString();
+
+      const promoteData = {
+        publisherId: parseInt(publisherId),
+        campaignId: parseInt(campaignId),
+        campaignAdvertiserUrlId: campaignAdvertiserUrl.campaignUrlId,
+        baseTrackingUrl: `${trackingBaseUrl}?${trackingParams}`,
+        isApproved: false,
+        status: "Pending",
+      };
+
+      const result = await createPromote(promoteData);
+      if (result) {
+        setHasPromoted(true);
+        message.success("Tham gia chiến dịch thành công! Đang chờ phê duyệt.");
+      } else {
+        throw new Error("Failed to create promote");
+      }
+    } catch (error) {
+      console.error("Error creating promote:", error.message);
+      message.error("Không thể tham gia chiến dịch: " + error.message);
+    } finally {
+      setPromoting(false);
+    }
   };
 
   if (loading) {
@@ -128,6 +165,16 @@ export default function CampaignDetail() {
           <Descriptions.Item label="Tên tiền tệ">
             {campaign.currencyName || "N/A"}
           </Descriptions.Item>
+          {campaignAdvertiserUrl && (
+            <Descriptions.Item label="Landing Page">
+              {campaignAdvertiserUrl.landingPage}
+            </Descriptions.Item>
+          )}
+          {advertiserUrl && (
+            <Descriptions.Item label="Advertiser URL">
+              {advertiserUrl.url || "N/A"}
+            </Descriptions.Item>
+          )}
         </Descriptions>
       </Card>
 
@@ -143,7 +190,7 @@ export default function CampaignDetail() {
           type="primary"
           onClick={handleCreatePromote}
           loading={promoting}
-          disabled={promoting || hasPromoted} // Vô hiệu hóa nếu đang tạo hoặc đã tạo
+          disabled={promoting || hasPromoted}
         >
           {hasPromoted ? "Xin chờ phê duyệt" : "Tham Gia Chiến Dịch"}
         </Button>
