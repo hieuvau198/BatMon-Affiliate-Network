@@ -1,37 +1,11 @@
 import { useState } from "react";
 import { Card, Form, InputNumber, Select, Button, Row, Col, message } from "antd";
-import { ArrowDownOutlined, ArrowUpOutlined, MoneyCollectOutlined, TransactionOutlined } from "@ant-design/icons";
+import { ArrowUpOutlined, TransactionOutlined } from "@ant-design/icons";
 import { createPayoutRequest } from "../../../../../modules/PublisherBalance/partials/createPayoutRequest";
-import { createDepositRequest } from "../../../../../modules/PublisherBalance/partials/createDepositRequest";
 
-export default function Overview({ walletData, formatCurrency, formatDynamicCurrency, updateWalletData, publisherId }) {
-  const [depositSubmitting, setDepositSubmitting] = useState(false);
+export default function Overview({ walletData, formatCurrency, updateWalletData, publisherId }) {
   const [payoutSubmitting, setPayoutSubmitting] = useState(false);
-  const [depositForm] = Form.useForm();
   const [payoutForm] = Form.useForm();
-
-  const handleDepositRequest = async (values) => {
-    setDepositSubmitting(true);
-    try {
-      const depositData = {
-        amount: values.amount,
-        currencyCode: values.currencyCode,
-        publisherId: parseInt(publisherId),
-        paymentMethod: values.paymentMethod
-      };
-      const result = await createDepositRequest(depositData);
-      if (result) {
-        depositForm.resetFields();
-        message.success("Yêu cầu nạp tiền đã được gửi thành công!");
-        updateWalletData();
-      }
-    } catch (error) {
-      console.error(error);
-      message.error("Có lỗi xảy ra khi gửi yêu cầu nạp tiền!");
-    } finally {
-      setDepositSubmitting(false);
-    }
-  };
 
   const handlePayoutRequest = async (values) => {
     if (!walletData) {
@@ -65,82 +39,7 @@ export default function Overview({ walletData, formatCurrency, formatDynamicCurr
 
   return (
     <Row gutter={[24, 24]} className="mt-4">
-      <Col xs={24} md={12}>
-        <Card
-          title={
-            <div className="flex items-center">
-              <MoneyCollectOutlined className="text-green-500 mr-2" />
-              <span>Nạp tiền vào ví</span>
-            </div>
-          }
-          className="shadow-sm h-full"
-        >
-          <Form
-            form={depositForm}
-            layout="vertical"
-            onFinish={handleDepositRequest}
-            initialValues={{
-              currencyCode: "VND",
-              paymentMethod: "BankTransfer"
-            }}
-          >
-            <Form.Item
-              label="Số tiền"
-              name="amount"
-              rules={[{ required: true, message: "Vui lòng nhập số tiền!" }]}
-            >
-              <InputNumber
-                min={1}
-                style={{ width: "100%" }}
-                placeholder="Nhập số tiền bạn muốn nạp"
-                size="large"
-                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
-              />
-            </Form.Item>
-            <Row gutter={12}>
-              <Col span={12}>
-                <Form.Item
-                  label="Loại tiền tệ"
-                  name="currencyCode"
-                  rules={[{ required: true, message: "Vui lòng chọn loại tiền tệ!" }]}
-                >
-                  <Select size="large">
-                    <Select.Option value="VND">VND</Select.Option>
-                    <Select.Option value="USD">USD</Select.Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  label="Phương thức"
-                  name="paymentMethod"
-                  rules={[{ required: true, message: "Vui lòng chọn phương thức thanh toán!" }]}
-                >
-                  <Select size="large">
-                    <Select.Option value="BankTransfer">Chuyển khoản</Select.Option>
-                    <Select.Option value="PayPal">PayPal</Select.Option>
-                    <Select.Option value="Momo">Momo</Select.Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-            </Row>
-            <Form.Item className="mt-6">
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={depositSubmitting}
-                block
-                size="large"
-                icon={<ArrowDownOutlined />}
-              >
-                Nạp tiền ngay
-              </Button>
-            </Form.Item>
-          </Form>
-        </Card>
-      </Col>
-      <Col xs={24} md={12}>
+      <Col xs={24}>
         <Card
           title={
             <div className="flex items-center">

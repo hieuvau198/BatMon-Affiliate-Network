@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Card, Input, Table, Spin, message } from "antd";
+import { Card, Input, Table, Spin, message, Tag } from "antd";
 import getPayoutRequestsByPublisher from "../../../../../modules/PublisherBalance/partials/getPayoutRequestsByPublisher";
 
 export default function PayoutHistory({ publisherId, formatDynamicCurrency }) {
@@ -69,8 +69,9 @@ export default function PayoutHistory({ publisherId, formatDynamicCurrency }) {
         let color = "default";
         if (status === "Pending") color = "orange";
         if (status === "Completed") color = "green";
+        if (status === "Approved") color = "green";
         if (status === "Failed") color = "red";
-        return <span style={{ color }}>{status}</span>;
+        return <Tag color={color}>{status}</Tag>;
       },
       width: 120
     }
