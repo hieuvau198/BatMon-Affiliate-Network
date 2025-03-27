@@ -18,7 +18,7 @@ export default async function getPublisherBalance() {
     }
 
     const data = await response.json();
-    message.success("Publisher balance fetched successfully!");
+    // message.success("Publisher balance fetched successfully!");
     return data;
   } catch (error) {
     message.error(
