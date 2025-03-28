@@ -1,260 +1,240 @@
-import React, { useState } from 'react';
-import {   Modal,   Form,   Input,   Button,   Select,   DatePicker,   notification,   Card,   Typography,   Space,  Divider} from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-import dayjs from 'dayjs';
+import React, { useState } from "react";
+import {   Button,   Modal,   Form,   Input,   Select,   notification,   Typography,  Table,  Tag} from "antd";
+import {  ArrowDownOutlined, CheckCircleOutlined,  ClockCircleOutlined} from '@ant-design/icons';
 
-const { Option } = Select;
 const { Title } = Typography;
 
-const DepositRequest = ({   advertiserBalance,   setAdvertiserBalance,   transactions,  setTransactions,  formatCurrency,  depositModal,  setDepositModal
+const DepositRequest = ({ 
+  advertiserBalance, 
+  setAdvertiserBalance, 
+  transactions, 
+  setTransactions, 
+  formatCurrency,
+  depositModal,
+  setDepositModal,
+  userBankAccounts: propUserBankAccounts // Rename the prop to avoid conflict
 }) => {
-  const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
-  const [depositRequests, setDepositRequests] = useState([
-    {
-      requestId: 1,
-      advertiserId: 101,
-      amount: 5000000,
-      requestDate: "2024-03-01",
-      status: "Completed",
-      paymentMethod: "Bank Transfer",
-      transactionId: "TXN-20240301",
-      currencyCode: "VND"
-    },
-    {
-      requestId: 2,
-      advertiserId: 101,
-      amount: 3000000,
-      requestDate: "2024-02-15",
-      status: "Completed",
-      paymentMethod: "Credit Card",
-      transactionId: "TXN-20240215",
-      currencyCode: "VND"
-    }
-  ]);
+  const [depositFormData, setDepositFormData] = useState({
+    amount: "",
+    paymentMethod: "BankTransfer",
+    bankAccount: "default"
+  });
+
+  const [selectedBankAccount, setSelectedBankAccount] = useState(null);
+
+  const bankAccounts = [
+    { id: "default", name: "Techcombank - 19120123456789 - CÔNG TY ABC" },
+    { id: "bank2", name: "Vietcombank - 19213456789 - CÔNG TY ABC" },
+  ];
 
   const paymentMethods = [
-    { value: 'Bank Transfer', label: 'Bank Transfer' },
-    { value: 'Credit Card', label: 'Credit Card' },
-    { value: 'E-Wallet', label: 'E-Wallet' },
-    { value: 'Cryptocurrency', label: 'Cryptocurrency' }
+    { value: "BankTransfer", label: "Chuyển khoản ngân hàng" },
+    { value: "CreditCard", label: "Thẻ tín dụng" },
+    { value: "DebitCard", label: "Thẻ ghi nợ" },
+    { value: "EWallet", label: "Ví điện tử" },
+    { value: "OnlineBanking", label: "Ngân hàng trực tuyến" }
   ];
 
-  const handleSubmit = async (values) => {
-    setLoading(true);
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const newRequest = {
-        requestId: depositRequests.length + 1,
-        advertiserId: advertiserBalance.advertiserId,
-        amount: values.amount,
-        requestDate: dayjs().format('YYYY-MM-DD'),
-        status: "Pending",
-        paymentMethod: values.paymentMethod,
-        transactionId: `TXN-${dayjs().format('YYYYMMDDHHmmss')}`,
-        currencyCode: advertiserBalance.currencyCode
-      };
-      setDepositRequests([...depositRequests, newRequest]);
-      if (values.status === "Completed") {
-        const newTransaction = {
-          id: `T${transactions.length + 1}`,
-          transactionId: newRequest.transactionId,
-          type: "Deposit",
-          amount: newRequest.amount,
-          status: "Completed",
-          date: newRequest.requestDate,
-          description: `${newRequest.paymentMethod} deposit`
+  const depositColumns = [
+    {
+      title: "Request ID",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
+      title: "Transaction ID",
+      dataIndex: "transactionId",
+      key: "transactionId",
+    },
+    {
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
+      render: (amount) => formatCurrency(amount),
+    },
+    {
+      title: "Bank Information",
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "Request Date",
+      dataIndex: "date",
+      key: "date",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => {
+        const statusColors = {
+          "Completed": "green",
+          "Pending": "gold"
         };
+        const statusIcons = {
+          "Completed": <CheckCircleOutlined />,
+          "Pending": <ClockCircleOutlined />
+        };
+        return (
+          <Tag 
+            color={statusColors[status]} 
+            icon={statusIcons[status]}
+          >
+            {status}
+          </Tag>
+        );
+      },
+    },
+  ];
 
-        setTransactions([...transactions, newTransaction]);
-        setAdvertiserBalance({
-          ...advertiserBalance,
-          availableBalance: advertiserBalance.availableBalance + newRequest.amount,
-          lifetimeDeposits: advertiserBalance.lifetimeDeposits + newRequest.amount
-        });
-      }
-
-      notification.success({
-        message: 'Deposit Request Submitted',
-        description: 'Your deposit request has been submitted successfully.'
-      });
-
-      form.resetFields();
-      setDepositModal(false);
-    } catch (error) {
-      notification.error({
-        message: 'Error',
-        description: 'There was an error processing your deposit request.'
-      });
-    } finally {
-      setLoading(false);
-    }
+  const handleDepositFormChange = (fieldName, value) => {  
+    setDepositFormData({  
+      ...depositFormData,  
+      [fieldName]: value
+    });  
   };
 
-  const columns = [
-    {
-      title: 'Request ID',
-      dataIndex: 'requestId',
-      key: 'requestId',
-    },
-    {
-      title: 'Amount',
-      dataIndex: 'amount',
-      key: 'amount',
-      render: (amount) => formatCurrency(amount)
-    },
-    {
-      title: 'Date',
-      dataIndex: 'requestDate',
-      key: 'requestDate',
-    },
-    {
-      title: 'Payment Method',
-      dataIndex: 'paymentMethod',
-      key: 'paymentMethod',
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status) => {
-        let color = '';
-        switch (status) {
-          case 'Completed':
-            color = 'green';
-            break;
-          case 'Pending':
-            color = 'orange';
-            break;
-          case 'Rejected':
-            color = 'red';
-            break;
-          default:
-            color = 'gray';
-        }
-        return <span style={{ color }}>{status}</span>;
-      }
-    },
-    {
-      title: 'Transaction ID',
-      dataIndex: 'transactionId',
-      key: 'transactionId',
+  const handleDepositSubmit = () => {
+    const amountString = depositFormData.amount.replace(/,/g, "");
+    const amount = parseFloat(amountString);
+
+    // Validate amount
+    if (!amountString || isNaN(amount) || amount < 100000) {
+      notification.error({
+        message: "Lỗi",
+        description: "Số tiền nạp tối thiểu là 100,000 đồng",
+      });
+      return;
     }
-  ];
+
+    // Validate bank account selection
+    if (!selectedBankAccount) {
+      notification.error({
+        message: "Lỗi",
+        description: "Vui lòng chọn tài khoản ngân hàng",
+      });
+      return;
+    }
+
+    // Create deposit transaction
+    const newTransaction = {
+      id: `REQ-${(transactions.length + 1).toString().padStart(3, "0")}`,
+      transactionId: `TXN-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}`,
+      type: "Deposit",
+      amount: amount,
+      status: "Completed",
+      date: new Date().toISOString().slice(0, 10),
+      description: `Deposit via ${depositFormData.paymentMethod} - ${depositFormData.bankAccount}`
+    };
+    
+    // Update transactions and balance
+    setTransactions([...transactions, newTransaction]);
+    setAdvertiserBalance({  
+      ...advertiserBalance,  
+      availableBalance: advertiserBalance.availableBalance + amount,
+      lifetimeDeposits: advertiserBalance.lifetimeDeposits + amount,
+      lastUpdated: new Date().toISOString().slice(0, 10)
+    });
+
+    // Reset form and close modal
+    setDepositModal(false);
+    setDepositFormData({
+      amount: "",
+      paymentMethod: "BankTransfer",
+      bankAccount: "default"
+    });
+    setSelectedBankAccount(null);
+    
+    // Always show success notification
+    notification.success({
+      message: "Nạp tiền thành công",
+      description: `Bạn đã nạp thành công ${formatCurrency(amount)} vào tài khoản`,
+    });
+  };
 
   return (
     <div>
-      <Card 
-        title={
-          <Space>
-            <Title level={4} style={{ margin: 0 }}>Deposit Requests</Title>
-            <Button 
-              type="primary" 
-              icon={<PlusOutlined />} 
-              onClick={() => setDepositModal(true)}
-            >
-              New Deposit
-            </Button>
-          </Space>
-        }
-        className="mb-4"
-      >
-        <div className="overflow-x-auto">
-          <table className="min-w-full">
-            <thead>
-              <tr>
-                {columns.map(col => (
-                  <th key={col.key} className="text-left px-4 py-2 border-b">
-                    {col.title}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {depositRequests.map(request => (
-                <tr key={request.requestId} className="hover:bg-gray-50">
-                  {columns.map(col => (
-                    <td key={col.key} className="px-4 py-2 border-b">
-                      {col.render ? col.render(request[col.dataIndex]) : request[col.dataIndex]}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      <div className="mb-4 flex justify-between items-center">
+        <div className="flex items-center">
+          <ArrowDownOutlined className="mr-2" />
+          <Title level={5} style={{ margin: 0 }}>Lịch sử nạp tiền</Title>
         </div>
-      </Card>
+        <Button type="primary" onClick={() => setDepositModal(true)}>
+          Nạp tiền ngay
+        </Button>
+      </div>
+
+      {/* Deposit History Table */}
+      <Table 
+        dataSource={transactions.filter(t => t.type === "Deposit")} 
+        columns={depositColumns} 
+        rowKey="id"
+        pagination={{ pageSize: 10 }}
+      />
 
       <Modal
-        title="New Deposit Request"
-        open={depositModal}
-        onCancel={() => {
-          form.resetFields();
-          setDepositModal(false);
-        }}
-        footer={null}
+        title="Nạp tiền"
+        visible={depositModal}
+        onOk={handleDepositSubmit}
+        onCancel={() => setDepositModal(false)}
         width={600}
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmit}
-          initialValues={{
-            currencyCode: advertiserBalance.currencyCode,
-            requestDate: dayjs()
-          }}
-        >
-          <Form.Item
-            label="Amount"
-            name="amount"
-            rules={[{ required: true, message: 'Please input the amount!' }]}
-          >
-            <Input 
-              type="number" 
-              prefix={advertiserBalance.currencyCode} 
-              style={{ width: '100%' }} 
+        <Form layout="vertical">
+          <Form.Item label="Số tiền nạp (đồng)" required>
+            <Input
+              value={depositFormData.amount}
+              onChange={(e) => {
+                const formattedValue = e.target.value
+                  .replace(/[^0-9,]/g, '')
+                  .replace(/(,.*),/g, '$1');
+                handleDepositFormChange('amount', formattedValue);
+              }}
+              addonAfter="đ"
+              placeholder="Nhập số tiền cần nạp (tối thiểu 100,000 đồng)"
             />
           </Form.Item>
-
-          <Form.Item
-            label="Payment Method"
-            name="paymentMethod"
-            rules={[{ required: true, message: 'Please select payment method!' }]}
-          >
-            <Select placeholder="Select payment method">
+          <Form.Item label="Phương thức thanh toán" required>
+            <Select
+              value={depositFormData.paymentMethod}
+              onChange={(value) => handleDepositFormChange('paymentMethod', value)}
+              placeholder="Chọn phương thức thanh toán"
+            >
               {paymentMethods.map(method => (
-                <Option key={method.value} value={method.value}>
+                <Select.Option key={method.value} value={method.value}>
                   {method.label}
-                </Option>
+                </Select.Option>
               ))}
             </Select>
           </Form.Item>
+          
+          {depositFormData.paymentMethod === 'BankTransfer' && (
+            <Form.Item label="Chọn tài khoản ngân hàng để chuyển khoản" required>
+              <Select
+                value={depositFormData.bankAccount}
+                onChange={(value) => handleDepositFormChange('bankAccount', value)}
+              >
+                {bankAccounts.map(account => (
+                  <Select.Option key={account.id} value={account.name}>
+                    {account.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          )}
 
-          <Form.Item
-            label="Currency"
-            name="currencyCode"
-          >
-            <Input disabled />
-          </Form.Item>
-
-          <Form.Item
-            label="Request Date"
-            name="requestDate"
-          >
-            <DatePicker disabled style={{ width: '100%' }} />
-          </Form.Item>
-
-          <Form.Item>
-            <Button 
-              type="primary" 
-              htmlType="submit" 
-              loading={loading}
-              style={{ width: '100%' }}
+        <Form.Item label="Tài khoản ngân hàng" required>
+            <Select
+              value={selectedBankAccount}
+              onChange={(value) => setSelectedBankAccount(value)}
+              placeholder="Chọn tài khoản ngân hàng"
             >
-              Submit Deposit Request
-            </Button>
+              {propUserBankAccounts.map(account => (
+                <Select.Option key={account.id} value={account.id}>
+                  {account.bankName} - {account.accountNumber} - {account.accountHolder}
+                  {account.isDefault && " (Mặc định)"}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
         </Form>
       </Modal>

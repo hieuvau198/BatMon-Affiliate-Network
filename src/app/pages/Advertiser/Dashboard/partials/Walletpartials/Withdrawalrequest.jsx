@@ -86,6 +86,16 @@ const WithdrawalRequest = ({   withdrawalRequests,   setWithdrawalRequests,   ad
       return;
     }
     const amount = parseFloat(newWithdrawalAmount.replace(/,/g, ""));
+    
+    // Check minimum withdrawal amount (100,000)
+    if (amount < 100000) {
+      notification.error({
+        message: "Lỗi",
+        description: "Số tiền rút tối thiểu phải là 100.000 đồng",
+      });
+      return;
+    }
+    
     if (amount > advertiserBalance.availableBalance) {
       notification.error({
         message: "Lỗi",
@@ -195,10 +205,12 @@ const WithdrawalRequest = ({   withdrawalRequests,   setWithdrawalRequests,   ad
               value={newWithdrawalAmount}
               onChange={(e) => setNewWithdrawalAmount(e.target.value)}
               addonAfter="đ"
-              placeholder="Nhập số tiền cần rút"
+              placeholder="Nhập số tiền cần rút (tối thiểu 100.000 đồng)"
             />
             <div className="text-sm text-gray-500 mt-1">
               Số dư khả dụng: {formatCurrency(advertiserBalance.availableBalance)}
+              <br />
+              Số tiền rút tối thiểu: 100.000 đồng
             </div>
           </Form.Item>
           <Form.Item label="Tài khoản ngân hàng" required>

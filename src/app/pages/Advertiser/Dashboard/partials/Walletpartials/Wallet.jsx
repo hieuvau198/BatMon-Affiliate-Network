@@ -134,6 +134,8 @@ export default function Wallet() {
           setWithdrawalModal={setWithdrawalModal}
           setDepositModal={setDepositModal}
           formatCurrency={formatCurrency}
+          userBankAccounts={userBankAccounts}
+
         />
         
         {/* Tabs cho các chức năng ví */}
@@ -169,6 +171,7 @@ export default function Wallet() {
               formatCurrency={formatCurrency}
               depositModal={depositModal}
               setDepositModal={setDepositModal}
+              userBankAccounts={userBankAccounts}
             />
           </TabPane>
 
