@@ -23,7 +23,7 @@ import {
   SettingOutlined,
 } from "@ant-design/icons";
 import logOut from "../../components/Logout";
-import logo from "../../assets/img/download (1).png";
+import logo from "../../assets/img/logo.png";
 const { Header } = Layout;
 
 export default function CustomHeader() {
