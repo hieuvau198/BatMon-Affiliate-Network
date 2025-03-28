@@ -3,9 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Card, Descriptions, Spin, message, Button, Tag } from "antd";
 import { LeftOutlined } from "@ant-design/icons";
 import { getCampaignById } from "../../../../modules/Publisher/getCampaignByID";
-import  createPromote  from "../../../../modules/Promote/createPromote";
+import createPromote from "../../../../modules/Promote/createPromote";
 import { getCampaignAdvertiserUrl } from "../../../../modules/PublisherCampaign/partials/getCampaignAdvertiserUrl";
-import  getAdvertiserUrl  from "../../../../modules/AdvertiserUrl/getAdverUrlByAdverId"; // Adjust path as needed
+import getAdvertiserUrl from "../../../../modules/AdvertiserUrl/getAdverUrlByAdverId"; // Adjust path as needed
 
 export default function CampaignDetail() {
   const { campaignId } = useParams();
@@ -160,21 +160,21 @@ export default function CampaignDetail() {
           <Descriptions.Item label="Ngày tạo">{campaign.createdDate}</Descriptions.Item>
           <Descriptions.Item label="Cập nhật lần cuối">{campaign.lastUpdated}</Descriptions.Item>
           <Descriptions.Item label="Tên nhà quảng cáo">
-            {campaign.advertiserName || "N/A"}
+            {campaign.advertiserName || "pub1"}
           </Descriptions.Item>
           <Descriptions.Item label="Tên tiền tệ">
-            {campaign.currencyName || "N/A"}
+            {campaign.currencyName || "VND"}
           </Descriptions.Item>
           {campaignAdvertiserUrl && (
-            <Descriptions.Item label="Landing Page">
+            <Descriptions.Item label="Link Sản Phẩm">
               {campaignAdvertiserUrl.landingPage}
             </Descriptions.Item>
           )}
-          {advertiserUrl && (
+          {/* {advertiserUrl && (
             <Descriptions.Item label="Advertiser URL">
               {advertiserUrl.url || "N/A"}
             </Descriptions.Item>
-          )}
+          )} */}
         </Descriptions>
       </Card>
 

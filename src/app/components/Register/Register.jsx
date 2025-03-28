@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../../assets/img/download (1).png";
+import logo from "../../assets/img/logo.png";
 
 export default function Register() {
   const navigate = useNavigate();

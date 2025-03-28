@@ -4,12 +4,13 @@ import {
   BellOutlined,
   SearchOutlined,
   UserOutlined,
-  WalletOutlined // Thêm WalletOutlined
+  WalletOutlined
 } from "@ant-design/icons"
 import { Avatar, Badge, Dropdown, Input, Menu, Tooltip } from "antd"
 import { motion } from "framer-motion"
 import logout from "../../../components/Logout"
-import { Link } from 'react-router-dom' // Thêm import này nếu dùng React Router
+import { Link } from 'react-router-dom'
+import Logo from "../../../assets/img/logo.png"; // Đảm bảo đường dẫn đúng
 
 const PublisherHeader = () => {
   const profileMenu = (
@@ -32,22 +33,31 @@ const PublisherHeader = () => {
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         {/* Left Section: Logo and Name */}
         <div className="flex items-center space-x-2">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="w-8 h-8 rounded-md bg-blue-500 flex items-center justify-center"
-          >
-            {/* <GlobalOutlined className="text-white" /> */}
-          </motion.div>
-          <motion.h1
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="text-xl font-bold text-white"
-          >
-            AffiHub
-          </motion.h1>
+          <Link to="/">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="flex items-center"
+            >
+              {/* Tăng kích thước logo */}
+              <img 
+                src={Logo} 
+                alt="AffiHub Logo" 
+                className="w-12 h-12 object-contain" 
+              />
+            </motion.div>
+          </Link>
+          <Link to="/">
+            <motion.h1
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="text-xl font-bold text-white"
+            >
+              AffiHub
+            </motion.h1>
+          </Link>
         </div>
 
         {/* Middle Section: Search Bar */}
@@ -79,7 +89,6 @@ const PublisherHeader = () => {
             </Badge>
           </motion.div>
 
-          {/* Thêm Wallet Icon */}
           <motion.div
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
