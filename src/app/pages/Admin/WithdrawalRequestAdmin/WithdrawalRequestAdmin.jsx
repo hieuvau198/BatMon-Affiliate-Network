@@ -1,42 +1,21 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Table, Modal, Tag, Tabs, message, Typography, Input } from 'antd';
-import {   CheckCircleOutlined,   CloseCircleOutlined,   ExclamationCircleOutlined,   DollarOutlined,   SearchOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, CloseCircleOutlined, DollarOutlined, SearchOutlined } from '@ant-design/icons';
+import getWithdrawalRequest from '../../../modules/WithdrawalRequest/getWithdrawalRequest';
+import approveWithdrawalRequest from '../../../modules/WithdrawalRequest/approveWithdrawalRequest';
+import rejectWithdrawalRequest from '../../../modules/WithdrawalRequest/rejectWithdrawalRequest';
+
 const { Title } = Typography;
 const { Search } = Input;
+
 const WithdrawalRequestAdmin = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [withdrawalRequests, setWithdrawalRequests] = useState([
-    {
-      key: 1,
-      type: 'Publisher',
-      name: 'John Doe',
-      amount: 5000,
-      currency: 'USD',
-      requestDate: '2024-03-15',
-      status: 'Pending'
-    },
-    {
-      key: 2,
-      type: 'Advertiser',
-      name: 'Tech Solutions Inc.',
-      amount: 10000,
-      currency: 'USD', 
-      requestDate: '2024-03-10',
-      status: 'Approved'
-    },
-    {
-      key: 3,
-      type: 'Publisher',
-      name: 'Sarah Smith',
-      amount: 2500,
-      currency: 'EUR',
-      requestDate: '2024-03-20',
-      status: 'Rejected'
-    }
-  ]);
+  const [withdrawalRequests, setWithdrawalRequests] = useState([]);
+  const [loading, setLoading] = useState(false);
 
+  // Giữ lại dữ liệu số dư (ví dụ từ API hoặc dữ liệu tạm)
   const [balances, setBalances] = useState({
     publishers: [
       {
@@ -59,15 +38,47 @@ const WithdrawalRequestAdmin = () => {
     advertisers: [
       {
         id: 1,
-        name: 'Tech Solutions Inc.',
-        availableBalance: 15000,
-        pendingBalance: 1000,
-        lifetimeDeposits: 50000,
-        lifetimeWithdrawals: 20000,
-        currency: 'USD'
+        name: 'Tech Innovators Vietnam',
+        availableBalance: 150000000,
+        pendingBalance: 10000000,
+        lifetimeDeposits: 500000000,
+        lifetimeWithdrawals: 200000000,
+        currency: 'VND'
       }
     ]
   });
+
+  // Lấy danh sách yêu cầu rút tiền từ API khi component mount
+  useEffect(() => {
+    setLoading(true);
+    getWithdrawalRequest()
+      .then(data => {
+        // Chuyển đổi dữ liệu API sang định dạng component cần dùng
+        const mappedData = data.map(item => ({
+          key: item.requestId, // sử dụng requestId làm key
+          requestId: item.requestId,
+          // Xác định loại request: nếu có advertiserId thì coi là Advertiser, ngược lại Publisher (nếu có thêm trường publisherId,...)
+          type: item.advertiserId ? 'Advertiser' : 'Publisher',
+          name: item.advertiserName || 'Unknown',
+          amount: item.amount,
+          // Sử dụng currencyCode hoặc currencyName tùy theo mục đích hiển thị
+          currency: item.currencyCode,
+          currencyName: item.currencyName,
+          requestDate: item.requestDate,
+          status: item.status,
+          rejectionReason: item.rejectionReason,
+          reviewedBy: item.reviewedBy
+        }));
+        setWithdrawalRequests(mappedData);
+        setLoading(false);
+      })
+      .catch(error => {
+        message.error('Có lỗi xảy ra khi lấy dữ liệu yêu cầu rút tiền');
+        setLoading(false);
+      });
+  }, []);
+
+  // Lọc và tìm kiếm yêu cầu dựa theo tab và searchTerm
   const filteredAndSearchedRequests = useMemo(() => {
     let filteredRequests = withdrawalRequests;
     switch(activeTab) {
@@ -82,8 +93,8 @@ const WithdrawalRequestAdmin = () => {
     }
     if (searchTerm) {
       const lowercasedTerm = searchTerm.toLowerCase();
-      filteredRequests = filteredRequests.filter(request => 
-        Object.values(request).some(value => 
+      filteredRequests = filteredRequests.filter(request =>
+        Object.values(request).some(value =>
           String(value).toLowerCase().includes(lowercasedTerm)
         )
       );
@@ -91,48 +102,32 @@ const WithdrawalRequestAdmin = () => {
     return filteredRequests;
   }, [withdrawalRequests, activeTab, searchTerm]);
 
+  // Hàm kiểm tra tính hợp lệ của yêu cầu rút tiền dựa vào số dư
   const validateWithdrawalEligibility = (request) => {
     const balanceGroup = request.type === 'Publisher' 
       ? balances.publishers 
       : balances.advertisers;
-
     const accountBalance = balanceGroup.find(b => b.name === request.name);
-
     if (!accountBalance) {
-      return {
-        isEligible: false,
-        reason: 'Không tìm thấy thông tin số dư'
-      };
+      return { isEligible: false, reason: 'Không tìm thấy thông tin số dư' };
     }
     const isValidCurrency = accountBalance.currency === request.currency;
     const hasEnoughBalance = accountBalance.availableBalance >= request.amount;
     if (!isValidCurrency) {
-      return {
-        isEligible: false,
-        reason: 'Không khớp ngoại tệ'
-      };
+      return { isEligible: false, reason: 'Không khớp ngoại tệ' };
     }
     if (!hasEnoughBalance) {
-      return {
-        isEligible: false,
-        reason: 'Số dư không đủ để rút',
-        availableBalance: accountBalance.availableBalance
-      };
+      return { isEligible: false, reason: 'Số dư không đủ để rút', availableBalance: accountBalance.availableBalance };
     }
-    return {
-      isEligible: true
-    };
+    return { isEligible: true };
   };
+
   const getStatusTag = (status, request) => {
     const eligibility = validateWithdrawalEligibility(request);
     switch(status) {
       case 'Pending':
         if (!eligibility.isEligible) {
-          return (
-            <Tag color="orange">
-              Pending - {eligibility.reason}
-            </Tag>
-          );
+          return <Tag color="orange">Pending - {eligibility.reason}</Tag>;
         }
         return <Tag color="orange">Pending</Tag>;
       case 'Approved':
@@ -143,9 +138,10 @@ const WithdrawalRequestAdmin = () => {
         return <Tag>Unknown</Tag>;
     }
   };
+
+  // Xử lý phê duyệt hoặc từ chối yêu cầu
   const handleRequestAction = (request, action) => {
     const eligibility = validateWithdrawalEligibility(request);
-    
     if (action === 'Approved' && !eligibility.isEligible) {
       Modal.error({
         title: 'Không thể phê duyệt',
@@ -153,21 +149,26 @@ const WithdrawalRequestAdmin = () => {
       });
       return;
     }
-    const updatedRequests = withdrawalRequests.map(req => 
-      req.key === request.key 
-        ? { ...req, status: action }
-        : req
-    );
-    setWithdrawalRequests(updatedRequests);
-    setSelectedRequest(null);
-    message.success(`Yêu cầu đã được ${action.toLowerCase()}`);
+    const apiCall = action === 'Approved'
+      ? approveWithdrawalRequest({ requestId: request.requestId })
+      : rejectWithdrawalRequest({ requestId: request.requestId });
+    apiCall.then(response => {
+      const updatedRequests = withdrawalRequests.map(req =>
+        req.requestId === request.requestId ? { ...req, status: action } : req
+      );
+      setWithdrawalRequests(updatedRequests);
+      setSelectedRequest(null);
+      message.success(`Yêu cầu đã được ${action.toLowerCase()}`);
+    }).catch(error => {
+      message.error(`Có lỗi xảy ra: ${error.message || error}`);
+    });
   };
 
   const columns = [
     {
       title: 'Request ID',
-      dataIndex: 'key',
-      key: 'key',
+      dataIndex: 'requestId',
+      key: 'requestId',
     },
     {
       title: 'Type',
@@ -211,6 +212,7 @@ const WithdrawalRequestAdmin = () => {
       ),
     },
   ];
+
   const tabItems = [
     {
       key: 'all',
@@ -225,6 +227,7 @@ const WithdrawalRequestAdmin = () => {
       label: 'Yêu Cầu Advertiser',
     }
   ];
+
   return (
     <div className="p-6">
       <div className="mb-6">
@@ -255,7 +258,8 @@ const WithdrawalRequestAdmin = () => {
           <Table 
             columns={columns} 
             dataSource={filteredAndSearchedRequests}
-            rowKey="key"
+            rowKey="requestId"
+            loading={loading}
             pagination={{
               className: 'mt-4',
               showSizeChanger: true,
@@ -296,7 +300,7 @@ const WithdrawalRequestAdmin = () => {
           <div className="space-y-4">
             <div className="flex justify-between">
               <span className="font-semibold">Mã Yêu Cầu:</span>
-              <span>{selectedRequest.key}</span>
+              <span>{selectedRequest.requestId}</span>
             </div>
             <div className="flex justify-between">
               <span className="font-semibold">Loại:</span>
@@ -319,7 +323,7 @@ const WithdrawalRequestAdmin = () => {
               {getStatusTag(selectedRequest.status, selectedRequest)}
             </div>
             
-            {/* Chi tiết số dư chi tiết */}
+            {/* Hiển thị thông tin số dư tương ứng */}
             <div className="mt-4 p-3 bg-gray-100 rounded">
               <h4 className="font-semibold mb-2 flex items-center">
                 <DollarOutlined className="mr-2" />
@@ -330,7 +334,6 @@ const WithdrawalRequestAdmin = () => {
                   ? balances.publishers 
                   : balances.advertisers;
                 const accountBalance = balanceGroup.find(b => b.name === selectedRequest.name);
-                
                 return accountBalance ? (
                   <div className="space-y-2">
                     <div className="flex justify-between">
