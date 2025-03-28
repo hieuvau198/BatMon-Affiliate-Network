@@ -1,4 +1,5 @@
 import {
+  DollarOutlined,
   FileTextOutlined,
   LineChartOutlined,
   MessageOutlined,
@@ -16,6 +17,7 @@ const AdminSidebar = ({ activeMenu, setActiveMenu }) => {
     { id: "/FraudDashboard", label: "FraudDash", icon: <FaChartPie />, link: "/admin/FraudDashboard" },
     { id: "/TaxDashboard", label: "TaxDashboard", icon: <FileTextOutlined />, link: "/admin/TaxDashboard" },
     { id: "/Campaign", label: "Campaign", icon: <LineChartOutlined />, link: "/admin/AdminCampaignApproval" },   
+    { id: "/WithdrawalRequest", label: "Withdrawal",  icon: <DollarOutlined />, link: "/admin/WithdrawalRequestAdmin" },
   ];
 
   return (
