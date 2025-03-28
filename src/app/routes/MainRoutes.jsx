@@ -49,6 +49,7 @@ import TransactionManagement from "../pages/Advertiser/Dashboard/partials/Wallet
 import Withdrawalrequest from "../pages/Advertiser/Dashboard/partials/Walletpartials/Withdrawalrequest";
 import DepositRequest from "../pages/Advertiser/Dashboard/partials/Walletpartials/DepositRequest"
 import Wallet from "../pages/Publisher/Campaign/Wallet/Wallet";
+import WithdrawalRequestAdmin from "../pages/Admin/WithdrawalRequestAdmin/WithdrawalRequestAdmin";
 const PageNotFound = lazy(() => import("../layouts/PageNotFound"));
 const ServerError = lazy(() => import("../layouts/ServerError/ServerError"));
 const Maintenance = lazy(() => import("../layouts/Maintenance/Maintenance"));
@@ -82,6 +83,7 @@ export default function MainRoutes() {
           <Route path="FraudDashboard/FraudAdjustmentForm" element={<FraudAdjustmentForm />} />
           <Route path="FraudDashboard/FraudAdjustmentsList" element={<FraudAdjustmentsList />} />
           <Route path="FraudDashboard/FraudDetectionSettings" element={<FraudDetectionSettings />} />
+          <Route path="WithdrawalRequestAdmin" element={<WithdrawalRequestAdmin />} />
 
         </Route>
 

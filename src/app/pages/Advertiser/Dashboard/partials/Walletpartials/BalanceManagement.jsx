@@ -1,24 +1,32 @@
-import React, { useState } from "react";
-import {     Card,   Statistic,   Button,   Typography,   Tooltip,   Modal,   Form,   Input,   Radio,  Upload,   notification,   Space,   Select} from "antd";
-import {    WalletOutlined, DollarOutlined,   ArrowUpOutlined,   ArrowDownOutlined,   ClockCircleOutlined,   InfoCircleOutlined,   UploadOutlined} from '@ant-design/icons';
+import React, { useState, useEffect } from "react";
+import {       Card,   Statistic,   Button,   Typography,   Tooltip,   Modal,   Form,   Input,   notification,   Select} from "antd";
+import {      WalletOutlined,   DollarOutlined,     ArrowUpOutlined,     ArrowDownOutlined,     ClockCircleOutlined,     InfoCircleOutlined} from '@ant-design/icons';
+
 const { Title, Text } = Typography;
+
 export default function BalanceManagement({   
   advertiserBalance, 
   setAdvertiserBalance, 
   transactions, 
   setTransactions, 
   setStatusFilter, 
-  setWithdrawalModal 
+  onWithdrawalModalToggle,
+  userBankAccounts: propUserBankAccounts 
 }) {
+  // State variables
   const [depositModal, setDepositModal] = useState(false);
+  const [withdrawalModal, setWithdrawalModal] = useState(false);
+  const [selectedBankAccount, setSelectedBankAccount] = useState('');
+  const [newWithdrawalAmount, setNewWithdrawalAmount] = useState('');
   const [depositFormData, setDepositFormData] = useState({
     amount: "",
-    paymentMethod: "BankTransfer", // Consistent with paymentMethods array
+    paymentMethod: "BankTransfer",
     bankAccount: "default",
     referenceNumber: "",
     proofFile: null
   });
 
+  // Predefined payment methods
   const paymentMethods = [
     { value: "BankTransfer", label: "Chuyển khoản ngân hàng" },
     { value: "CreditCard", label: "Thẻ tín dụng" },
@@ -27,16 +35,18 @@ export default function BalanceManagement({
     { value: "OnlineBanking", label: "Ngân hàng trực tuyến" }
   ];
 
+  // Predefined bank accounts
   const bankAccounts = [
     { id: "default", name: "Techcombank - 19120123456789 - CÔNG TY ABC" },
     { id: "bank2", name: "Vietcombank - 19213456789 - CÔNG TY ABC" },
-    { id: "bank3", name: "BIDV - 19023156789 - CÔNG TY ABC" }
   ];
 
+  // Currency formatting utility
   const formatCurrency = (value) => {  
-    return `${value.toLocaleString()}đ`;
+    return `${(value || 0).toLocaleString()}đ`;
   };
 
+  // Deposit form change handler
   const handleDepositFormChange = (fieldName, value) => {  
     setDepositFormData({  
       ...depositFormData,  
@@ -44,10 +54,13 @@ export default function BalanceManagement({
     });  
   };
 
+  // Deposit submission handler
   const handleDepositSubmit = () => {
+    // Remove commas and parse amount
     const amountString = depositFormData.amount.replace(/,/g, "");
     const amount = parseFloat(amountString);
 
+    // Validation checks
     if (!amountString || isNaN(amount) || amount <= 0) {
       notification.error({
         message: "Lỗi",
@@ -55,6 +68,7 @@ export default function BalanceManagement({
       });
       return;
     }
+
     if (!depositFormData.paymentMethod) {
       notification.error({
         message: "Lỗi",
@@ -62,30 +76,30 @@ export default function BalanceManagement({
       });
       return;
     }
-    if (depositFormData.paymentMethod === "BankTransfer" && !depositFormData.bankAccount) {
-      notification.error({
-        message: "Lỗi",
-        description: "Vui lòng chọn tài khoản ngân hàng",
-      });
-      return;
-    }
+
+    // Create new transaction
     const newTransaction = {
       id: `T${(transactions.length + 1).toString().padStart(3, "0")}`,
       transactionId: `TXN-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}`,
       type: "Deposit",
       amount: amount,
-      status: "Pending",
+      status: "Completed", // Changed from "Pending" to "Completed"
       date: new Date().toISOString().slice(0, 10),
-      description: `Deposit via ${depositFormData.paymentMethod}`
+      description: `Deposit via ${depositFormData.paymentMethod}`,
+      paymentMethod: depositFormData.paymentMethod,
+      bankAccount: depositFormData.bankAccount
     };
     
+    // Update transactions and balance
     setTransactions([...transactions, newTransaction]);
     setAdvertiserBalance({  
       ...advertiserBalance,  
-      pendingBalance: advertiserBalance.pendingBalance + amount,  
+      availableBalance: (advertiserBalance.availableBalance || 0) + amount, // Add directly to available balance
+      lifetimeDeposits: (advertiserBalance.lifetimeDeposits || 0) + amount,
       lastUpdated: new Date().toISOString().slice(0, 10)
     });
 
+    // Reset modal and form
     setDepositModal(false);
     setDepositFormData({
       amount: "",
@@ -95,10 +109,87 @@ export default function BalanceManagement({
       proofFile: null
     });
     
+    // Success notification
     notification.success({
       message: "Thành công",
-      description: "Yêu cầu nạp tiền đã được gửi và đang chờ xác nhận",
+      description: "Yêu cầu nạp tiền đã được xác nhận thành công",
     });
+  };
+
+  // Withdrawal request handler
+  const handleWithdrawalRequest = () => {
+    // Remove commas and parse amount
+    const amount = parseFloat(newWithdrawalAmount.replace(/,/g, ""));
+
+    // Validation checks
+    if (!amount || isNaN(amount) || amount <= 0) {
+      notification.error({
+        message: "Lỗi",
+        description: "Vui lòng nhập số tiền hợp lệ (lớn hơn 0)",
+      });
+      return;
+    }
+
+    if (amount > (advertiserBalance.availableBalance || 0)) {
+      notification.error({
+        message: "Lỗi",
+        description: "Số tiền rút vượt quá số dư khả dụng",
+      });
+      return;
+    }
+
+    if (!selectedBankAccount) {
+      notification.error({
+        message: "Lỗi",
+        description: "Vui lòng chọn tài khoản ngân hàng",
+      });
+      return;
+    }
+
+    // Find selected bank account details
+    const selectedBank = bankAccounts.find(bank => bank.id === selectedBankAccount);
+
+    // Create new transaction
+    const newTransaction = {
+      id: `T${(transactions.length + 1).toString().padStart(3, "0")}`,
+      transactionId: `TXN-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}`,
+      type: "Withdrawal",
+      amount: amount,
+      status: "Pending", // Kept as "Pending"
+      date: new Date().toISOString().slice(0, 10),
+      description: `Withdrawal to ${selectedBank.name}`,
+      bankAccount: selectedBank.name
+    };
+
+    // Update transactions and balance
+    setTransactions([...transactions, newTransaction]);
+    setAdvertiserBalance({
+      ...advertiserBalance,
+      availableBalance: (advertiserBalance.availableBalance || 0) - amount,
+      pendingBalance: (advertiserBalance.pendingBalance || 0) + amount,
+      lifetimeWithdrawals: (advertiserBalance.lifetimeWithdrawals || 0) + amount,
+      lastUpdated: new Date().toISOString().slice(0, 10)
+    });
+
+    // Reset modal and form
+    setWithdrawalModal(false);
+    setNewWithdrawalAmount('');
+    setSelectedBankAccount('');
+
+    // Success notification
+    notification.success({
+      message: "Thành công",
+      description: "Yêu cầu rút tiền đã được gửi và đang chờ xác nhận",
+    });
+  };
+
+
+  // Withdrawal modal toggle handler
+  const handleWithdrawalModalToggle = (isOpen) => {
+    setWithdrawalModal(isOpen);
+    if (onWithdrawalModalToggle) {
+      onWithdrawalModalToggle(isOpen);
+    }
   };
 
   return (
@@ -106,6 +197,7 @@ export default function BalanceManagement({
       <div className="mb-8">
         <Title level={4} className="mb-4">Tổng quan tài chính</Title>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Available Balance Card */}
           <Card className="bg-blue-50 border-blue-200">
             <Statistic
               title={
@@ -129,12 +221,13 @@ export default function BalanceManagement({
               <Button type="primary" onClick={() => setDepositModal(true)}>
                 <ArrowDownOutlined /> Nạp tiền
               </Button>
-              <Button onClick={() => setWithdrawalModal(true)}>
+              <Button onClick={() => handleWithdrawalModalToggle(true)}>
                 <ArrowUpOutlined /> Rút tiền
               </Button>
             </div>
           </Card>
           
+          {/* Pending Balance Card */}
           <Card className="bg-yellow-50 border-yellow-200">
             <Statistic
               title={
@@ -154,17 +247,9 @@ export default function BalanceManagement({
             <Text type="secondary" className="block mt-2">
               Số tiền đang trong quá trình xử lý
             </Text>
-            <div className="mt-4">
-              <Tooltip title="View pending transactions">
-                <Button onClick={() => {
-                  setStatusFilter("Pending");
-                }}>
-                  Xem giao dịch đang chờ
-                </Button>
-              </Tooltip>
-            </div>
           </Card>
           
+          {/* Summary Card */}
           <Card className="bg-gray-50 border-gray-200">
             <div className="grid grid-cols-3 gap-2">
               <Statistic
@@ -198,7 +283,7 @@ export default function BalanceManagement({
           </Card>
         </div>
       </div>
-
+    
       <Modal
         title="Nạp tiền"
         visible={depositModal}
@@ -212,12 +297,12 @@ export default function BalanceManagement({
               value={depositFormData.amount}
               onChange={(e) => {
                 const formattedValue = e.target.value
-                  .replace(/[^0-9,]/g, '')  // Remove non-numeric characters except comma
-                  .replace(/(,.*),/g, '$1');  // Remove multiple commas
+                  .replace(/[^0-9,]/g, '')
+                  .replace(/(,.*),/g, '$1');
                 handleDepositFormChange('amount', formattedValue);
               }}
               addonAfter="đ"
-              placeholder="Nhập số tiền cần nạp"
+              placeholder="Nhập số tiền cần nạp (tối thiểu 100,000 đồng)"
             />
           </Form.Item>
           <Form.Item label="Phương thức thanh toán" required>
@@ -235,32 +320,89 @@ export default function BalanceManagement({
           </Form.Item>
           
           {depositFormData.paymentMethod === 'BankTransfer' && (
-            <>
-              <Form.Item label="Chọn tài khoản ngân hàng để chuyển khoản" required>
-                <Select
-                  value={depositFormData.bankAccount}
-                  onChange={(value) => handleDepositFormChange('bankAccount', value)}
-                >
-                  {bankAccounts.map(account => (
-                    <Select.Option key={account.id} value={account.id}>
-                      {account.name}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
-              <Form.Item label="Bằng chứng thanh toán">
-                <Upload
-                  beforeUpload={() => false}
-                  maxCount={1}
-                  onChange={(info) => {
-                    handleDepositFormChange('proofFile', info.file);
-                  }}
-                >
-                  <Button icon={<UploadOutlined />}>Tải lên</Button>
-                </Upload>
-              </Form.Item>
-            </>
+            <Form.Item label="Chọn tài khoản ngân hàng để chuyển khoản" required>
+              <Select
+                value={depositFormData.bankAccount}
+                onChange={(value) => handleDepositFormChange('bankAccount', value)}
+              >
+                {bankAccounts.map(account => (
+                  <Select.Option key={account.id} value={account.name}>
+                    {account.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
           )}
+
+        <Form.Item label="Tài khoản ngân hàng" required>
+            <Select
+              value={selectedBankAccount}
+              onChange={(value) => setSelectedBankAccount(value)}
+              placeholder="Chọn tài khoản ngân hàng"
+            >
+              {propUserBankAccounts.map(account => (
+                <Select.Option key={account.id} value={account.id}>
+                  {account.bankName} - {account.accountNumber} - {account.accountHolder}
+                  {account.isDefault && " (Mặc định)"}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Form>
+      </Modal>
+      
+      {/* Withdrawal Modal */}
+      <Modal
+        title="Rút tiền"
+        visible={withdrawalModal}
+        onOk={handleWithdrawalRequest}
+        onCancel={() => handleWithdrawalModalToggle(false)}
+        width={600}
+      >
+        <Form layout="vertical">
+          <Form.Item 
+            label={
+              <span>
+                Số tiền rút (đồng) 
+                <Tooltip title={`Số dư khả dụng: ${formatCurrency(advertiserBalance.availableBalance)}`}>
+                  <InfoCircleOutlined className="ml-1" />
+                </Tooltip>
+              </span>
+            }
+            required
+          >
+            <Input
+              value={newWithdrawalAmount}
+              onChange={(e) => {
+                const formattedValue = e.target.value
+                  .replace(/[^0-9,]/g, '')
+                  .replace(/(,.*),/g, '$1');
+                setNewWithdrawalAmount(formattedValue);
+              }}
+              addonAfter="đ"
+              placeholder="Nhập số tiền cần rút (tối thiểu 100.000 đồng)"
+            />
+            <div className="text-sm text-gray-500 mt-1">
+              Số dư khả dụng: {formatCurrency(advertiserBalance.availableBalance)}
+              <br />
+              Số tiền rút tối thiểu: 100.000 đồng
+            </div>
+          </Form.Item>
+          
+          <Form.Item label="Tài khoản ngân hàng" required>
+            <Select
+              value={selectedBankAccount}
+              onChange={(value) => setSelectedBankAccount(value)}
+              placeholder="Chọn tài khoản ngân hàng"
+            >
+              {propUserBankAccounts.map(account => (
+                <Select.Option key={account.id} value={account.id}>
+                  {account.bankName} - {account.accountNumber} - {account.accountHolder}
+                  {account.isDefault && " (Mặc định)"}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
         </Form>
       </Modal>
     </>

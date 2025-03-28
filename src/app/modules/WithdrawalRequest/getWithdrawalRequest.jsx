@@ -3,9 +3,9 @@ import Cookies from "js-cookie";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-export default async function getPublisherBalance() {
+export default async function getWithdrawalRequest() {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/PublisherBalance`, {
+    const response = await fetch(`${API_BASE_URL}/api/WithdrawalRequest`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -14,15 +14,14 @@ export default async function getPublisherBalance() {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to fetch publisher balance. Please try again.");
+      throw new Error("Failed to fetch withdrawal request. Please try again.");
     }
 
     const data = await response.json();
-    // message.success("Publisher balance fetched successfully!");
     return data;
   } catch (error) {
     message.error(
-      error.message || "Failed to fetch publisher balance. Please try again."
+      error.message || "Failed to fetch withdrawal request. Please try again."
     );
     return null;
   }
